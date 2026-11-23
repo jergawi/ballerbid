@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-m0I/UxENLh/JANlrMn3/gZ8bWIsKEfCzmsMfidv70AI=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-NrnIYlQY+FbfgljB72gzUXMZu/CLQXenRSFdbQUHCf0=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -257,10 +257,10 @@ select:disabled{opacity:.6}
 .irow .intro{margin-top:0;justify-content:flex-start}
 .intro span.sk::before{content:'⚡ ';}
 /* bench + multi-pick */
-.rost span.bn{opacity:.85;background:var(--panel2)}
-.rost span.bn b{color:var(--mut)}
-.srow.bn .sl{font-size:12px;color:var(--mut)}
-.slots button.bn{border-style:dashed}
+.rost span.bench{opacity:.85;background:var(--panel2)}
+.rost span.bench b{color:var(--mut)}
+.srow.bench .sl{font-size:13px;color:#fff;background:color-mix(in srgb,var(--c) 55%,#6b7280)}
+.slots button.bench{border-style:dashed}
 .picked{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .pk{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:5px 6px 5px 11px;border-radius:999px;background:#eef4ff;color:#2f5aa8;border:1px solid #cfdcf6}
 .pk button{width:22px;height:22px;border-radius:50%;background:#fff;color:#2f5aa8;font-size:15px;line-height:1;border:1px solid #cfdcf6}
@@ -310,6 +310,33 @@ select:disabled{opacity:.6}
 .rtot.bad{background:#fff1f0;border-color:#f3b4ad;color:#c0392b}
 .seg.pmode .chip{font-size:13px}
 
+/* nickname plate */
+.nick{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 4px;letter-spacing:0}
+.nick::before,.nick::after{content:'';height:2px;width:26px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--acc))}
+.nick::after{background:linear-gradient(90deg,var(--acc),transparent)}
+.nick span{font-family:var(--disp),'Noto Sans TC',sans-serif;font-style:italic;font-weight:900;font-size:21px;line-height:1;padding:3px 2px;
+  background:linear-gradient(90deg,#ff7a1a,#e8a400);-webkit-background-clip:text;background-clip:text;color:transparent;transform:skewX(-6deg)}
+.nick span::before{content:'“';margin-right:2px}.nick span::after{content:'”';margin-left:2px}
+.nick i{display:none}
+/* lineup board (draft-board look) */
+.board2{margin-top:14px;padding:14px 12px 14px;border-radius:20px;background:linear-gradient(160deg,#1b2a5c,#0f1a3d 70%);box-shadow:0 10px 30px -14px rgba(10,20,60,.6)}
+.board2 .bh{display:flex;align-items:baseline;justify-content:space-between;padding:0 4px}
+.board2 .bt{font-family:var(--disp);font-weight:800;font-style:italic;font-size:26px;text-transform:uppercase;letter-spacing:.02em;filter:brightness(1.35)}
+.board2 .bsub{font-size:12px;color:#aab4cc;margin:2px 4px 6px}
+.board2 .blab{font-size:11px;font-weight:800;letter-spacing:.15em;color:#7f8bb0;margin:10px 4px 4px}
+.plate{display:flex;align-items:stretch;margin-top:6px;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 3px 0 rgba(0,0,0,.18);cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .15s var(--ease),box-shadow .15s}
+.plate .ps{flex:none;width:52px;display:grid;place-items:center;background:var(--c);color:#fff;font-family:var(--num);font-weight:800;font-size:18px}
+.plate.bench .ps{font-size:13px;background:color-mix(in srgb,var(--c) 55%,#6b7280)}
+.plate .pn{flex:1;min-width:0;padding:7px 10px}
+.plate .pn b{display:block;font-family:var(--disp);font-weight:800;font-size:19px;line-height:1.05;letter-spacing:.01em;color:#141a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plate .pn small{display:block;font-size:11px;color:#667089;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plate .grip{flex:none;width:34px;display:grid;place-items:center;color:#9aa3b8;font-size:18px;touch-action:none;cursor:grab;border-left:1px solid #eef0f5}
+.plate.sel{box-shadow:0 0 0 3px #ffcf33;transform:translateX(4px)}
+.plate.over{box-shadow:0 0 0 3px #4ade80;transform:scale(1.02)}
+.plate.dragging{opacity:.35}
+.plate.locked{cursor:default}.plate.locked .grip{visibility:hidden}
+.ghost2{position:fixed;z-index:50;pointer-events:none;opacity:.95;transform:rotate(-1.5deg) scale(1.03);box-shadow:0 14px 30px -8px rgba(0,0,0,.45)}
+
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
 <script src="https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js" integrity="sha384-ilRYg/zm2XqUafLvBoGVk40UfNRnvUkYMy+e/JPo4YgsFR6X9Q3jYEkqFQXquX4r" crossorigin="anonymous" async></script>
@@ -327,7 +354,7 @@ select:disabled{opacity:.6}
    Stats: Basketball-Reference (via sumitrodatta/bball-reference-datasets)
    ========================================================= */
 const POS=['PG','SG','SF','PF','C'],ALL=['A','B','C'];
-const T_NOBID=12000,T_BID=8000,T_SLOT=15000,T_LINEUP=60000;
+const T_NOBID=20000,T_BID=15000,T_SLOT=20000,T_LINEUP=90000;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const num=(v,d)=>typeof v==='number'&&isFinite(v)?v:d;
@@ -534,7 +561,7 @@ function fillFA(g){g.sides.forEach(s=>openSlots(g,s).forEach(x=>{const i=isBench
   g.rosters[s].push({slot:x,k,price:0});g.log.push({n:g.items[k].n,who:s,amt:0,slot:x,fa:1})}))}
 function nextCard(S){const g=S.game;g.idx++;g.bid={who:null,amt:0};g.pass={};g.pending=null;g.turn=null;
   if(!g.sides.every(s=>openN(g,s)===0)&&g.idx>=g.items.length&&!refill(g))fillFA(g);
-  if(isOver(g)){S.phase='lineup';g.ready={};g.lineupEnd=now()+T_LINEUP*(g.size===10?1.5:1);return}
+  if(isOver(g)){S.phase='lineup';g.ready={};g.lineupEnd=now()+T_LINEUP*(g.size===10?4/3:1);return}
   startCard(S)}
 function assign(S,slot){
   const g=S.game,p=g.pending;if(!p||!openSlots(g,p.who).includes(slot))return false;
@@ -894,10 +921,10 @@ function vHome(){
 }
 function rulesCard(){return `<section class="card"><details><summary>📖 玩法 & 對戰怎麼算</summary><ol>
   <li>每人預算一樣。球員卡自動翻開，<b>輪流出價</b>：兩人時每張牌輪流由不同人先喊，三人時用蛇形順序（A B C → C B A）。</li>
-  <li>輪到你時輸入金額出價，或按「不要」。沒人出價 12 秒、有人出價後 8 秒內不動作，就算「不要」。其他人都不要時，最高價的人得標。</li>
+  <li>輪到你時輸入金額出價，或按「不要」。沒人出價 20 秒、有人出價後 15 秒內不動作，就算「不要」。其他人都不要時，最高價的人得標。</li>
   <li>大家都不要的球員會流標，誰都拿不到。牌不夠時會從主題補新球員，最後還缺人才補「自由球員」（$0，板凳等級）。</li>
   <li>正規模式湊滿 PG～C 五個位置；夢幻隊模式再加 5 位替補。每個空位至少要留 $1，<b>沒花完的錢</b>會換成小額實力加分（每 $1 ＋0.3，最多 ＋2.5）。</li>
-  <li>標完進入「賽前排陣」（正規 60 秒、10 人 90 秒），可以調整位置，看不到別人怎麼排。</li>
+  <li>標完進入「賽前排陣」（正規 90 秒、10 人 120 秒），可以調整位置，看不到別人怎麼排。</li>
   <li>每兩隊打一輪七戰四勝系列賽，先逐場播放，再看結算；系列賽勝場最多的奪冠。</li></ol>
   <ul style="margin-top:12px"><li><b>夢幻隊模式（10 人）</b>：替補每人約等於先發的 1/4 影響力。<b>火爆浪子</b>偶爾會吃技術犯規，兩次就被驅逐出場；<b>犯規麻煩</b>的人容易四犯被換下或六犯畢業。被換下時由最強的替補頂上，這一場損失約 0～2 分，不會大到不值得買。</li>
   <li><b>數據</b>：Basketball-Reference。單季陣容用該季、年代主題用那十年最好的 5 季、隊史主題用在該隊最好的 5 季。上場時間很少的球員，數據會往平均拉回，避免小樣本失真。</li>
@@ -989,7 +1016,7 @@ function bioOf(p){if(!p.id||!BIOS||!own(BIOS.p,p.id))return null;const o={};BIOS
 function roleTags(p){const t=[];if(num(p.pts,0)>=25)t.push('得分機器');if(num(p.astp,0)>=30)t.push('組織大師');else if(num(p.astp,0)>=22)t.push('傳球好手');
   if(num(p.trbp,0)>=17)t.push('籃板怪');if(num(p.blkp,0)>=4)t.push('護框長人');if(num(p.stlp,0)>=2.6)t.push('抄截高手');if(peOf(p)>=3.8&&spc(p)>=0.6)t.push('空間型長人');if(num(p.usg,20)<17&&num(p.dbpm,0)>=1.5)t.push('防守悍將');return t.slice(0,2)}
 /* Taiwan fan nicknames: Jerry's list (PTT / 巴哈 / 痞客邦 sources), first nickname per player */
-const NICK={abdulka01:"天勾",adamsst01:"水行俠",adebaba01:"阿爹",allenra02:"糖",anderky01:"慢速先生",antetgi01:"字母哥",anthoca01:"甜瓜",arenagi01:"Agent 0",artesro01:"世界和平",barklch01:"惡漢",birdla01:"大鳥",boguemu01:"強盜",bookede01:"書人",bradlsh01:"竹竿",bryanko01:"黑曼巴",butleji01:"士官長",capelca01:"餅皇",cartevi01:"加拿大航空",cassesa01:"外星人",chambwi01:"籃球皇帝",curryse01:"咖哩弟",curryst01:"我家咖喱・浪花兄弟",davisan02:"濃眉",derozde01:"DDR",doncilu01:"東 77",drexlcl01:"滑翔機",duncati01:"石佛",duranke01:"死神",edwaran01:"蟻人",embiijo01:"大帝",ervinju01:"J博士",ewingpa01:"Gorilla",fishede01:"小魚",francst01:"老大",garneke01:"狼王",gasolpa01:"西班牙兔子",georgpa01:"PG-13",gervige01:"冰人",ginobma01:"妖刀",greenac01:"鐵人",greendr01:"追夢",hamilri01:"面具人",hardaan01:"便士",hardati01:"甲蟲",hardeja01:"大鬍子",havlijo01:"小偷",haywago01:"星海哥",hillgr01:"好孩子",horryro01:"關鍵先生",howardw01:"魔獸",ilgauzy01:"大Z",irvinky01:"德魯大叔",iversal01:"答案",jamesle01:"小皇帝",johnsla02:"大媽",johnsma02:"魔術師",jokicni01:"小丑",jordami01:"飛人",kempsh01:"雨人",kiddja01:"發動機",kirilan01:"AK-47",kuminjo01:"苦命",leonaka01:"可愛",linje01:"豪神",majerda01:"震雷",malonka01:"郵差",malonmo01:"孤獨的勇士",maravpe01:"手槍",marbust01:"獨狼",mariosh01:"駭客任務",mcgratr01:"T-Mac",millere01:"終結者",mingya01:"小巨人",moblecu01:"老貓",mournal01:"大佐",mullich01:"上帝左手",murraja01:"屁孩",mutomdi01:"非洲大山",nashst01:"助推器",nowitdi01:"德國坦克",nurkiju01:"巨獸",oaklech01:"老橡樹",olajuha01:"大夢",onealsh01:"大鯊魚",parisro01:"酋長",parketo01:"法國跑車",paulch01:"CP3",paytoga01:"手套",piercpa01:"真理",pippesc01:"皮蓬",porzikr01:"KP",princta01:"王子",randoza01:"Z-Bo",robinda01:"海軍上將",rodmade01:"小蟲",rosede01:"飆風玫瑰",russebi01:"指環王",sampsra01:"超級彈簧腿",schrode01:"8400萬",scolalu01:"大鑽石",siakapa01:"洗牙啃",sprewla01:"狂人",stockjo01:"將軍",stoudam01:"小霸王",stoudda01:"小飛鼠",terryja01:"噴射機",thomais01:"微笑刺客",thompkl01:"浪花兄弟",vanexni01:"小精靈",wadedw01:"閃電俠",wallabe01:"大本鐘",wallara01:"怒吼天尊",waltobi01:"紅色巨人",webbech01:"國王",wembavi01:"斑馬",westbru01:"威少",westje01:"教父",wiggian01:"圍巾",wilkido01:"人類電影精華",willija02:"白巧克力",willizi01:"胖虎",worthja01:"眼鏡蛇"};
+const NICK={loveke01:"愛神",abdulka01:"天勾",adamsst01:"水行俠",adebaba01:"阿爹",allenra02:"糖",anderky01:"慢速先生",antetgi01:"字母哥",anthoca01:"甜瓜",arenagi01:"Agent 0",artesro01:"世界和平",barklch01:"惡漢",birdla01:"大鳥",boguemu01:"強盜",bookede01:"書人",bradlsh01:"竹竿",bryanko01:"黑曼巴",butleji01:"士官長",capelca01:"餅皇",cartevi01:"加拿大航空",cassesa01:"外星人",chambwi01:"籃球皇帝",curryse01:"咖哩弟",curryst01:"我家咖喱・浪花兄弟",davisan02:"濃眉",derozde01:"DDR",doncilu01:"東 77",drexlcl01:"滑翔機",duncati01:"石佛",duranke01:"死神",edwaran01:"蟻人",embiijo01:"大帝",ervinju01:"J博士",ewingpa01:"Gorilla",fishede01:"小魚",francst01:"老大",garneke01:"狼王",gasolpa01:"西班牙兔子",georgpa01:"PG-13",gervige01:"冰人",ginobma01:"妖刀",greenac01:"鐵人",greendr01:"追夢",hamilri01:"面具人",hardaan01:"便士",hardati01:"甲蟲",hardeja01:"大鬍子",havlijo01:"小偷",haywago01:"星海哥",hillgr01:"好孩子",horryro01:"關鍵先生",howardw01:"魔獸",ilgauzy01:"大Z",irvinky01:"德魯大叔",iversal01:"答案",jamesle01:"小皇帝",johnsla02:"大媽",johnsma02:"魔術師",jokicni01:"小丑",jordami01:"飛人",kempsh01:"雨人",kiddja01:"發動機",kirilan01:"AK-47",kuminjo01:"苦命",leonaka01:"可愛",linje01:"豪神",majerda01:"震雷",malonka01:"郵差",malonmo01:"孤獨的勇士",maravpe01:"手槍",marbust01:"獨狼",mariosh01:"駭客任務",mcgratr01:"T-Mac",millere01:"終結者",mingya01:"小巨人",moblecu01:"老貓",mournal01:"大佐",mullich01:"上帝左手",murraja01:"屁孩",mutomdi01:"非洲大山",nashst01:"助推器",nowitdi01:"德國坦克",nurkiju01:"巨獸",oaklech01:"老橡樹",olajuha01:"大夢",onealsh01:"大鯊魚",parisro01:"酋長",parketo01:"法國跑車",paulch01:"CP3",paytoga01:"手套",piercpa01:"真理",pippesc01:"皮蓬",porzikr01:"KP",princta01:"王子",randoza01:"Z-Bo",robinda01:"海軍上將",rodmade01:"小蟲",rosede01:"飆風玫瑰",russebi01:"指環王",sampsra01:"超級彈簧腿",schrode01:"8400萬",scolalu01:"大鑽石",siakapa01:"洗牙啃",sprewla01:"狂人",stockjo01:"將軍",stoudam01:"小霸王",stoudda01:"小飛鼠",terryja01:"噴射機",thomais01:"微笑刺客",thompkl01:"浪花兄弟",vanexni01:"小精靈",wadedw01:"閃電俠",wallabe01:"大本鐘",wallara01:"怒吼天尊",waltobi01:"紅色巨人",webbech01:"國王",wembavi01:"斑馬",westbru01:"威少",westje01:"教父",wiggian01:"圍巾",wilkido01:"人類電影精華",willija02:"白巧克力",willizi01:"胖虎",worthja01:"眼鏡蛇"};
 const nickOf=p=>p&&own(NICK,p.id)?NICK[p.id]:'';
 function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
   if(b){if(b.hof)ch.push('🏛 名人堂');if(b.mvp)ch.push(`👑 MVP ×${b.mvp}`);if(b.dpoy)ch.push(`🛡 最佳防守 ×${b.dpoy}`);if(b.all1)ch.push(`年度第一隊 ×${b.all1}`);else if(b.alln)ch.push(`年度最佳陣容 ×${b.alln}`);
@@ -1013,7 +1040,7 @@ function amtFor(g,s){const mn=g.bid.amt+1,mx=maxBid(g,s);let v=ui.amt[s];if(!(v>
 function bidRow(g,s,r){
   const full=openN(g,s)===0,lead=g.bid.who===s,mx=maxBid(g,s),mine=r==='all'||r===s,passed=g.pass[s],turn=g.turn===s&&!g.pending;
   const out=full||passed||(!lead&&mx<=g.bid.amt);
-  const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?'替':x;return q?`<span class="f ${isBench(x)?'bn':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bn':''}"><b>${L}</b>—</span>`}).join('');
+  const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?'替':x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
   const offl=NET.mode!=='local'&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
   const state=(offl?'📴 離線中（自動跳過）・':'')+(full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
   const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt;
@@ -1030,7 +1057,7 @@ function clock(end,tot,label){return `<div class="small mut" data-end="${end}" d
 function vAuction(){
   const g=S.game,r=myRole(),pl=cur(g);if(!pl)return '';
   const pct=Math.round(g.idx/g.items.length*100);
-  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><i>外號</i>${esc(nickOf(pl))}</div>`:''}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
+  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
       ${g.showStats?`<div class="psub">${esc(sub(pl))}</div><div class="pstats">${[['pts','PTS'],['trb','REB'],['ast','AST'],['stl','STL'],['blk','BLK']].map(([k,l])=>`<div><b>${fmt(pl[k])}</b><i>${l}</i></div>`).join('')}</div>`:''}</div>`;
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
@@ -1040,7 +1067,7 @@ function vAuction(){
   let sheet='';
   if(g.pending){const p=g.pending,os=openSlots(g,p.who),canPick=r==='all'||r===p.who;
     sheet=`<div class="sheet" id="sheet-${g.gid}-${g.idx}"><div class="in"><div style="font-weight:900;font-size:16px;color:${col(p.who)}">${esc(nm(S,p.who))} 以 $${p.amt} 標下</div><div style="font-size:22px;font-weight:900;margin-top:2px">${esc(pl.n)}</div>
-    ${canPick?`<div class="mut small" style="margin-top:4px">先放哪個位置？（賽前排陣還能再調）</div><div class="slots">${os.map(x=>{const i=posInfo(pl,x);return `<button class="t${isBench(x)?0:i.tier} ${isBench(x)?'bn':''}" data-act="slot" data-v="${x}">${isBench(x)?'替補':x}<small>${isBench(x)?'板凳':i.lab}</small></button>`}).filter((h,j,arr)=>!(/data-v="B[2-5]"/.test(h))||!arr.some((y,k)=>k<j&&/data-v="B/.test(y))).join('')}</div>
+    ${canPick?`<div class="mut small" style="margin-top:4px">先放哪個位置？（賽前排陣還能再調）</div><div class="slots">${os.map(x=>{const i=posInfo(pl,x);return `<button class="t${isBench(x)?0:i.tier} ${isBench(x)?'bench':''}" data-act="slot" data-v="${x}">${isBench(x)?'替補':x}<small>${isBench(x)?'板凳':i.lab}</small></button>`}).filter((h,j,arr)=>!(/data-v="B[2-5]"/.test(h))||!arr.some((y,k)=>k<j&&/data-v="B/.test(y))).join('')}</div>
     ${clock(p.deadline,T_SLOT,'時間到自動放最適合的位置：')}`:`<div class="mut" style="margin-top:10px"><span class="spin"></span> 等 ${esc(nm(S,p.who))} 選位置…</div>`}</div></div>`}
   return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div><div class="small mut">之後還有 ${remain(g)-1} 張</div></div>
   <div class="bar"><i style="width:${pct}%"></i></div><div class="stage">${card}</div>${hintBox}${curBox}
@@ -1052,14 +1079,17 @@ function vLineup(){
   const panel=s=>{const mine=r==='all'||r===s,R=rosterOf(g,s),rd=g.ready[s];
     if(!mine)return `<section class="card"><div class="row"><b style="color:${col(s)}">${esc(nm(S,s))}</b><span class="grow"></span><span class="small ${rd?'':'mut'}">${rd?'✅ 已準備':'<span class="spin"></span> 排陣中…'}</span></div>
       <div class="small mut" style="margin-top:6px">${R.map(p=>esc(p.n)).join('、')}</div><div class="small mut" style="margin-top:4px">位置安排開打時才公開。</div></section>`;
-    const rows=R.map(p=>{const pi=posInfo(p,p.slot),sel=ui.sel&&ui.sel.who===s&&ui.sel.slot===p.slot;
-      return `<button class="lu ${s} ${sel?'sel':''}" data-act="lu" data-who="${s}" data-v="${p.slot}" ${rd?'disabled':''}><span class="sl">${isBench(p.slot)?'替':p.slot}</span><span class="grow"><b>${esc(p.n)}</b>${pi.tier>0?`<i class="tag t${pi.tier}">${pi.lab}</i>`:''}<span class="poss2">能打：${canPlay(p).join(' ')}</span></span></button>`}).join('');
-    return `<section class="card"><div class="row"><b style="color:${col(s)};font-size:16px">${esc(nm(S,s))}</b><span class="grow"></span><span class="small mut">剩 $${left(g,s)}</span></div>
-      <div class="small mut" style="margin:4px 0 8px">${rd?'已鎖定，等其他人…':(ui.sel&&ui.sel.who===s?'再點一位球員跟他交換':'點兩位球員互換位置'+(g.size===10?'（先發和替補也能互換）':''))}</div>${rows}
-      <button class="${rd?'ghost':'big'}" data-act="ready" data-who="${s}" data-v="${rd?0:1}">${rd?'取消準備':'準備好了 ✓'}</button></section>`};
+    const plate=p=>{const pi=posInfo(p,p.slot),sel=ui.sel&&ui.sel.who===s&&ui.sel.slot===p.slot,b=isBench(p.slot),nk=nickOf(p);
+      return `<div class="plate ${s} ${sel?'sel':''} ${b?'bench':''} ${rd?'locked':''}" data-act="${rd?'':'lu'}" data-who="${s}" data-v="${p.slot}" data-drag="${rd?'':s}">
+        <span class="ps">${b?'替補':p.slot}</span><span class="pn"><b>${esc(String(p.n).toUpperCase())}</b><small>${nk?`“${esc(nk)}”・`:''}能打 ${canPlay(p).join(' ')||'—'}${pi.tier>0&&!b?` <i class="tag t${pi.tier}">${pi.lab}</i>`:''}</small></span><span class="grip" aria-hidden="true">⠿</span></div>`};
+    const st=R.filter(p=>!isBench(p.slot)),bn=R.filter(p=>isBench(p.slot));
+    return `<section class="board2 ${s}"><div class="bh"><span class="bt" style="color:${col(s)}">${esc(nm(S,s))}</span><span class="small" style="color:#aab4cc">剩 $${left(g,s)}</span></div>
+      <div class="bsub">${rd?'已鎖定，等其他人…':(ui.sel&&ui.sel.who===s?'再點一位球員跟他交換':'拖曳 ⠿ 或點兩位球員互換'+(g.size===10?'（先發和替補也能互換）':''))}</div>
+      <div class="blab">先發</div>${st.map(plate).join('')}${bn.length?`<div class="blab">替補</div>${bn.map(plate).join('')}`:''}
+      <button class="${rd?'ghost':'big'}" style="margin-top:12px" data-act="ready" data-who="${s}" data-v="${rd?0:1}">${rd?'取消準備':'準備好了 ✓'}</button></section>`};
   return `<div class="center" style="margin-top:14px"><div style="font-size:36px">📋</div><div style="font-weight:900;font-size:20px">賽前排陣</div>
     <div class="small mut" style="max-width:420px;margin:4px auto 0">同位置的球員會一對一。小個子打大位置靠速度、但籃板吃虧；大個子靠籃板和低位。對手的排法開打才公開。</div>
-    <div style="max-width:300px;margin:8px auto 0">${clock(g.lineupEnd,T_LINEUP*(g.size===10?1.5:1),'時間到自動開打：')}</div></div>
+    <div style="max-width:300px;margin:8px auto 0">${clock(g.lineupEnd,T_LINEUP*(g.size===10?4/3:1),'時間到自動開打：')}</div></div>
     ${g.sides.map(panel).join('')}`;
 }
 const ar=(x,k,inv)=>{const m=x.m&&x.m[k];if(m==null||Math.abs(m-1)<0.1)return '';const good=inv?m<1:m>1;return `<i class="${good?'up':'dn'}">${m>1?'▲':'▼'}</i>`};
@@ -1144,18 +1174,22 @@ function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)retu
       const all=bA.map(x=>({...x,s:z.a})).concat(bB.map(x=>({...x,s:z.b})));const pog=all.sort((x,y)=>(y.pts+1.2*y.reb+1.5*y.ast+2*y.stl+2*y.blk)-(x.pts+1.2*x.reb+1.5*x.ast+2*x.stl+2*x.blk))[0];
       list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB,inc})})});
   pbCache={gid:g.gid+sim.champ,d:list};return list}
-const PB_Q=3600,PB_HOLD=2600,PB_SEG=1150,PB_POST=650;
+const PB_Q=6000,PB_HOLD=2600,PB_SEG=1150,PB_POST=550;
 function pbDur(G){return G.q[0].length*PB_Q+PB_HOLD}
-const pbDefSp=()=>S&&S.game&&S.game.sides.length===3?3:2;
+const pbDefSp=()=>1;
 function pbState(){const L=pbData(),p=ui.pb;if(!p||p.gid!==S.game.gid)return null;
   const G=L[p.k];if(!G)return null;const e=(Date.now()-p.t0)*p.sp,P=G.q[0].length,pe=Math.min(P,e/PB_Q);return{L,G,e,P,pe,done:e>=P*PB_Q,next:e>=pbDur(G)}}
 function pbStart(){ui.pb={gid:S.game.gid,k:0,t0:Date.now(),sp:ui.pbSp||pbDefSp()}}
 function pbNext(){const L=pbData();if(ui.pb.k+1>=L.length){ui.pbDone.add(S.game.gid);ui.pbFast=true;ui.pb=null}else{ui.pb.k++;ui.pb.t0=Date.now()}render();scrollTo(0,0)}
 setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.pb||ui.pbDone.has(S.game.gid))return;const st=pbState();if(st&&st.next&&ui.pb.auto!==false)return pbNext();render()})},150);
 
-/* ---------- mini court (top-down, canvas): ten players and the ball act out each highlight ---------- */
+/* ---------- mini court (top-down, canvas) ----------
+ Each highlight is played as a full possession: the ball is brought up the floor from where the last play ended,
+ the offense runs a set that fits the shooter (isolation for stars, pick-and-roll, ball swing for shooters,
+ post entry for bigs), then the shot. Steals turn into fast breaks the other way. Teams switch ends at halftime. */
 const CW=360,CH=200,HX={L:22,R:338},HY=100;
-const SPOTS=[[110,100],[85,32],[85,168],[45,52],[22,136]]; // PG SG SF PF C, measured back from the hoop
+const SET=[[118,100],[88,30],[88,170],[42,52],[20,140]];
+const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest']);
 function teamCol(s){const v=getComputedStyle(document.documentElement).getPropertyValue({A:'--a',B:'--b',C:'--c3'}[s]||'--a').trim();return v||'#2f7cf6'}
 function court(ctx){ctx.fillStyle='#f3e3c6';ctx.fillRect(0,0,CW,CH);ctx.strokeStyle='rgba(120,80,30,.45)';ctx.lineWidth=1.2;
   ctx.strokeRect(4,4,CW-8,CH-8);ctx.beginPath();ctx.moveTo(CW/2,4);ctx.lineTo(CW/2,CH-4);ctx.stroke();ctx.beginPath();ctx.arc(CW/2,HY,22,0,7);ctx.stroke();
@@ -1163,58 +1197,119 @@ function court(ctx){ctx.fillStyle='#f3e3c6';ctx.fillRect(0,0,CW,CH);ctx.strokeSt
     ctx.beginPath();ctx.moveTo(d>0?4:CW-4,HY-86);ctx.lineTo(hx+d*14,HY-86);ctx.arc(hx,HY,87,d>0?-1.4:Math.PI+1.4,d>0?1.4:Math.PI-1.4,d<0);ctx.lineTo(d>0?4:CW-4,HY+86);ctx.stroke();
     ctx.strokeStyle='#e8772e';ctx.lineWidth=2;ctx.beginPath();ctx.arc(hx,HY,5,0,7);ctx.stroke();ctx.strokeStyle='rgba(120,80,30,.45)';ctx.lineWidth=1.2;
     ctx.beginPath();ctx.moveTo(hx-d*6,HY-9);ctx.lineTo(hx-d*6,HY+9);ctx.stroke()}}
-const lerp=(a,b,u)=>a+(b-a)*u,ease=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
-function spotFor(side,dirR,i,jit){const hx=dirR?HX.R:HX.L,d=dirR?-1:1,[dx,y]=SPOTS[i];return[hx+d*dx+Math.sin(jit+i)*3,y+Math.cos(jit*1.3+i)*3]}
-function shotSpot(kind,dirR,seed){const hx=dirR?HX.R:HX.L,d=dirR?-1:1,a=(seed%100)/100*2.4-1.2;
-  const rr=kind==='logo'?150:kind==='three'?95:kind==='mid'?55:kind==='post'?28:14;return[hx+d*Math.cos(a)*rr,HY+Math.sin(a)*rr*0.9]}
-function drawPlayer(ctx,x,y,c,lab,hl){ctx.beginPath();ctx.arc(x,y+1.5,8,0,7);ctx.fillStyle='rgba(0,0,0,.15)';ctx.fill();
-  ctx.beginPath();ctx.arc(x,y,8,0,7);ctx.fillStyle=c;ctx.fill();ctx.lineWidth=hl?2.5:1.5;ctx.strokeStyle=hl?'#ffcf33':'#fff';ctx.stroke();
-  ctx.fillStyle='#fff';ctx.font='700 7px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lab,x,y+.5)}
-function drawBall(ctx,x,y,h){ctx.beginPath();ctx.arc(x,y+h*0.25+2,3.2,0,7);ctx.fillStyle='rgba(0,0,0,.18)';ctx.fill();
-  ctx.beginPath();ctx.arc(x,y-h,3.6+h*0.08,0,7);ctx.fillStyle='#f07a1e';ctx.fill();ctx.strokeStyle='#7a3a0c';ctx.lineWidth=.8;ctx.stroke()}
-function pop(ctx,x,y,txt,u,size){const sc=u<.25?u/.25*1.25:1.25-(u-.25)*.33;ctx.save();ctx.globalAlpha=u>.75?(1-u)/.25:1;ctx.translate(x,y-u*14);ctx.scale(sc,sc);
-  ctx.font=`900 ${size||16}px system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.9)';ctx.strokeText(txt,0,0);ctx.fillStyle='#1c2333';ctx.fillText(txt,0,0);ctx.restore()}
+const lerp=(a,b,u)=>a+(b-a)*u,ease=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2,cl01=u=>Math.max(0,Math.min(1,u)),seg=(u,a,b)=>cl01((u-a)/(b-a));
+const L2=(p,q,u)=>[lerp(p[0],q[0],u),lerp(p[1],q[1],u)];
+const at=(right,dx,y)=>[right?HX.R-dx:HX.L+dx,y],hoop=right=>[right?HX.R:HX.L,HY];
+const attacksRight=(z,side,q)=>(side===z.a)!==(q>=2);
+const SUFX=new Set(['Jr.','Sr.','II','III','IV']);
+function shortName(p){const nk=nickOf(p),k=nk?nk.split('・')[0]:'';const parts=String(p.n||'').split(' ').filter(Boolean);let last=parts[parts.length-1]||'';
+  if(SUFX.has(last)&&parts.length>2)last=parts[parts.length-2];if(last.length>9&&k)return k;
+  const s=(parts.length>1?parts[0][0]+'.':'')+last;return s.length>11?(k||last.slice(0,10)):s}
+function guard(o,right){const h=hoop(right),dx=h[0]-o[0],dy=h[1]-o[1],d=Math.hypot(dx,dy)||1,g=Math.min(16,d*0.35);return[o[0]+dx/d*g,o[1]+dy/d*g-5]}
+function setLayout(off,def,right,ro,jit){const P={};ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx+Math.sin(jit+i)*3,y+Math.cos(jit*1.2+i)*3)});
+  ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
+function tipoff(z,ro){const P={};[z.a,z.b].forEach((s,k)=>ro[s].forEach((p,i)=>{const ang=(i/5)*Math.PI*2+(k?0.6:0),r=i===4?8:34;P[s+i]=[CW/2+(k?6:-6)+Math.cos(ang)*r*(i===4?1:1),HY+Math.sin(ang)*r*0.8]}));return P}
+function playType(E,p){if(E.kind==='three'||E.kind==='logo')return'swing';if(E.kind==='post'||E.kind==='putback')return'post';if(E.kind==='assist'||E.kind==='alley')return'pnr';
+  return styleOf(p).star||E.kind==='clutch'?'iso':'drive'}
+function shotDx(kind,seed){return kind==='logo'?150:kind==='three'?92:kind==='mid'?52:kind==='post'?24:12}
+// where everyone stands when a play ends (start point of the next possession)
+function endLayout(E,z,ro,prevL){if(!E||DEAD.has(E.kind))return prevL;
+  const off=E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side,def=off===z.a?z.b:z.a,right=attacksRight(z,off,E.q),P={};
+  if(E.kind==='steal'){const run=!right;ro[E.side].forEach((p,i)=>{P[E.side+i]=at(run,i===0?14:40+i*12,HY+(i-2)*24)});ro[off].forEach((p,i)=>{P[off+i]=at(run,60+i*14,HY+(i-2)*30)});return P}
+  ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx*0.6,lerp(HY,y,0.7))});ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
 function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getElementById('court');if(!cv||!S||document.hidden)return;
   withView(()=>{if(S.phase!=='results'||!ui.pb)return;const st=pbState();if(!st)return;const {G,e,done}=st,z=G.z;
-  let ctx=null;try{ctx=cv.getContext('2d')}catch(e){}if(!ctx)return;const k=cv.width/CW;ctx.setTransform(k,0,0,k,0,0);court(ctx);
+  let ctx=null;try{ctx=cv.getContext('2d')}catch(_){}if(!ctx)return;const k=cv.width/CW;ctx.setTransform(k,0,0,k,0,0);court(ctx);
   const full={[z.a]:rosterOf(S.game,z.a),[z.b]:rosterOf(S.game,z.b)},ro={[z.a]:starters(full[z.a]),[z.b]:starters(full[z.b])},nowQ=e/PB_Q;
-  (G.inc||[]).forEach(i=>{if(i.kind==='tech'||!i.sub)return;const st=i.q+i.t,en=i.kind==='trouble'?i.q+1:99;if(nowQ<st||nowQ>en)return;
-    const k=ro[i.side].findIndex(p=>p.n===i.n),sb=full[i.side].find(p=>p.n===i.sub);if(k>=0&&sb){ro[i.side]=ro[i.side].slice();ro[i.side][k]={...sb,slot:ro[i.side][k].slot}}});
-  const _r0=0,C={[z.a]:teamCol(z.a),[z.b]:teamCol(z.b)},R={[z.a]:true,[z.b]:false};
-  const lab=p=>{const k=nickOf(p);return(k&&k.length<=2?k:lastN_(p).slice(0,3))};
-  const ev=G.ev.map(x=>({...x,T:(x.q+x.t)*PB_Q})),jit=e/420;
-  let ci=ev.findIndex(x=>x.T+PB_POST>e);if(ci<0)ci=ev.length;const E=ev[ci],prevT=ci>0?ev[ci-1].T+PB_POST:0;
-  const offSide=E?(E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):(E.side||z.a)):(G.sa>G.sb?z.a:z.b);
-  const defSide=offSide===z.a?z.b:z.a,dirR=R[offSide];
-  const pos={};[offSide,defSide].forEach(s=>ro[s].forEach((p,i)=>{pos[s+i]=spotFor(s,dirR,i,jit+(s===defSide?1:0))}));
-  ro[defSide].forEach((p,i)=>{const o=pos[offSide+i],hx=dirR?HX.R:HX.L;pos[defSide+i]=[lerp(o[0],hx,0.2),lerp(o[1],HY,0.2)]});
-  const seg0=E?Math.max(prevT,E.T-PB_SEG):0;
-  if(E&&e<seg0){const v=ease(Math.min(1,(e-prevT)/Math.max(1,seg0-prevT)));Object.keys(pos).forEach(kk=>{pos[kk]=[lerp(CW/2+(pos[kk][0]-CW/2)*0.25,pos[kk][0],v),lerp(HY+(pos[kk][1]-HY)*0.6,pos[kk][1],v)]})}
-  let ball=null,flash=null,hl=null;
-  const idxOf=(s,n)=>{const i=ro[s].findIndex(p=>p.n===n);return i>=0?i:(hash(n||'x')%5)};
-  if(E&&!done&&KPTS[E.kind]!=null){const u=Math.max(0,Math.min(1,(e-seg0)/Math.max(1,E.T-seg0))),post=e>E.T?(e-E.T)/PB_POST:0;
-    const hx=dirR?HX.R:HX.L,seed=hash(E.txt+E.clk);
-    const si=E.kind==='block'?idxOf(offSide,E.d):E.kind==='steal'?0:idxOf(offSide,E.p),shooter=offSide+si;hl=E.kind==='block'||E.kind==='steal'?defSide+idxOf(defSide,E.p):shooter;
-    const sp=shotSpot(E.kind==='block'?'rim':E.kind,dirR,seed),start=pos[shooter],pg=pos[offSide+(E.a?idxOf(offSide,E.a):0)];
-    pos[shooter]=[lerp(start[0],sp[0],ease(Math.min(1,u/0.55))),lerp(start[1],sp[1],ease(Math.min(1,u/0.55)))];
-    if(E.kind==='dunk'||E.kind==='alley'||E.kind==='ankle'||E.kind==='rim'||E.kind==='and1'||E.kind==='putback'){const v=ease(Math.max(0,Math.min(1,(u-0.45)/0.5)));pos[shooter]=[lerp(pos[shooter][0],hx+(dirR?-8:8),v),lerp(pos[shooter][1],HY,v)]}
-    if(E.kind==='steal'){const thief=defSide+idxOf(defSide,E.p),tgt=pos[offSide+1];pos[thief]=[lerp(pos[thief][0],(pg[0]+tgt[0])/2,ease(Math.min(1,u/0.6))),lerp(pos[thief][1],(pg[1]+tgt[1])/2,ease(Math.min(1,u/0.6)))];
-      ball=u<0.6?[lerp(pg[0],tgt[0],u/0.6*0.5),lerp(pg[1],tgt[1],u/0.6*0.5),0]:[pos[thief][0]+(post?(dirR?-1:1)*post*60:0),pos[thief][1],0];if(post){pos[thief][0]+=(dirR?-1:1)*post*60}
-      if(post)flash=['🧤 抄截！',post]}
-    else{const holder=u<0.3?pg:pos[shooter];
-      if(u<0.3&&pg!==start)ball=[lerp(pg[0],pos[shooter][0],u/0.3),lerp(pg[1],pos[shooter][1],u/0.3),6*Math.sin(Math.PI*u/0.3)];
-      else if(u<0.6||['dunk','alley','rim','and1','ankle','putback'].includes(E.kind)&&u<0.95)ball=[holder[0],holder[1],Math.abs(Math.sin(e/90))*3];
-      else{const v=Math.min(1,(u-0.6)/0.4),fx=pos[shooter];ball=[lerp(fx[0],hx,v),lerp(fx[1],HY,v),Math.sin(Math.PI*v)*(E.kind==='three'||E.kind==='logo'?26:16)]}
-      if(E.kind==='block'&&u>0.75){const bl=defSide+idxOf(defSide,E.p);pos[bl]=[lerp(pos[bl][0],pos[shooter][0],0.8),lerp(pos[bl][1],pos[shooter][1],0.8)];
-        if(post){ball=[pos[shooter][0]+(dirR?-1:1)*post*50,pos[shooter][1]+post*40,8*(1-post)];flash=['🚫 火鍋！',post]}}
-      else if(post){ball=[hx,HY,0];flash=[`${KICO[E.kind]} +${KPTS[E.kind]}`,post]}}}
-  // players
-  [defSide,offSide].forEach(s=>ro[s].forEach((p,i)=>{const q=pos[s+i];drawPlayer(ctx,q[0],q[1],C[s],lab(p),hl===s+i)}));
-  if(!ball&&!done){const q=pos[offSide+0];ball=[q[0]+5,q[1]+2,Math.abs(Math.sin(e/90))*3]}
+  (G.inc||[]).forEach(i=>{if(i.kind==='tech'||!i.sub)return;const s0=i.q+i.t,en=i.kind==='trouble'?i.q+1:99;if(nowQ<s0||nowQ>en)return;
+    const kk=ro[i.side].findIndex(p=>p.n===i.n),sb=full[i.side].find(p=>p.n===i.sub);if(kk>=0&&sb){ro[i.side]=ro[i.side].slice();ro[i.side][kk]={...sb,slot:ro[i.side][kk].slot}}});
+  const C={[z.a]:teamCol(z.a),[z.b]:teamCol(z.b)},jit=e/380;
+  const ev=G.ev.map(x=>({...x,T:(x.q+x.t)*PB_Q}));
+  let ci=ev.findIndex(x=>x.T+PB_POST>e);if(ci<0)ci=ev.length;
+  let L=tipoff(z,ro);for(let i=0;i<ci;i++)L=endLayout(ev[i],z,ro,L);
+  const E=done?null:ev[ci],s0=ci>0?ev[ci-1].T+PB_POST:0;
+  let P={...L},ball=null,flash=null,hl=null,banner=null;
+  const idx=(s,n)=>{const i=ro[s].findIndex(p=>p.n===n);return i>=0?i:(hash(String(n))%5)};
+  if(E&&!DEAD.has(E.kind)){
+    const off=E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side,def=off===z.a?z.b:z.a,right=attacksRight(z,off,E.q),H=hoop(right);
+    let u=cl01((e-s0)/Math.max(1,E.T-s0));const pu=e>E.T?cl01((e-E.T)/PB_POST):0,seed=hash(E.txt+E.clk);
+    // possessions alternate: if the last play should have handed the ball to the other team, show their empty trip first
+    let nat=null;for(let i=ci-1;i>=0;i--){const x=ev[i];if(DEAD.has(x.kind))continue;nat=x.kind==='block'?x.side:(x.side===z.a?z.b:z.a);break}
+    let inTrip=false;if(nat&&nat!==off){const rD=attacksRight(z,def,E.q),SE=setLayout(def,off,rD,ro,jit),uE=seg(u,0,0.42),mv=ease(seg(uE,0,0.6));
+      if(uE<1){inTrip=true;Object.keys(SE).forEach(kk=>{P[kk]=L2(L[kk]||SE[kk],SE[kk],mv)});const sh=P[def+1],H2=hoop(rD);
+        if(uE<0.62){const q=P[def+0];ball=[q[0]+(rD?3:-3),q[1]+2,Math.abs(Math.sin(e/85))*3]}
+        else if(uE<0.9){const v=seg(uE,0.62,0.9);ball=[lerp(sh[0],H2[0],v),lerp(sh[1],HY,v),Math.sin(Math.PI*v)*18]}
+        else{const v=seg(uE,0.9,1),rb=P[off+4];ball=[lerp(H2[0],rb[0],v),lerp(HY,rb[1],v),8*Math.sin(Math.PI*v)];flash=['🧱 沒進！籃板',v]}}
+      L=SE;u=seg(u,0.42,1)}
+    const si=E.kind==='steal'?1+(seed%4):E.kind==='block'?idx(off,E.d):idx(off,E.p),sp=ro[off][si]||ro[off][0];
+    const type=E.kind==='block'||E.kind==='steal'?'drive':playType(E,sp);
+    play:{if(inTrip)break play;
+    const S0=setLayout(off,def,right,ro,jit),uA=ease(seg(u,0,0.3));
+    Object.keys(S0).forEach(kk=>{P[kk]=L2(L[kk]||S0[kk],S0[kk],uA)});
+    let holder=0;const pass=[];// [time, toIndex]
+    const big=ro[off][4]?4:3,ang=((seed%100)/100*2.2-1.1);
+    const spot=[right?H[0]-Math.cos(ang)*shotDx(E.kind):H[0]+Math.cos(ang)*shotDx(E.kind),HY+Math.sin(ang)*shotDx(E.kind)*0.9];
+    const uB=seg(u,0.3,0.72),uC=seg(u,0.72,1);
+    if(type==='swing'){const mid=si===1?2:1;pass.push([0.42,mid],[0.6,si]);P[off+si]=L2(P[off+si],spot,ease(seg(u,0.45,0.62)))}
+    else if(type==='post'){P[off+si]=L2(P[off+si],at(right,24,HY+18),ease(seg(u,0.3,0.5)));pass.push([0.52,si])}
+    else if(type==='pnr'){const scr=si===big?3:big,pg=0;const scrPos=[P[off+pg][0]+(right?14:-14),P[off+pg][1]+10];
+      P[off+scr]=L2(P[off+scr],scrPos,ease(seg(u,0.3,0.45)));P[off+pg]=L2(P[off+pg],at(right,48,HY-10),ease(seg(u,0.48,0.64)));
+      if(si!==pg){P[off+si]=L2(P[off+si],at(right,14,HY+12),ease(seg(u,0.5,0.66)));pass.push([0.66,si])}}
+    else if(type==='iso'){[0,1,2,3,4].forEach(i=>{if(i===si)return;const cor=[[8,18],[8,182],[110,30],[110,170],[60,190]][i];P[off+i]=L2(P[off+i],at(right,cor[0],cor[1]),ease(uB))});
+      if(si!==0)pass.push([0.38,si]);P[off+si]=L2(P[off+si],at(right,70,HY+(seed%2?-14:14)),ease(seg(u,0.35,0.5)));P[off+si][0]+=Math.sin(e/70)*2*(uB>0&&uB<1)}
+    else{if(si!==0)pass.push([0.45,si])}
+    // defenders shadow their man
+    ro[def].forEach((p,i)=>{P[def+i]=L2(P[def+i],guard(P[off+i],right),uA>0.99?0.85:uA)});
+    // shot / drive
+    const rimShot=['dunk','alley','rim','and1','ankle','putback','clutch'].includes(E.kind)&&!(E.kind==='clutch'&&styleOf(sp).three),jumper=!rimShot;
+    if(E.kind==='steal'){const th=idx(E.side,E.p),run=!right,tgt=hoop(run);
+      const passFrom=P[off+0],passTo=P[off+si];const iu=0.62;
+      if(u<iu){holder=0;if(u>0.5)ball=[...L2(passFrom,passTo,seg(u,0.5,iu)*0.6),5]}
+      else{const ru=seg(u,iu,1);P[E.side+th]=L2(L2(passFrom,passTo,0.35),[tgt[0]+(run?-10:10),HY],ease(ru));ro[E.side].forEach((p,i)=>{if(i!==th)P[E.side+i]=L2(P[E.side+i],at(run,40+i*14,HY+(i-2)*26),ease(ru))});
+        ro[off].forEach((p,i)=>{P[off+i]=L2(P[off+i],at(run,70+i*12,HY+(i-2)*30),ease(ru)*0.9)});ball=[P[E.side+th][0],P[E.side+th][1],Math.abs(Math.sin(e/80))*3]}
+      hl=E.side+th;if(u>=iu&&u<0.8)flash=['🧤 抄截！',seg(u,iu,0.8)];if(pu)flash=['⚡ 快攻！',pu];}
+    else{
+      // ball follows passes, then the shot
+      let h=0,t0=0;for(const [t,to] of pass){if(u>=t)h=to,t0=t}const prevH=pass.filter(x=>x[0]<=u).slice(-2,-1)[0];
+      const fromI=pass.length&&u>=pass[0][0]?(pass.findIndex(x=>x[0]===t0)>0?pass[pass.findIndex(x=>x[0]===t0)-1][1]:0):0;
+      if(rimShot){P[off+si]=L2(P[off+si],[H[0]+(right?-9:9),HY+3],ease(uC))}
+      else P[off+si]=L2(P[off+si],spot,ease(seg(u,0.6,0.75)));
+      const flying=u-t0<0.06&&pass.length&&u>=pass[0][0];
+      if(flying){const a=P[off+fromI],b=P[off+h],v=(u-t0)/0.06;ball=[lerp(a[0],b[0],v),lerp(a[1],b[1],v),6*Math.sin(Math.PI*v)]}
+      else if(u<0.82||rimShot&&u<0.97){const q=P[off+h];ball=[q[0]+(right?3:-3),q[1]+2,Math.abs(Math.sin(e/85))*3];holder=h}
+      else{const v=seg(u,0.82,1),q=P[off+si];ball=[lerp(q[0],H[0],v),lerp(q[1],HY,v),Math.sin(Math.PI*v)*(E.kind==='three'||E.kind==='logo'?26:16)]}
+      if(E.kind==='block'&&u>0.8){const bl=idx(E.side,E.p);P[E.side+bl]=L2(P[E.side+bl],P[off+si],0.85);hl=E.side+bl;
+        if(u>0.9||pu){const v=pu||0;ball=[P[off+si][0]+(right?-1:1)*v*60,P[off+si][1]+v*44,8*(1-v)];flash=['🚫 火鍋！',Math.max(seg(u,0.9,1)*0.3,v)]}}
+      else{hl=off+si;if(pu){ball=[H[0],HY+pu*4,0];flash=[`${KICO[E.kind]||'🏀'} +${KPTS[E.kind]||2}`,pu]}}
+      if(u<0.3)banner=null}}
+  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
+  if(E&&E.kind==='clutch'&&e>E.T)banner=['🏆 致勝球！',cl01((e-E.T)/PB_POST)];
+  const curOff=E&&!DEAD.has(E.kind)?(E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side):null;
+  // draw players; offense names under the dots, defense names above (smaller)
+  const lab=p=>shortName(p);
+  [z.a,z.b].forEach(s=>ro[s].forEach((p,i)=>{const q=P[s+i];if(!q)return;const star=styleOf(p).star;
+    ctx.beginPath();ctx.arc(q[0],q[1]+1.6,7.5,0,7);ctx.fillStyle='rgba(0,0,0,.16)';ctx.fill();
+    ctx.beginPath();ctx.arc(q[0],q[1],7,0,7);ctx.fillStyle=C[s];ctx.fill();ctx.lineWidth=hl===s+i?2.6:1.6;ctx.strokeStyle=hl===s+i?'#ffcf33':star?'#ffe9a8':'#fff';ctx.stroke();
+    ctx.font='800 8.5px "Barlow Condensed","Noto Sans TC",system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.lineJoin='round';
+    const t=lab(p),offNow=curOff?s===curOff:true,ty=offNow?q[1]+8.5:q[1]-17;ctx.globalAlpha=offNow||hl===s+i?1:0.7;if(!offNow)ctx.font='700 7.5px "Barlow Condensed","Noto Sans TC",system-ui,sans-serif';
+    ctx.lineWidth=3;ctx.strokeStyle='rgba(20,26,46,.88)';ctx.strokeText(t,q[0],ty);ctx.fillStyle='#fff';ctx.fillText(t,q[0],ty);ctx.globalAlpha=1}));
+  if(!ball&&!done){const E2=E||{},off=E2.side||z.a,q=P[off+0]||P[z.a+0];if(q)ball=[q[0]+4,q[1]+2,Math.abs(Math.sin(e/90))*3]}
   if(ball)drawBall(ctx,ball[0],ball[1],ball[2]);
-  if(flash)pop(ctx,dirR?HX.R-34:HX.L+34,HY-28,flash[0],flash[1]);
-  if(E&&!done&&KPTS[E.kind]==null&&e>E.T-200)pop(ctx,CW/2,HY,`${KICO[E.kind]||''} ${E.kind==='ot'?'延長賽！':E.kind==='timeout'?'暫停':E.kind==='run'?'攻勢！':E.kind==='hot'?'手感發燙':E.kind==='tech'?'技術犯規':E.kind==='clutch'?'致勝球！':E.kind==='rest'?'提前收工':E.kind==='foul'?'犯規麻煩':E.kind==='foulout'?'犯滿離場':E.kind==='eject'?'驅逐出場！':''}`,Math.min(1,Math.max(0,(e-E.T+200)/(PB_POST+200))),18);
-  if(done)pop(ctx,CW/2,HY,'終場',0.5,26)})}
+  if(flash)pop(ctx,CW/2,40,flash[0],flash[1],18);if(banner)pop(ctx,CW/2,HY,banner[0],banner[1],18);
+  // mini scoreboard
+  const [ca,cb]=pbScore(st);const per=Math.min(st.P-1,Math.floor(st.pe)),pf=st.pe-Math.floor(st.pe),len=per<4?12:5,lt=done?0:Math.max(0,len*(1-pf));
+  const clk=done?'FINAL':`${per<4?'Q'+(per+1):'OT'} ${Math.floor(lt)}:${String(Math.floor((lt%1)*60)).padStart(2,'0')}`;
+  ctx.save();ctx.translate(CW/2,13);const W=150;ctx.fillStyle='rgba(20,26,46,.86)';ctx.beginPath();ctx.roundRect?ctx.roundRect(-W/2,-9,W,18,6):ctx.rect(-W/2,-9,W,18);ctx.fill();
+  ctx.fillStyle=C[z.a];ctx.fillRect(-W/2,-9,5,18);ctx.fillStyle=C[z.b];ctx.fillRect(W/2-5,-9,5,18);
+  ctx.textBaseline='middle';ctx.font='800 11px "Barlow Condensed",system-ui,sans-serif';ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(String(nm(S,z.a)).slice(0,6),-W/2+9,0.5);
+  ctx.textAlign='right';ctx.fillText(String(nm(S,z.b)).slice(0,6),W/2-9,0.5);ctx.textAlign='center';ctx.font='800 12px "Barlow Condensed",system-ui,sans-serif';ctx.fillText(`${ca} : ${cb}`,-2,0.5);
+  ctx.font='700 7.5px system-ui,sans-serif';ctx.fillStyle='#ffcf33';ctx.fillText(clk,-2,13);ctx.restore()})}
+function drawBall(ctx,x,y,h){ctx.beginPath();ctx.arc(x,y+h*0.25+2,3.2,0,7);ctx.fillStyle='rgba(0,0,0,.18)';ctx.fill();
+  ctx.beginPath();ctx.arc(x,y-h,3.6+h*0.08,0,7);ctx.fillStyle='#f07a1e';ctx.fill();ctx.strokeStyle='#7a3a0c';ctx.lineWidth=.8;ctx.stroke()}
+function pop(ctx,x,y,txt,u,size){const sc=u<.25?u/.25*1.2:1.2-(u-.25)*.27;ctx.save();ctx.globalAlpha=u>.8?(1-u)/.2:1;ctx.translate(x,y-u*8);ctx.scale(sc,sc);
+  ctx.font=`900 ${size||16}px system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.strokeText(txt,0,0);ctx.fillStyle='#1c2333';ctx.fillText(txt,0,0);ctx.restore()}
+function pbScore(st){const {G,P,pe,done}=st,qa=G.q[0],qb=G.q[1];if(done)return[G.sa,G.sb];const full=Math.floor(pe);let a=0,b=0;
+  for(let i=0;i<P;i++){if(i<full){a+=qa[i];b+=qb[i]}else if(i===full){const f=pe-full;a+=Math.floor(qa[i]*f);b+=Math.floor(qb[i]*f)}}return[a,b]}
 requestAnimationFrame(courtFrame);
 function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayback()}
   const {L,G,e,P,pe,done}=st,z=G.z,two=g.sides.length===2,ns=S.sim.series.length;
@@ -1260,7 +1355,7 @@ function vResults(){
   const board=`<div class="board rs" style="--d:1.8s"><div class="lab">${two?'系列賽':'循環賽'}</div><div style="text-align:left;margin-top:6px">${ser}</div>${std}
     ${sim.mvp?`<div class="small mut" style="margin-top:8px">冠軍 MVP：${esc(sim.mvp.n)}（決勝場 ${sim.mvp.pts} 分 ${sim.mvp.reb} 籃板 ${sim.mvp.ast} 助攻）</div>`:''}</div>`;
   const teamBlock=(s,d0)=>{const R=rosterOf(g,s),t=T[s];
-    const rows=R.map((p,i)=>{const pi=posInfo(p,p.slot);return `<div class="srow ${s} rs ${isBench(p.slot)?'bn':''}" style="--d:${(d0+0.1*i).toFixed(2)}s"><div class="sl">${isBench(p.slot)?'替補':esc(p.slot)}</div><div class="bd"><span class="pr">$${p.price}</span><div class="nm">${esc(p.n)}</div>
+    const rows=R.map((p,i)=>{const pi=posInfo(p,p.slot);return `<div class="srow ${s} rs ${isBench(p.slot)?'bench':''}" style="--d:${(d0+0.1*i).toFixed(2)}s"><div class="sl">${isBench(p.slot)?'替補':esc(p.slot)}</div><div class="bd"><span class="pr">$${p.price}</span><div class="nm">${esc(p.n)}</div>
       <div class="sb">${esc(sub(p))}${p.est&&p.est.length?' · 估':''}${pi.tier>0?`<i class="tag t${pi.tier}">${pi.lab}</i>`:''}</div>
       <div class="st">${[['pts','PPG'],['trb','RPG'],['ast','APG'],['stl','SPG'],['blk','BPG']].map(([k,l])=>`<div><b>${fmt(p[k])}</b><i>${l}</i></div>`).join('')}</div></div></div>`}).join('');
     return `<div class="teamhead ${s} rs" style="--d:${(d0-0.1).toFixed(2)}s"><span class="nm">${esc(nm(S,s))}</span><span class="grow small mut">花 $${g.spent[s]}・剩 $${left(g,s)}</span><span class="grade">${t.grade}</span><span class="pct">贏過本主題 ${t.pct}% 的隨機陣容</span></div>${rows}`};
@@ -1308,6 +1403,17 @@ function summaryText(){
 async function copyText(txt,okMsg){try{await navigator.clipboard.writeText(txt);toast(okMsg)}catch(e){toast('複製失敗，請長按手動複製')}}
 
 /* ---------- events ---------- */
+/* drag a lineup plate onto another to swap them (pointer events, works with touch) */
+let drag=null;
+document.addEventListener('pointerdown',e=>{const pl=e.target.closest('[data-drag]');if(!pl||!pl.dataset.drag||!e.target.closest('.grip'))return;
+  e.preventDefault();const r=pl.getBoundingClientRect();const gh=pl.cloneNode(true);gh.classList.add('ghost2');gh.style.width=r.width+'px';gh.style.left=r.left+'px';gh.style.top=r.top+'px';document.body.appendChild(gh);
+  drag={who:pl.dataset.drag,from:pl.dataset.v,gh,dy:e.clientY-r.top,dx:e.clientX-r.left,over:null};pl.classList.add('dragging')});
+document.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();drag.gh.style.top=(e.clientY-drag.dy)+'px';drag.gh.style.left=(e.clientX-drag.dx)+'px';
+  drag.gh.style.display='none';const el=document.elementFromPoint(e.clientX,e.clientY);drag.gh.style.display='';
+  const t=el&&el.closest('[data-drag]');document.querySelectorAll('.plate.over').forEach(x=>x.classList.remove('over'));
+  drag.over=t&&t.dataset.drag===drag.who&&t.dataset.v!==drag.from?t.dataset.v:null;if(drag.over)t.classList.add('over')},{passive:false});
+document.addEventListener('pointerup',()=>{if(!drag)return;const d=drag;drag=null;d.gh.remove();document.querySelectorAll('.plate.over,.plate.dragging').forEach(x=>x.classList.remove('over','dragging'));
+  if(d.over){ui.sel=null;dispatch({a:'swap',who:d.who,x:d.from,y:d.over})}});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');if(!t||t.disabled)return;const a=t.dataset.act,d=t.dataset;
   if(a!=='quit')ui.quit=false;
