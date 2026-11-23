@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-UobfhlZv5vfjxZglBKSbv+kxsVhYRM/T/WIJ+1Bku8Y=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-63QxWLv5JvBIJ4NZI+5p3u5JHrpfEbubAbgGx8DVKLw=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -337,6 +337,7 @@ select:disabled{opacity:.6}
 .plate.locked{cursor:default}.plate.locked .grip{visibility:hidden}
 .ghost2{position:fixed;z-index:50;pointer-events:none;opacity:.95;transform:rotate(-1.5deg) scale(1.03);box-shadow:0 14px 30px -8px rgba(0,0,0,.45)}
 .rules h3{font-size:14px;margin:14px 0 4px}.rules ol,.rules ul{padding-left:20px;margin:0}.rules li{margin:5px 0;font-size:13.5px;line-height:1.55}
+.intro span.sig{background:linear-gradient(90deg,#fff3c4,#ffe08a);border-color:#f2c94c;color:#7a4b00}
 
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
@@ -1025,12 +1026,13 @@ function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
     if(b.ar1&&!b.roy&&ch.length<4)ch.push('新秀一隊');if(!ch.length)ch.push('角色球員');
     const f=String(b.sk||'');if(f.includes('3'))sk.push('三分射手');if(f.includes('m'))sk.push('中投機器');if(f.includes('r'))sk.push('禁區殺手')}
   if(S&&S.game&&S.game.size===10){if(foulProne(p))sk.unshift('犯規麻煩');if(isHot(p))sk.unshift('火爆浪子')}
+  const sg=sigOf(p);
   tags.forEach(t=>{if(!sk.includes(t))sk.push(t)});
   const chips=ch.slice(0,6).map(x=>`<span>${esc(x)}</span>`).concat(sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`));
   const rev=ui.reveal.has(key);
   const line=b&&b.pts!=null?`生涯 ${b.g} 場・場均 ${fmt(b.pts)} 分 ${fmt(b.trb)} 籃板 ${fmt(b.ast)} 助攻`:'';
   const era=b?`${b.from-1}–${String(b.to%100).padStart(2,'0')} 年・主要效力${own(TEAMZH,b.tm)?TEAMZH[b.tm]:b.tm}${b.dy?`・${b.dy} 年選秀第 ${b.dp} 順位`:'・落選秀'}`:'';
-  const hon=ch.slice(0,8).map(x=>`<span>${esc(x)}</span>`).join(''),sty=sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`).join('');
+  const hon=ch.slice(0,8).map(x=>`<span>${esc(x)}</span>`).join(''),sty=(sg?`<span class="sig">⭐ ${esc(sg.lab)}</span>`:'')+sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`).join('');
   return `<div class="intro2"><div class="irow"><i class="il">榮譽</i><div class="intro">${hon}</div></div>${sty?`<div class="irow"><i class="il">球風</i><div class="intro">${sty}</div></div>`:''}</div>${line?`<div class="small mut" style="margin-top:6px">${line}</div>`:''}
     ${b?(rev?`<div class="small" style="margin-top:4px">${esc(era)}</div>`:`<button class="link" data-act="reveal" data-v="${key}">看年代和球隊（會透露主題）</button>`):''}`}
 const posChips=p=>`<div class="poss">${POS.map(s=>{const i=posInfo(p,s);return i.tier<=1?`<span class="${i.tier===0?'n':'c'}">${s}</span>`:''}).join('')}</div>`;
@@ -1118,10 +1120,59 @@ const KTXT={three:['{n} 底角三分，刷！','{n} 接球就投，三分入網'
   block:['{n} 送出大火鍋！','{n} 把球搧到場邊！'],steal:['{n} 抄截，一路快攻！','{n} 預判傳球路線，抄截成功']};
 const KPTS={three:3,logo:3,and1:3,mid:2,rim:2,dunk:2,post:2,putback:2,ankle:2,alley:2,assist:2,block:0,steal:0};
 const KICO={three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'💥',post:'🏀',putback:'🏀',ankle:'😵',alley:'🚀',assist:'🤝',block:'🚫',steal:'🧤',timeout:'⏸',run:'🔥',hot:'🔥',tech:'😤',ot:'⏱',clutch:'🏆',rest:'🪑',foul:'⚠️',foulout:'❌',eject:'🟥'};
-function offKind(p,mates,r){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{c.push(k);w.push(x)};
+/* signature traits of well-known stars (from widely cited "signature moves" lists and highlights).
+   They change how a play is shown and nudge which play type a player picks; how often they happen is still
+   tied to his numbers: chase-down blocks scale with block rate, swats only replace blocks the stats produce,
+   clutch shooters get a bigger share of game-winners. */
+const SIG={
+ jamesle01:{lab:'追魂鍋',chase:1,k:{dunk:['{n} 一路衝刺，單手戰斧暴扣！']}},
+ wadedw01:{lab:'追魂鍋',chase:1,k:{rim:['{n} 閃電切入，空中換手上籃']}},
+ pippesc01:{lab:'全能防守',chase:1,stl:['{n} 長臂抄截，一路快攻']},
+ wembavi01:{lab:'長臂封阻',swat:['{n} 長臂一揮，把切入的上籃直接搧飛！','外星人 {n} 的臂展太誇張，上籃被搧到場邊'],k:{three:['{n} 7 呎 4 的高度投三分，根本蓋不到']}},
+ mutomdi01:{lab:'搖手指',swat:['{n} 大火鍋！還對對手搖搖手指 ☝️']},
+ howardw01:{lab:'超人灌籃',k:{dunk:['{n} 超人起飛，雙手暴扣！']},swat:['{n} 從籃下飛出來，把球搧出界']},
+ wallabe01:{lab:'大本鐘',swat:['{n} 大火鍋！大本鐘響了 🔔']},
+ robinda01:{lab:'海軍上將',swat:['{n} 海軍上將補防，把上籃蓋掉']},
+ garneke01:{lab:'狼王怒吼',swat:['{n} 火鍋之後對著籃框怒吼']},
+ olajuha01:{lab:'夢幻舞步',k:{post:['{n} 夢幻舞步晃翻防守，輕鬆放進'],mid:['{n} 夢幻舞步接後仰跳投']},swat:['{n} 退回禁區把上籃蓋掉']},
+ abdulka01:{lab:'天勾',k:{post:['{n} 招牌天勾，沒人蓋得到'],mid:['{n} 招牌天勾，空心入網']}},
+ nowitdi01:{lab:'金雞獨立',k:{mid:['{n} 金雞獨立後仰跳投，進！'],post:['{n} 背框單腳後仰，籃框都沒碰到']},clutch:1},
+ jordami01:{lab:'後仰跳投',k:{mid:['{n} 招牌後仰跳投，防守再好也沒用'],dunk:['{n} 罰球線起跳，空中飛人灌籃！']},clutch:1},
+ bryanko01:{lab:'曼巴後仰',k:{mid:['{n} 曼巴式後仰跳投，被包夾照樣進'],three:['{n} 高難度後仰三分']},clutch:1},
+ lillada01:{lab:'Dame Time',k:{three:['{n} 超遠距離三分，指著手腕 ⌚'],logo:['{n} Logo 三分！Dame Time ⌚']},clutch:1,ctxt:'Dame Time！⌚ {n} 超遠三分殺死比賽'},
+ curryst01:{lab:'Logo 三分',k:{three:['{n} 運球晃開，超遠三分刷網','{n} 球還沒進就轉身慶祝，Night Night 😴'],logo:['{n} 中場 Logo 附近出手——刷！']},clutch:1},
+ iversal01:{lab:'Crossover',k:{ankle:['{n} 招牌 crossover 把防守者晃倒，還跨過去 😏'],rim:['{n} 胯下運球加速，撞進人群上籃']}},
+ hardeja01:{lab:'後撤步三分',k:{three:['{n} 招牌後撤步三分！'],rim:['{n} 歐洲步騙過防守，上籃得手']}},
+ ginobma01:{lab:'歐洲步',k:{rim:['{n} 招牌歐洲步，閃過兩個人上籃'],and1:['{n} 歐洲步硬切，打進還加罰！']}},
+ duncati01:{lab:'擦板跳投',k:{mid:['{n} 招牌 45 度擦板跳投'],post:['{n} 低位轉身擦板進球']}},
+ jokicni01:{lab:'Sombor Shuffle',k:{mid:['{n} 單腳後仰 Sombor Shuffle，進！'],post:['{n} 背框慢慢磨，轉身放進']},pass:['{a} 不看人背後傳球，{n} 空檔得分','{a} 全場長傳妙傳，{n} 快攻上籃']},
+ johnsma02:{lab:'不看人傳球',k:{post:['{n} 招牌小天勾！']},pass:['{a} 不看人傳球，{n} 快攻得分','{a} 魔術般的妙傳，{n} 輕鬆上籃']},
+ nashst01:{lab:'穿針引線',pass:['{a} 鑽進禁區再穿針引線，{n} 輕鬆得分']},
+ stockjo01:{lab:'經典擋拆',pass:['{a} 經典擋拆，把球塞給 {n} 輕鬆得分']},
+ paulch01:{lab:'控衛之神',pass:['{a} 擋拆後擊地傳球，{n} 接球得分'],k:{mid:['{n} 招牌罰球線中距離']}},
+ malonka01:{lab:'擋拆順下',k:{mid:['{n} 擋拆後接球中距離，郵差送達 📮'],post:['{n} 背打轉身強硬得分']}},
+ onealsh01:{lab:'大鯊魚灌籃',k:{dunk:['{n} 背框轉身暴扣，籃架都在晃！','{n} 雙手暴扣，差點把籃框扯下來'],post:['{n} 低位硬頂進禁區，強吃得分']}},
+ cartevi01:{lab:'飛人灌籃',k:{dunk:['{n} 起跳越過防守者，半人半神暴扣！']}},
+ antetgi01:{lab:'歐洲步暴扣',k:{dunk:['{n} 三分線起步，兩步就到籃下暴扣！'],rim:['{n} 歐洲步長驅直入']}},
+ leonaka01:{lab:'大手抄截',stl:['{n} 大手一伸，直接把球摸走'],k:{mid:['{n} 底角後仰跳投——彈框四下，進了！']},clutch:1},
+ allenra02:{lab:'底角三分',k:{three:['{n} 底角三分，教科書般的投籃']},clutch:1,ctxt:'{n} 退到底角接球——三分進！救命一擊'},
+ millere01:{lab:'Miller Time',k:{three:['{n} 連續三分，還對觀眾比割喉手勢']},clutch:1},
+ horryro01:{lab:'關鍵先生',clutch:1,ctxt:'關鍵先生 {n} 接球出手，致勝三分！'},
+ irvinky01:{lab:'魔術運球',k:{rim:['{n} 魔術般運球，打板挑籃進'],ankle:['{n} 連續胯下，晃倒防守者']},clutch:1},
+ duranke01:{lab:'死神跳投',k:{mid:['{n} 7 呎身高急停跳投，誰都蓋不到']}},
+ westbru01:{lab:'全速推進',k:{dunk:['{n} 全速推進，一路衝刺暴扣！'],rim:['{n} 坦克式衝刺上籃']}},
+ thompkl01:{lab:'手感爆發',k:{three:['{n} 接球就投，三分連發']}},
+ butleji01:{lab:'Playoff Jimmy',clutch:1},
+ rodmade01:{lab:'籃板蟲',k:{putback:['{n} 拼命搶下進攻籃板，補進']}}};
+const sigOf=p=>p&&own(SIG,p.id)?SIG[p.id]:null;
+function sigText(p,kind,a,r){const g=sigOf(p);if(g&&g.k&&g.k[kind]&&r()<0.6)return fill(PICK(g.k[kind],r),p,a,r);
+  const ga=sigOf(a);if(a&&ga&&ga.pass&&(kind==='assist'||kind==='alley')&&r()<0.65)return fill(PICK(ga.pass,r),p,a,r);
+  return fill(PICK(KTXT[kind],r),p,a,r)}
+function offKind(p,mates,r){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{const i=c.indexOf(k);if(i>=0)w[i]+=x;else{c.push(k);w.push(x)}};
   add(st.big?'post':'rim',2);if(st.three)add('three',st.big?2:4);if(st.mid)add('mid',3);add('mid',1);
   if(st.rim)add('and1',1.2);if(st.big||st.rim)add('dunk',st.big?2:1.2);if(st.big)add('putback',1);if(st.guard)add('ankle',0.35);
   if(st.three&&st.star)add('logo',0.15);
+  const g=sigOf(p);if(g&&g.k)Object.keys(g.k).forEach(k=>{const i=c.indexOf(k);if(i>=0)w[i]*=2;else if(k==='logo'&&st.three)add('logo',0.5)});
   const k=pickW(c,w,r),passers=mates.filter(q=>q!==p&&styleOf(q).pass);
   if(passers.length&&k!=='putback'&&k!=='ankle'&&k!=='logo'&&r()<0.3){const a=PICK(passers,r);return{k:(k==='dunk'||k==='rim')&&r()<0.5?'alley':k==='three'?'three':'assist',a}}
   return{k,a:null}}
@@ -1140,9 +1191,12 @@ function gameEvents(z,game,boxA,boxB,R,r,inc){inc=inc||[];
       if(!toDone&&(q===1||q===2)&&x<0.12){toDone=true;e={kind:'timeout',side:other(side),txt:`${tn(other(side))} 叫暫停，教練氣得跳腳`}}
       else if(!techDone&&x<0.16&&T.R.some(p=>HOT.has(p.id))){techDone=true;const p=PICK(T.R.filter(p=>HOT.has(p.id)),r);e={kind:'tech',side,p:p.n,txt:`${callN(p,r)} 跟裁判理論，吃到技術犯規 😤`}}
       else if(x<0.27){const c=T.R.filter(y=>styleOf(y).blk),p=c.length&&r()<0.7?PICK(c,r):pickW(T.R,T.R.map(y=>num(y.blk,0.3)+0.1),r),sh=pickW(O.R,O.R.map(y=>ptsOf(O,y)+1),r);
-        e={kind:'block',side,p:p.n,d:sh.n,txt:fill(PICK(KTXT.block,r),p,null,r)}}
-      else if(x<0.36){const p=pickW(T.R,T.R.map(y=>num(y.stl,0.5)+0.1),r);e={kind:'steal',side,p:p.n,txt:fill(PICK(KTXT.steal,r),p,null,r)}}
-      else{const p=pickW(T.R,T.R.map(y=>ptsOf(T,y)+1),r),o=offKind(p,T.R,r);e={kind:o.k,side,p:p.n,a:o.a&&o.a.n,txt:fill(PICK(KTXT[o.k],r),p,o.a,r)};
+        const gs=sigOf(p);e={kind:'block',side,p:p.n,d:sh.n,txt:gs&&gs.swat&&r()<0.75?fill(PICK(gs.swat,r),p,null,r):fill(PICK(KTXT.block,r),p,null,r)}}
+      else if(x<0.36){const p=pickW(T.R,T.R.map(y=>num(y.stl,0.5)+0.1),r),gs=sigOf(p);e={kind:'steal',side,p:p.n,txt:gs&&gs.stl&&r()<0.7?fill(PICK(gs.stl,r),p,null,r):fill(PICK(KTXT.steal,r),p,null,r)};
+        // chase-down block: a trait player on the beaten team, chance scaled by his block rate
+        const ch=O.R.filter(y=>sigOf(y)&&sigOf(y).chase);if(ch.length){const c2=PICK(ch,r),pc=0.35*clamp(num(c2.blkp,1)/2.2,0.3,1);
+          if(r()<pc){e.chase=c2.n;e.txt+=`……${callN(c2,r)} 從後面追上來，追魂鍋！🚫`}}}
+      else{const p=pickW(T.R,T.R.map(y=>ptsOf(T,y)+1),r),o=offKind(p,T.R,r);e={kind:o.k,side,p:p.n,a:o.a&&o.a.n,txt:sigText(p,o.k,o.a,r)};
         const hk=side+p.n;hot[hk]=(hot[hk]||0)+1;if(hot[hk]===3)ev.push({q,t:Math.min(0.99,frac+0.02),clk,side,kind:'hot',txt:`${callN(p,r)} 手感發燙！已經投進好幾球 🔥`})}
       e.q=q;e.t=frac;e.clk=clk;ev.push(e)}}
   const N=nm2=>{const p=[...teams[z.a].R,...teams[z.b].R].find(x=>x.n===nm2);return p?callN(p,r):String(nm2).split(' ').slice(-1)[0]};
@@ -1156,10 +1210,11 @@ function gameEvents(z,game,boxA,boxB,R,r,inc){inc=inc||[];
   // scoring runs: three scoring plays in a row by one team
   let run=0,last=null;const runs=[];ev.forEach((e,i)=>{if(KPTS[e.kind]>0){if(e.side===last)run++;else{last=e.side;run=1}if(run===3)runs.push({q:e.q,t:Math.min(0.995,e.t+0.01),clk:e.clk,side:e.side,kind:'run',txt:`${tn(e.side)} 打出一波 ${8+Math.floor(r()*6)}–0 攻勢 🔥`})}});
   ev.push(...runs);
-  const win=sa>sb?z.a:z.b,diff=Math.abs(sa-sb),W=teams[win],star=W.R.slice().sort((x,y)=>ptsOf(W,y)-ptsOf(W,x))[0];
+  const win=sa>sb?z.a:z.b,diff=Math.abs(sa-sb),W=teams[win],top=W.R.slice().sort((x,y)=>ptsOf(W,y)-ptsOf(W,x)).slice(0,5),
+    star=diff<=4?pickW(top,top.map(x=>(ptsOf(W,x)+2)*(sigOf(x)&&sigOf(x).clutch?3:1)),r):top[0];
   if(ot)ev.push({q:3,t:0.999,clk:'0:00',side:null,kind:'ot',txt:'平手！比賽進入延長賽'});
   if(diff>=15)ev.push({q:P-1,t:0.75,clk:'3:'+String(10+Math.floor(r()*49)),side:win,kind:'rest',txt:`${callN(star,r)} 坐上板凳休息，比賽提前分出勝負`});
-  else ev.push({q:P-1,t:0.97,clk:'0:0'+(2+Math.floor(r()*7)),side:win,kind:diff<=4?'clutch':'mid',p:star.n,txt:diff<=4?`關鍵時刻！${callN(star,r)} 投進致勝球！`:`${callN(star,r)} 連拿分數，鎖定勝局`});
+  else ev.push({q:P-1,t:0.97,clk:'0:0'+(2+Math.floor(r()*7)),side:win,kind:diff<=4?'clutch':'mid',p:star.n,txt:diff<=4?(sigOf(star)&&sigOf(star).ctxt?fill(sigOf(star).ctxt,star,null,r):`關鍵時刻！${callN(star,r)} 投進致勝球！`):`${callN(star,r)} 連拿分數，鎖定勝局`});
   return ev.sort((x,y)=>(x.q+x.t)-(y.q+y.t))}
 function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)return pbCache.d;
   const ro={},base={};g.sides.forEach(s=>{ro[s]=rosterOf(g,s);base[s]=baseRate(ro[s],g,left(g,s))});
@@ -1186,6 +1241,7 @@ function slowWins(G){if(G.slow)return G.slow;const W=[];const P=G.q[0].length;
   G.ev.forEach(x=>{if(DEAD.has(x.kind)&&x.kind!=='ot')return;const T=(x.q+x.t)*PB_Q,pe=x.q+x.t,d0=scoreAt(G,Math.max(0,pe-0.3)),d1=scoreAt(G,Math.min(P,pe+0.02)),late=x.q>=3&&x.t>0.45||x.q>=4;
     let w=null;
     if(x.kind==='clutch')w={rate:0.3,zoom:1,lab:'🎬 致勝球'};
+    else if(x.chase)w={rate:0.35,zoom:1,lab:'🎬 追魂鍋'};
     else if(x.q>=2&&Math.sign(d0)!==Math.sign(d1)&&d1!==0&&d0!==0)w={rate:0.4,zoom:1,lab:'🎬 逆轉！'};
     else if(late&&Math.abs(d1)<=5)w={rate:0.4,zoom:1,lab:'🎬 關鍵時刻'};
     else if(x.kind==='ot')w={rate:0.5,zoom:0,lab:'⏱ 延長賽'};
@@ -1293,7 +1349,10 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
         mates.forEach((i,k)=>{const [tg,w]=lanes[k];P[E.side+i]=L2(P[E.side+i],tg,ease(cl01(ru*spd(ro[E.side][i])*1.05*w)))});
         ro[off].forEach((p,i)=>{if(i===0)return;P[off+i]=L2(P[off+i],at(run,60+i*16,HY+(i-2)*28),ease(cl01(ru*spd(p)*0.85)))});
         ball=[lp[0]+dir*3,lp[1]+2,Math.abs(Math.sin(e/75))*3];hl=E.side+th;
-        if(ru<0.35)flash=['🧤 抄截！',ru/0.35];else if(pu)flash=['⚡ 快攻得手！',pu]}
+        if(E.chase){const ch=idx(off,E.chase),cs=P[off+ch],cu=cl01(ru*1.2);P[off+ch]=L2(cs,[lp[0]-dir*7,lp[1]-5],ease(cu));
+          if(ru>0.85){const v=cl01((ru-0.85)/0.15+pu);ball=[lp[0]-dir*v*40,lp[1]+v*36,10*(1-v)];hl=off+ch;flash=['🚫 追魂鍋！',Math.min(1,v)]}
+          else if(ru<0.35)flash=['🧤 抄截！',ru/0.35]}
+        else if(ru<0.35)flash=['🧤 抄截！',ru/0.35];else if(pu)flash=['⚡ 快攻得手！',pu]}
     }else{
       // ---- offense: passes, the shot, bigs crash the glass ----
       let h=0,t0=-1;for(const [t,to] of pass){if(u>=t){h=to;t0=t}}
