@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-eQa7LpAt+GDPwgDKX8NU/B0Uw3ov01Ikr8HgqFfg+38=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-UobfhlZv5vfjxZglBKSbv+kxsVhYRM/T/WIJ+1Bku8Y=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -1178,11 +1178,28 @@ function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)retu
 const PB_Q=6000,PB_HOLD=2600,PB_SEG=1150,PB_POST=550;
 function pbDur(G){return G.q[0].length*PB_Q+PB_HOLD}
 const pbDefSp=()=>1;
+/* playback clock: virtual game time advances at the chosen speed, but slows down around key moments
+   (close game late, lead changes, game winners) and a little for highlight plays, so they can be followed */
+function scoreAt(G,pe){const qa=G.q[0],qb=G.q[1],P=qa.length,full=Math.floor(pe);let a=0,b=0;
+  for(let i=0;i<P;i++){if(i<full){a+=qa[i];b+=qb[i]}else if(i===full){const f=pe-full;a+=Math.floor(qa[i]*f);b+=Math.floor(qb[i]*f)}}return a-b}
+function slowWins(G){if(G.slow)return G.slow;const W=[];const P=G.q[0].length;
+  G.ev.forEach(x=>{if(DEAD.has(x.kind)&&x.kind!=='ot')return;const T=(x.q+x.t)*PB_Q,pe=x.q+x.t,d0=scoreAt(G,Math.max(0,pe-0.3)),d1=scoreAt(G,Math.min(P,pe+0.02)),late=x.q>=3&&x.t>0.45||x.q>=4;
+    let w=null;
+    if(x.kind==='clutch')w={rate:0.3,zoom:1,lab:'🎬 致勝球'};
+    else if(x.q>=2&&Math.sign(d0)!==Math.sign(d1)&&d1!==0&&d0!==0)w={rate:0.4,zoom:1,lab:'🎬 逆轉！'};
+    else if(late&&Math.abs(d1)<=5)w={rate:0.4,zoom:1,lab:'🎬 關鍵時刻'};
+    else if(x.kind==='ot')w={rate:0.5,zoom:0,lab:'⏱ 延長賽'};
+    else if(['dunk','alley','logo','block','ankle'].includes(x.kind))w={rate:0.6,zoom:0,lab:''};
+    if(w)W.push({a:T-1500,b:T+PB_POST+300,...w})});
+  return G.slow=W}
+const warpAt=(G,vt)=>{let r=1,w=null;for(const x of slowWins(G))if(vt>=x.a&&vt<=x.b&&x.rate<r){r=x.rate;w=x}return{r,w}};
+function pbAdvance(){const p=ui.pb;if(!p)return;const now=Date.now(),dt=Math.min(250,now-(p.last||now));p.last=now;const G=pbData()[p.k];if(!G)return;
+  p.vt+=dt*p.sp*warpAt(G,p.vt).r}
 function pbState(){const L=pbData(),p=ui.pb;if(!p||p.gid!==S.game.gid)return null;
-  const G=L[p.k];if(!G)return null;const e=(Date.now()-p.t0)*p.sp,P=G.q[0].length,pe=Math.min(P,e/PB_Q);return{L,G,e,P,pe,done:e>=P*PB_Q,next:e>=pbDur(G)}}
-function pbStart(){ui.pb={gid:S.game.gid,k:0,t0:Date.now(),sp:ui.pbSp||pbDefSp()}}
-function pbNext(){const L=pbData();if(ui.pb.k+1>=L.length){ui.pbDone.add(S.game.gid);ui.pbFast=true;ui.pb=null}else{ui.pb.k++;ui.pb.t0=Date.now()}render();scrollTo(0,0)}
-setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.pb||ui.pbDone.has(S.game.gid))return;const st=pbState();if(st&&st.next&&ui.pb.auto!==false)return pbNext();render()})},150);
+  const G=L[p.k];if(!G)return null;const e=p.vt,P=G.q[0].length,pe=Math.min(P,e/PB_Q);return{L,G,e,P,pe,done:e>=P*PB_Q,next:e>=pbDur(G)}}
+function pbStart(){ui.pb={gid:S.game.gid,k:0,vt:0,last:Date.now(),sp:ui.pbSp||pbDefSp()}}
+function pbNext(){const L=pbData();if(ui.pb.k+1>=L.length){ui.pbDone.add(S.game.gid);ui.pbFast=true;ui.pb=null}else{ui.pb.k++;ui.pb.vt=0;ui.pb.last=Date.now()}render();scrollTo(0,0)}
+setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.pb||ui.pbDone.has(S.game.gid))return;pbAdvance();const st=pbState();if(st&&st.next&&ui.pb.auto!==false)return pbNext();render()})},150);
 
 /* ---------- mini court (top-down, canvas) ----------
  Each highlight is played as a full possession: the ball is brought up the floor from where the last play ended,
@@ -1206,6 +1223,7 @@ const SUFX=new Set(['Jr.','Sr.','II','III','IV']);
 function shortName(p){const nk=nickOf(p),k=nk?nk.split('・')[0]:'';const parts=String(p.n||'').split(' ').filter(Boolean);let last=parts[parts.length-1]||'';
   if(SUFX.has(last)&&parts.length>2)last=parts[parts.length-2];if(last.length>9&&k)return k;
   const s=(parts.length>1?parts[0][0]+'.':'')+last;return s.length>11?(k||last.slice(0,10)):s}
+function guardAt(o,right,dist){const h=hoop(right),dx=h[0]-o[0],dy=h[1]-o[1],d=Math.hypot(dx,dy)||1,g=Math.min(dist,d*0.6);return[o[0]+dx/d*g,o[1]+dy/d*g-3]}
 function guard(o,right){const h=hoop(right),dx=h[0]-o[0],dy=h[1]-o[1],d=Math.hypot(dx,dy)||1,g=Math.min(16,d*0.35);return[o[0]+dx/d*g,o[1]+dy/d*g-5]}
 function setLayout(off,def,right,ro,jit){const P={};ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx+Math.sin(jit+i)*3,y+Math.cos(jit*1.2+i)*3)});
   ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
@@ -1220,7 +1238,7 @@ function endLayout(E,z,ro,prevL){if(!E||DEAD.has(E.kind))return prevL;
   ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx*0.6,lerp(HY,y,0.7))});ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
 function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getElementById('court');if(!cv||!S||document.hidden)return;
   withView(()=>{if(S.phase!=='results'||!ui.pb)return;const st=pbState();if(!st)return;const {G,e,done}=st,z=G.z;
-  let ctx=null;try{ctx=cv.getContext('2d')}catch(_){}if(!ctx)return;const k=cv.width/CW;ctx.setTransform(k,0,0,k,0,0);court(ctx);
+  let ctx=null;try{ctx=cv.getContext('2d')}catch(_){}if(!ctx)return;const k=cv.width/CW;pbAdvance();
   const full={[z.a]:rosterOf(S.game,z.a),[z.b]:rosterOf(S.game,z.b)},ro={[z.a]:starters(full[z.a]),[z.b]:starters(full[z.b])},nowQ=e/PB_Q;
   (G.inc||[]).forEach(i=>{if(i.kind==='tech'||!i.sub)return;const s0=i.q+i.t,en=i.kind==='trouble'?i.q+1:99;if(nowQ<s0||nowQ>en)return;
     const kk=ro[i.side].findIndex(p=>p.n===i.n),sb=full[i.side].find(p=>p.n===i.sub);if(kk>=0&&sb){ro[i.side]=ro[i.side].slice();ro[i.side][kk]={...sb,slot:ro[i.side][kk].slot}}});
@@ -1259,32 +1277,59 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
     else if(type==='iso'){[0,1,2,3,4].forEach(i=>{if(i===si)return;const cor=[[8,18],[8,182],[110,30],[110,170],[60,190]][i];P[off+i]=L2(P[off+i],at(right,cor[0],cor[1]),ease(uB))});
       if(si!==0)pass.push([0.38,si]);P[off+si]=L2(P[off+si],at(right,70,HY+(seed%2?-14:14)),ease(seg(u,0.35,0.5)));P[off+si][0]+=Math.sin(e/70)*2*(uB>0&&uB<1)}
     else{if(si!==0)pass.push([0.45,si])}
-    // defenders shadow their man
-    ro[def].forEach((p,i)=>{P[def+i]=L2(P[def+i],guard(P[off+i],right),uA>0.99?0.85:uA)});
-    // shot / drive
-    const rimShot=['dunk','alley','rim','and1','ankle','putback','clutch'].includes(E.kind)&&!(E.kind==='clutch'&&styleOf(sp).three),jumper=!rimShot;
-    if(E.kind==='steal'){const th=idx(E.side,E.p),run=!right,tgt=hoop(run);
-      const passFrom=P[off+0],passTo=P[off+si];const iu=0.62;
-      if(u<iu){holder=0;if(u>0.5)ball=[...L2(passFrom,passTo,seg(u,0.5,iu)*0.6),5]}
-      else{const ru=seg(u,iu,1);P[E.side+th]=L2(L2(passFrom,passTo,0.35),[tgt[0]+(run?-10:10),HY],ease(ru));ro[E.side].forEach((p,i)=>{if(i!==th)P[E.side+i]=L2(P[E.side+i],at(run,40+i*14,HY+(i-2)*26),ease(ru))});
-        ro[off].forEach((p,i)=>{P[off+i]=L2(P[off+i],at(run,70+i*12,HY+(i-2)*30),ease(ru)*0.9)});ball=[P[E.side+th][0],P[E.side+th][1],Math.abs(Math.sin(e/80))*3]}
-      hl=E.side+th;if(u>=iu&&u<0.8)flash=['🧤 抄截！',seg(u,iu,0.8)];if(pu)flash=['⚡ 快攻！',pu];}
-    else{
-      // ball follows passes, then the shot
-      let h=0,t0=0;for(const [t,to] of pass){if(u>=t)h=to,t0=t}const prevH=pass.filter(x=>x[0]<=u).slice(-2,-1)[0];
-      const fromI=pass.length&&u>=pass[0][0]?(pass.findIndex(x=>x[0]===t0)>0?pass[pass.findIndex(x=>x[0]===t0)-1][1]:0):0;
-      if(rimShot){P[off+si]=L2(P[off+si],[H[0]+(right?-9:9),HY+3],ease(uC))}
-      else P[off+si]=L2(P[off+si],spot,ease(seg(u,0.6,0.75)));
-      const flying=u-t0<0.06&&pass.length&&u>=pass[0][0];
-      if(flying){const a=P[off+fromI],b=P[off+h],v=(u-t0)/0.06;ball=[lerp(a[0],b[0],v),lerp(a[1],b[1],v),6*Math.sin(Math.PI*v)]}
-      else if(u<0.82||rimShot&&u<0.97){const q=P[off+h];ball=[q[0]+(right?3:-3),q[1]+2,Math.abs(Math.sin(e/85))*3];holder=h}
-      else{const v=seg(u,0.82,1),q=P[off+si];ball=[lerp(q[0],H[0],v),lerp(q[1],HY,v),Math.sin(Math.PI*v)*(E.kind==='three'||E.kind==='logo'?26:16)]}
+    const rimShot=['dunk','alley','rim','and1','ankle','putback','clutch'].includes(E.kind)&&!(E.kind==='clutch'&&styleOf(sp).three);
+    const spd=p=>{const st=styleOf(p);return st.guard?1:st.big?0.78:0.9};
+    if(E.kind==='steal'){
+      // a pass gets picked off; the thief leads the break, the passer chases, the thief's wings fill the lanes
+      const th=idx(E.side,E.p),run=!right,lead=[hoop(run)[0]+(run?-10:10),HY],passFrom=P[off+0],passTo=P[off+si],iu=0.55,pick=L2(passFrom,passTo,0.55);
+      ro[def].forEach((p,i)=>{P[def+i]=L2(P[def+i],guardAt(P[off+i],right,12),uA)});
+      if(u<iu){ball=u>0.42?[...L2(passFrom,passTo,seg(u,0.42,iu)*0.55),5]:[passFrom[0]+(right?3:-3),passFrom[1]+2,Math.abs(Math.sin(e/85))*3];
+        P[def+th]=L2(P[def+th],pick,ease(seg(u,0.38,iu)))}
+      else{const ru=seg(u,iu,1)+(pu*0.3),dir=run?1:-1;
+        P[E.side+th]=L2(pick,lead,ease(cl01(ru)));const lp=P[E.side+th];
+        P[off+0]=L2(passFrom,[lp[0]-dir*16,lp[1]+7],ease(cl01(ru*0.93)));
+        const mates=ro[E.side].map((p,i)=>i).filter(i=>i!==th).sort((x,y)=>spd(ro[E.side][y])-spd(ro[E.side][x]));
+        const lanes=[[at(run,34,38),1],[at(run,34,162),1],[at(run,95,HY+8),0.85],[at(run,150,HY-20),0.7]];
+        mates.forEach((i,k)=>{const [tg,w]=lanes[k];P[E.side+i]=L2(P[E.side+i],tg,ease(cl01(ru*spd(ro[E.side][i])*1.05*w)))});
+        ro[off].forEach((p,i)=>{if(i===0)return;P[off+i]=L2(P[off+i],at(run,60+i*16,HY+(i-2)*28),ease(cl01(ru*spd(p)*0.85)))});
+        ball=[lp[0]+dir*3,lp[1]+2,Math.abs(Math.sin(e/75))*3];hl=E.side+th;
+        if(ru<0.35)flash=['🧤 抄截！',ru/0.35];else if(pu)flash=['⚡ 快攻得手！',pu]}
+    }else{
+      // ---- offense: passes, the shot, bigs crash the glass ----
+      let h=0,t0=-1;for(const [t,to] of pass){if(u>=t){h=to;t0=t}}
+      const pi=pass.findIndex(x=>x[0]===t0),fromI=pi>0?pass[pi-1][1]:0;
+      if(rimShot)P[off+si]=L2(P[off+si],[H[0]+(right?-9:9),HY+3],ease(uC));else P[off+si]=L2(P[off+si],spot,ease(seg(u,0.6,0.75)));
+      const shotU=rimShot?0.95:0.82;
+      ro[off].forEach((p,i)=>{if(i!==si&&peOf(p)>=4&&u>shotU-0.08)P[off+i]=L2(P[off+i],at(right,20,HY+(i===4?16:-16)),ease(seg(u,shotU-0.08,1)))});
+      const flying=t0>=0&&u-t0<0.06;
+      if(flying){const a2=P[off+fromI],b2=P[off+h],v=(u-t0)/0.06;ball=[lerp(a2[0],b2[0],v),lerp(a2[1],b2[1],v),6*Math.sin(Math.PI*v)]}
+      else if(u<shotU){const q=P[off+h];ball=[q[0]+(right?3:-3),q[1]+2,Math.abs(Math.sin(e/85))*3]}
+      else{const v=seg(u,shotU,1),q=P[off+si];ball=[lerp(q[0],H[0],v),lerp(q[1],HY,v),Math.sin(Math.PI*v)*(E.kind==='three'||E.kind==='logo'?26:rimShot?4:16)]}
+      const bp=flying?P[off+h]:(ball?[ball[0],ball[1]]:P[off+h]);
+      // ---- defense: man-to-man that sags off non-shooters, helps from the weak side, rotates, switches and closes out ----
+      const D={};ro[def].forEach((p,i)=>{const man=P[off+i],mp=ro[off][i],thr=styleOf(mp).three,onBall=i===h,near=Math.abs(man[1]-bp[1])<55;
+        let g=guardAt(man,right,onBall?6:thr?9:near?14:24);
+        if(!onBall&&!near)g=L2(g,[lerp(bp[0],H[0],0.55),lerp(bp[1],HY,0.6)],0.38);D[i]=g});
+      if(type==='pnr'){const scr=si===big?3:big,a0=ro[def][0],aS=ro[def][scr],sw=canPlay(a0).length>=3&&canPlay(aS).length>=3;
+        if(sw&&u>0.5){const t=ease(seg(u,0.5,0.6));D[0]=L2(D[0],guardAt(P[off+scr],right,8),t);D[scr]=L2(D[scr],guardAt(P[off+0],right,6),t)}
+        else if(u>0.42&&u<0.72){D[scr]=L2(D[scr],P[off+0],0.55*Math.sin(Math.PI*seg(u,0.42,0.72)))}}
+      if(type==='swing'&&t0>=0&&pi===pass.length-1){const cu=seg(u,t0,t0+0.16);D[si]=L2([lerp(bp[0],H[0],0.5),lerp(bp[1],HY,0.5)],guardAt(P[off+si],right,5),ease(cu))}
+      if(rimShot&&u>0.55){let best=-1,bv=-1;ro[def].forEach((p,i)=>{if(i===si)return;const v=num(p.blkp,1)+peOf(p);if(v>bv){bv=v;best=i}});
+        if(best>=0)D[best]=L2(D[best],[lerp(P[off+si][0],H[0],0.45),lerp(P[off+si][1],HY,0.45)],ease(seg(u,0.55,0.85)))}
+      if(!rimShot&&u>0.7)D[si]=L2(D[si],[lerp(P[off+si][0],H[0],0.1),P[off+si][1]-2],ease(seg(u,0.7,0.8)));
+      if(u>shotU)ro[def].forEach((p,i)=>{if(peOf(p)>=4&&i!==si)D[i]=L2(D[i],at(right,13,HY+(i%2?11:-11)),ease(seg(u,shotU,1)))});
+      ro[def].forEach((p,i)=>{P[def+i]=L2(P[def+i],D[i],uA<1?uA*0.92:1)});
       if(E.kind==='block'&&u>0.8){const bl=idx(E.side,E.p);P[E.side+bl]=L2(P[E.side+bl],P[off+si],0.85);hl=E.side+bl;
         if(u>0.9||pu){const v=pu||0;ball=[P[off+si][0]+(right?-1:1)*v*60,P[off+si][1]+v*44,8*(1-v)];flash=['🚫 火鍋！',Math.max(seg(u,0.9,1)*0.3,v)]}}
       else{hl=off+si;if(pu){ball=[H[0],HY+pu*4,0];flash=[`${KICO[E.kind]||'🏀'} +${KPTS[E.kind]||2}`,pu]}}
-      if(u<0.3)banner=null}}
+    }}
   }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
   if(E&&E.kind==='clutch'&&e>E.T)banner=['🏆 致勝球！',cl01((e-E.T)/PB_POST)];
+  // camera: zoom in on the action during key moments
+  const wa=warpAt(G,e),ww=wa.w;let zf=1,fx=CW/2,fy=HY;
+  if(ww&&ww.zoom&&!done){const r=Math.min(cl01((e-ww.a)/450),cl01((ww.b-e)/450));zf=1+0.5*ease(r);const f=ball||[CW/2,HY];fx=f[0];fy=f[1]}
+  const vw=CW/zf,vh=CH/zf;fx=Math.max(vw/2,Math.min(CW-vw/2,fx));fy=Math.max(vh/2,Math.min(CH-vh/2,fy));
+  ctx.setTransform(k*zf,0,0,k*zf,k*(CW/2-fx*zf),k*(CH/2-fy*zf));court(ctx);
   const curOff=E&&!DEAD.has(E.kind)?(E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side):null;
   // draw players; offense names under the dots, defense names above (smaller)
   const lab=p=>shortName(p);
@@ -1296,7 +1341,10 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
     ctx.lineWidth=3;ctx.strokeStyle='rgba(20,26,46,.88)';ctx.strokeText(t,q[0],ty);ctx.fillStyle='#fff';ctx.fillText(t,q[0],ty);ctx.globalAlpha=1}));
   if(!ball&&!done){const E2=E||{},off=E2.side||z.a,q=P[off+0]||P[z.a+0];if(q)ball=[q[0]+4,q[1]+2,Math.abs(Math.sin(e/90))*3]}
   if(ball)drawBall(ctx,ball[0],ball[1],ball[2]);
-  if(flash)pop(ctx,CW/2,40,flash[0],flash[1],18);if(banner)pop(ctx,CW/2,HY,banner[0],banner[1],18);
+  ctx.setTransform(k,0,0,k,0,0);
+  if(flash)pop(ctx,CW/2,44,flash[0],flash[1],18);if(banner)pop(ctx,CW/2,HY,banner[0],banner[1],18);
+  if(ww&&ww.lab&&!done){ctx.save();ctx.globalAlpha=0.6+0.4*Math.abs(Math.sin(Date.now()/300));ctx.font='900 11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.lineWidth=3;ctx.strokeStyle='rgba(20,26,46,.85)';ctx.strokeText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.fillStyle='#ffcf33';ctx.fillText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.restore()}
   // mini scoreboard
   const [ca,cb]=pbScore(st);const per=Math.min(st.P-1,Math.floor(st.pe)),pf=st.pe-Math.floor(st.pe),len=per<4?12:5,lt=done?0:Math.max(0,len*(1-pf));
   const clk=done?'FINAL':`${per<4?'Q'+(per+1):'OT'} ${Math.floor(lt)}:${String(Math.floor((lt%1)*60)).padStart(2,'0')}`;
@@ -1433,8 +1481,8 @@ document.addEventListener('click',e=>{
     case 'reveal':ui.reveal.add(d.v);return render();
   }
   function pbAct(a){switch(a){
-    case 'pbsp':{const p=ui.pb;if(!p)return;const e=(Date.now()-p.t0)*p.sp,ns=p.sp>=4?1:p.sp+1;p.sp=ui.pbSp=ns;p.t0=Date.now()-e/ns;return render()}
-    case 'pbnext':{const st=pbState();if(!st)return;if(!st.done){ui.pb.t0=Date.now()-(st.P*PB_Q)/ui.pb.sp;return render()}return pbNext()}
+    case 'pbsp':{const p=ui.pb;if(!p)return;p.sp=ui.pbSp=p.sp>=4?1:p.sp+1;return render()}
+    case 'pbnext':{const st=pbState();if(!st)return;if(!st.done){ui.pb.vt=st.P*PB_Q;return render()}return pbNext()}
     case 'pbskip':ui.pbDone.add(S.game.gid);ui.pbFast=true;ui.pb=null;render();return scrollTo(0,0);
   }}
   switch(a){
