@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-nZ9CKID6f8UUyoksnk3r3dqMdeX7JgUlbxbzP0QKI+k=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-m0I/UxENLh/JANlrMn3/gZ8bWIsKEfCzmsMfidv70AI=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -456,8 +456,19 @@ function eraOk(t,c){const e=c.era;if(!e)return true;if(t.y0==null)return false;c
 const CATNAME={夢幻隊:'夢幻隊',陣容:'冠軍隊',年代:'年代全明星',隊史:'球隊',特別:'特別'};
 const CATDESC={夢幻隊:'歷屆奧運美國隊',陣容:'歷屆 NBA 冠軍隊陣容',年代:'某個年代的全明星',隊史:'某隊某年代，或隊史傳奇',特別:'MVP、狀元、國際球星、選秀梯隊'};
 const ERA_ON=k=>k!=='特別',TEAM_ON=k=>k==='陣容'||k==='隊史';
-const catPool=(c,k)=>THEMES.filter(t=>!t.grp&&t.cat===k&&themeOk(t,c)&&(!ERA_ON(k)||eraOk(t,c)));
+/* A theme smaller than the rosters need (common in 10-man mode: most themes have 12-17 players) is not dropped:
+   when it is drawn, the closest themes of the same category are merged in (same team first, then nearest years)
+   until the pool is big enough. So the theme count does not depend on 5- or 10-man mode. */
+const catCands=(c,k)=>THEMES.filter(t=>!t.grp&&t.cat===k&&(!ERA_ON(k)||eraOk(t,c)));
+const needOf=c=>c.players*(c.size||5);
+const catPool=(c,k)=>{const cs=catCands(c,k);return cs.some(t=>themeOk(t,c))||pickPool(cs.map(t=>t.id)).items.length>=needOf(c)?cs:[]};
 const randPool=c=>CATS.filter(k=>c.cats.includes(k)).flatMap(k=>catPool(c,k));
+function autoMerge(th,c){const need=needOf(c);if(th.items.length>=need+2)return th;
+  const near=catCands(c,th.cat).filter(t=>t.id!==th.id).sort((x,y)=>((x.fr&&x.fr===th.fr)?0:1)-((y.fr&&y.fr===th.fr)?0:1)||Math.abs((x.y0||0)-(th.y0||0))-Math.abs((y.y0||0)-(th.y0||0)));
+  const ids=[th.id];for(const t of near){if(pickPool(ids).items.length>=need+2)break;ids.push(t.id)}
+  const pp=pickPool(ids);if(pp.ts.length===1)return th;const ts=[...pp.ts].sort((x,y)=>(x.y0||0)-(y.y0||0));
+  const name=th.cat==='夢幻隊'?'夢幻隊 '+ts.map(t=>t.name.slice(0,4)).join('、'):ts.slice(0,3).map(t=>t.name).join(' ＋ ')+(ts.length>3?` 等 ${ts.length} 個`:'');
+  return{id:'mix',name,tag:`主題人數不夠，自動合併 ${ts.length} 個相近的主題（同一球員取數據最好的版本）`,cat:th.cat,items:pp.items,random:true}}
 function poolLenFor(cfg){if(cfg.theme==='random')return 0;if(cfg.theme==='pick')return cfg.pmode==='one'&&(cfg.picks||[]).length>1?0:pickPool(cfg.picks).items.length;if(cfg.theme==='custom')return parseCustom(cfg.custom.text).length;const t=THEMES.find(t=>t.id===cfg.theme);return t?t.items.length:0}
 function defaultDraw(cfg){const need=cfg.players*(cfg.size||5),L=poolLenFor(cfg);return L?Math.min(L,need+2):need+2}
 function drawItems(items,n,k){
@@ -474,7 +485,7 @@ const lastView=()=>!!(S&&S.phase==='lobby'&&S.last&&NET.mode&&NET.mode!=='local'
 function withView(fn){if(!lastView())return fn();const g=S.game,sm=S.sim,ph=S.phase;S.game=S.last.game;S.sim=S.last.sim;S.phase='results';try{return fn()}finally{S.game=g;S.sim=sm;S.phase=ph}}
 function startGame(S){
   const c=S.cfg;S.err='';const n=c.players,size=c.size===10?10:5,need=n*size;let th;
-  if(c.theme==='random'){const ok=randPool(c);if(!ok.length){S.err='沒有可以抽的主題：請多勾幾個類別，或放寬篩選';return true}th=ok[Math.floor(Math.random()*ok.length)]}
+  if(c.theme==='random'){const ok=randPool(c);if(!ok.length){S.err='沒有可以抽的主題：請多勾幾個類別，或放寬篩選';return true}th=autoMerge(ok[Math.floor(Math.random()*ok.length)],c)}
   else if(c.theme==='custom'){if(!CAREER){S.err='資料還在載入';return true}th={id:'custom',name:clean(c.custom.name,30)||'自訂主題',tag:'生涯巔峰 5 季',cat:'自訂',items:parseCustom(c.custom.text)}}
   else if(c.theme==='pick'){const pp=pickPool(c.picks);if(!pp.ts.length){S.err='請先選主題';return true}
     if(pp.ts.length===1)th=pp.ts[0];
@@ -921,10 +932,10 @@ function vLobby(){
     const pool=randPool(c),era=c.era||[0,0],teams=c.teams||[],need=c.players*(c.size||5);
     const decOpt=(sel,first)=>`<option value="">${first}</option>`+DECS.map(d=>`<option value="${d}" ${sel===d?'selected':''}>${d} 年代</option>`).join('');
     const rows=CATS.map(k=>{const on=c.cats.includes(k),n=catPool(c,k).length;
-      const why=n?'':!THEMES.some(t=>!t.grp&&t.cat===k&&themeOk(t,c))?`主題都不到 ${need} 人`:'這個年代沒有';
+      const why=n?'':catCands(c,k).length?`合併後也不到 ${need} 人`:'這個年代沒有';
       return `<button class="crow ${on?'on':''} ${on&&!n?'zero':''}" data-act="cat" data-v="${k}" ${dis}><span class="ck">${on?'✓':''}</span><span class="grow"><b>${CATNAME[k]}</b><small>${CATDESC[k]}</small></span><span class="cn">${n?(on?`${n} 個`:`<small>${n} 個</small>`):`<small>0 個${on?'<br>'+why:''}</small>`}</span></button>`}).join('');
     const nc=c.cats.length;
-    themeBox+=`<div class="small mut" style="margin:12px 0 6px">點卡片勾選類別（可複選）。開始時從勾選的類別裡抽一個主題，大家都不知道是哪個。</div><div class="crows">${rows}</div>
+    themeBox+=`<div class="small mut" style="margin:12px 0 6px">點卡片勾選類別（可複選）。開始時從勾選的類別裡抽一個主題，大家都不知道是哪個。${(c.size||5)===10||c.players===3?'人數不夠的主題，抽到時會自動合併同隊或相近年份的主題。':''}</div><div class="crows">${rows}</div>
       <div class="frow"><span class="fl">年代</span><div class="sel2"><select data-in="era0" ${dis}>${decOpt(c.era?era[0]:null,'不限')}</select><span class="mut">到</span><select data-in="era1" ${dis}>${decOpt(c.era?era[1]:null,'不限')}</select></div></div>
       <div class="small mut fh">選填。只影響有年代的類別，「特別」不受影響。</div>
       <div class="rtot ${pool.length?'':'bad'}">${pool.length?`🎲 共 ${pool.length} 個主題，開始時抽一個`:!nc?'還沒勾選類別：點上面的卡片勾選':'勾選的類別在這個年代沒有主題，請放寬年代或多勾幾類'}</div>
