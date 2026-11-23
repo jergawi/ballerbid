@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-GsFWlRkDMY2LAXltBkhE55ZyGTTl7d05sPw91EWxy6c=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-tqtDz3izkmCUgCT6w2OuzzB9kjpOm6U4NngDsgp6K+g=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -369,7 +369,7 @@ const LS='ballerbid_local_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24c';
+const APPV='2026.11.24d';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -1127,36 +1127,36 @@ const KICO={three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'�
    tied to his numbers: chase-down blocks scale with block rate, swats only replace blocks the stats produce,
    clutch shooters get a bigger share of game-winners. */
 const SIG={
- jamesle01:{lab:'追魂鍋',chase:1,k:{dunk:['{n} 一路衝刺，單手戰斧暴扣！']}},
- wadedw01:{lab:'追魂鍋',chase:1,k:{rim:['{n} 閃電切入，空中換手上籃']}},
+ jamesle01:{lab:'追魂鍋',kl:{dunk:'戰斧暴扣'},chase:1,k:{dunk:['{n} 一路衝刺，單手戰斧暴扣！']}},
+ wadedw01:{lab:'閃電切入',chase:1,k:{rim:['{n} 閃電切入，空中換手上籃']}},
  pippesc01:{lab:'全能防守',chase:1,stl:['{n} 長臂抄截，一路快攻']},
- wembavi01:{lab:'長臂封阻',swat:['{n} 長臂一揮，把切入的上籃直接搧飛！','外星人 {n} 的臂展太誇張，上籃被搧到場邊'],k:{three:['{n} 7 呎 4 的高度投三分，根本蓋不到']}},
+ wembavi01:{lab:'長臂封阻',kl:{three:'外星人三分'},swat:['{n} 長臂一揮，把切入的上籃直接搧飛！','外星人 {n} 的臂展太誇張，上籃被搧到場邊'],k:{three:['{n} 7 呎 4 的高度投三分，根本蓋不到']}},
  mutomdi01:{lab:'搖手指',swat:['{n} 大火鍋！還對對手搖搖手指 ☝️']},
- howardw01:{lab:'超人灌籃',k:{dunk:['{n} 超人起飛，雙手暴扣！']},swat:['{n} 從籃下飛出來，把球搧出界']},
+ howardw01:{lab:'超人灌籃',sl:'超人封阻',k:{dunk:['{n} 超人起飛，雙手暴扣！']},swat:['{n} 從籃下飛出來，把球搧出界']},
  wallabe01:{lab:'大本鐘',swat:['{n} 大火鍋！大本鐘響了 🔔']},
  robinda01:{lab:'海軍上將',swat:['{n} 海軍上將補防，把上籃蓋掉']},
  garneke01:{lab:'狼王怒吼',swat:['{n} 火鍋之後對著籃框怒吼']},
- olajuha01:{lab:'夢幻舞步',k:{post:['{n} 夢幻舞步晃翻防守，輕鬆放進'],mid:['{n} 夢幻舞步接後仰跳投']},swat:['{n} 退回禁區把上籃蓋掉']},
+ olajuha01:{lab:'夢幻舞步',sl:'歷史火鍋王',k:{post:['{n} 夢幻舞步晃翻防守，輕鬆放進'],mid:['{n} 夢幻舞步接後仰跳投']},swat:['{n} 退回禁區把上籃蓋掉']},
  abdulka01:{lab:'天勾',k:{post:['{n} 招牌天勾，沒人蓋得到'],mid:['{n} 招牌天勾，空心入網']}},
  nowitdi01:{lab:'金雞獨立',k:{mid:['{n} 金雞獨立後仰跳投，進！'],post:['{n} 背框單腳後仰，籃框都沒碰到']},clutch:1},
- jordami01:{lab:'後仰跳投',k:{mid:['{n} 招牌後仰跳投，防守再好也沒用'],dunk:['{n} 罰球線起跳，空中飛人灌籃！']},clutch:1},
+ jordami01:{lab:'後仰跳投',kl:{dunk:'罰球線灌籃'},k:{mid:['{n} 招牌後仰跳投，防守再好也沒用'],dunk:['{n} 罰球線起跳，空中飛人灌籃！']},clutch:1},
  bryanko01:{lab:'曼巴後仰',k:{mid:['{n} 曼巴式後仰跳投，被包夾照樣進'],three:['{n} 高難度後仰三分']},clutch:1},
  lillada01:{lab:'Dame Time',k:{three:['{n} 超遠距離三分，指著手腕 ⌚'],logo:['{n} Logo 三分！Dame Time ⌚']},clutch:1,ctxt:'Dame Time！⌚ {n} 超遠三分殺死比賽'},
- curryst01:{lab:'Logo 三分',k:{three:['{n} 運球晃開，超遠三分刷網','{n} 球還沒進就轉身慶祝，Night Night 😴'],logo:['{n} 中場 Logo 附近出手——刷！']},clutch:1},
+ curryst01:{lab:'Logo 三分',kl:{three:'超遠三分'},k:{three:['{n} 運球晃開，超遠三分刷網','{n} 球還沒進就轉身慶祝，Night Night 😴'],logo:['{n} 中場 Logo 附近出手——刷！']},clutch:1},
  iversal01:{lab:'Crossover',k:{ankle:['{n} 招牌 crossover 把防守者晃倒，還跨過去 😏'],rim:['{n} 胯下運球加速，撞進人群上籃']}},
- hardeja01:{lab:'後撤步三分',k:{three:['{n} 招牌後撤步三分！'],rim:['{n} 歐洲步騙過防守，上籃得手']}},
+ hardeja01:{lab:'後撤步三分',kl:{rim:'歐洲步'},k:{three:['{n} 招牌後撤步三分！'],rim:['{n} 歐洲步騙過防守，上籃得手']}},
  ginobma01:{lab:'歐洲步',k:{rim:['{n} 招牌歐洲步，閃過兩個人上籃'],and1:['{n} 歐洲步硬切，打進還加罰！']}},
  duncati01:{lab:'擦板跳投',k:{mid:['{n} 招牌 45 度擦板跳投'],post:['{n} 低位轉身擦板進球']}},
- jokicni01:{lab:'Sombor Shuffle',k:{mid:['{n} 單腳後仰 Sombor Shuffle，進！'],post:['{n} 背框慢慢磨，轉身放進']},pass:['{a} 不看人背後傳球，{n} 空檔得分','{a} 全場長傳妙傳，{n} 快攻上籃']},
- johnsma02:{lab:'不看人傳球',k:{post:['{n} 招牌小天勾！']},pass:['{a} 不看人傳球，{n} 快攻得分','{a} 魔術般的妙傳，{n} 輕鬆上籃']},
+ jokicni01:{lab:'Sombor Shuffle',kl:{post:'背框單打'},pl:'不看人妙傳',k:{mid:['{n} 單腳後仰 Sombor Shuffle，進！'],post:['{n} 背框慢慢磨，轉身放進']},pass:['{a} 不看人背後傳球，{n} 空檔得分','{a} 全場長傳妙傳，{n} 快攻上籃']},
+ johnsma02:{lab:'不看人傳球',kl:{post:'小天勾'},k:{post:['{n} 招牌小天勾！']},pass:['{a} 不看人傳球，{n} 快攻得分','{a} 魔術般的妙傳，{n} 輕鬆上籃']},
  nashst01:{lab:'穿針引線',pass:['{a} 鑽進禁區再穿針引線，{n} 輕鬆得分']},
  stockjo01:{lab:'經典擋拆',pass:['{a} 經典擋拆，把球塞給 {n} 輕鬆得分']},
- paulch01:{lab:'控衛之神',pass:['{a} 擋拆後擊地傳球，{n} 接球得分'],k:{mid:['{n} 招牌罰球線中距離']}},
+ paulch01:{lab:'控衛之神',kl:{mid:'罰球線中距離'},pass:['{a} 擋拆後擊地傳球，{n} 接球得分'],k:{mid:['{n} 招牌罰球線中距離']}},
  malonka01:{lab:'擋拆順下',k:{mid:['{n} 擋拆後接球中距離，郵差送達 📮'],post:['{n} 背打轉身強硬得分']}},
  onealsh01:{lab:'大鯊魚灌籃',k:{dunk:['{n} 背框轉身暴扣，籃架都在晃！','{n} 雙手暴扣，差點把籃框扯下來'],post:['{n} 低位硬頂進禁區，強吃得分']}},
  cartevi01:{lab:'飛人灌籃',k:{dunk:['{n} 起跳越過防守者，半人半神暴扣！']}},
  antetgi01:{lab:'歐洲步暴扣',k:{dunk:['{n} 三分線起步，兩步就到籃下暴扣！'],rim:['{n} 歐洲步長驅直入']}},
- leonaka01:{lab:'大手抄截',stl:['{n} 大手一伸，直接把球摸走'],k:{mid:['{n} 底角後仰跳投——彈框四下，進了！']},clutch:1},
+ leonaka01:{lab:'大手抄截',kl:{mid:'後仰跳投'},stl:['{n} 大手一伸，直接把球摸走'],k:{mid:['{n} 底角後仰跳投——彈框四下，進了！']},clutch:1},
  allenra02:{lab:'底角三分',k:{three:['{n} 底角三分，教科書般的投籃']},clutch:1,ctxt:'{n} 退到底角接球——三分進！救命一擊'},
  millere01:{lab:'Miller Time',k:{three:['{n} 連續三分，還對觀眾比割喉手勢']},clutch:1},
  horryro01:{lab:'關鍵先生',clutch:1,ctxt:'關鍵先生 {n} 接球出手，致勝三分！'},
@@ -1171,8 +1171,8 @@ const sigOf=p=>p&&own(SIG,p.id)?SIG[p.id]:null;
 const MOVERS=new Set(['curryst01','thompkl01','allenra02','millere01','redicjj01','korveky01','hamilri01','robindu01']);
 const ATHL=new Set(['jamesle01','westbru01','antetgi01','davisan02','leonaka01','pippesc01','wembavi01','wadedw01','jordami01','garneke01','olajuha01','robinda01','moranja01','edwaran01']);
 const OFFBALL_TXT=['{n} 無球跑動，繞過兩道掩護，接球三分刷！','{n} 從底線一路跑到側翼，接球就投，進！','{n} 繞掩護甩開防守，空檔三分！'];
-function sigText(p,kind,a,r){const g=sigOf(p);if(g&&g.k&&g.k[kind]&&r()<0.85)return{txt:fill(PICK(g.k[kind],r),p,a,r),sig:g.lab,sp:p.n,sid:p.id};
-  const ga=sigOf(a);if(a&&ga&&ga.pass&&(kind==='assist'||kind==='alley')&&r()<0.8)return{txt:fill(PICK(ga.pass,r),p,a,r),sig:ga.lab,sp:a.n,sid:a.id};
+function sigText(p,kind,a,r){const g=sigOf(p);if(g&&g.k&&g.k[kind]&&r()<0.85)return{txt:fill(PICK(g.k[kind],r),p,a,r),sig:(g.kl&&g.kl[kind])||g.lab,sp:p.n,sid:p.id};
+  const ga=sigOf(a);if(a&&ga&&ga.pass&&(kind==='assist'||kind==='alley')&&r()<0.8)return{txt:fill(PICK(ga.pass,r),p,a,r),sig:ga.pl||ga.lab,sp:a.n,sid:a.id};
   return{txt:fill(PICK(KTXT[kind],r),p,a,r)}}
 const SIGICO={jamesle01:'👑',wadedw01:'⚡',pippesc01:'🦇',wembavi01:'👽',mutomdi01:'☝️',howardw01:'🦸',wallabe01:'🔔',robinda01:'⚓',garneke01:'🐺',
  olajuha01:'🌀',abdulka01:'🪝',nowitdi01:'🦩',jordami01:'🐐',bryanko01:'🐍',lillada01:'⌚',curryst01:'😴',iversal01:'😵',hardeja01:'🧔',ginobma01:'🔀',
@@ -1203,7 +1203,7 @@ function gameEvents(z,game,boxA,boxB,R,r,inc){inc=inc||[];
       if(!toDone&&(q===1||q===2)&&x<0.12){toDone=true;e={kind:'timeout',side:other(side),txt:`${tn(other(side))} 叫暫停，教練氣得跳腳`}}
       else if(!techDone&&x<0.16&&T.R.some(p=>HOT.has(p.id))){techDone=true;const p=PICK(T.R.filter(p=>HOT.has(p.id)),r);e={kind:'tech',side,p:p.n,txt:`${callN(p,r)} 跟裁判理論，吃到技術犯規 😤`}}
       else if(x<0.27){const c=T.R.filter(y=>styleOf(y).blk),p=c.length&&r()<0.7?PICK(c,r):pickW(T.R,T.R.map(y=>num(y.blk,0.3)+0.1),r),sh=pickW(O.R,O.R.map(y=>ptsOf(O,y)+1),r);
-        const gs=sigOf(p),useS=gs&&gs.swat&&r()<0.9;e={kind:'block',side,p:p.n,d:sh.n,txt:useS?fill(PICK(gs.swat,r),p,null,r):fill(PICK(KTXT.block,r),p,null,r)};if(useS){e.sig=gs.lab;e.sp=p.n;e.sid=p.id}}
+        const gs=sigOf(p),useS=gs&&gs.swat&&r()<0.9;e={kind:'block',side,p:p.n,d:sh.n,txt:useS?fill(PICK(gs.swat,r),p,null,r):fill(PICK(KTXT.block,r),p,null,r)};if(useS){e.sig=gs.sl||gs.lab;e.sp=p.n;e.sid=p.id}}
       else if(x<0.36){const p=pickW(T.R,T.R.map(y=>num(y.stl,0.5)+0.1),r),gs=sigOf(p);const useS=gs&&gs.stl&&r()<0.7;e={kind:'steal',side,p:p.n,txt:useS?fill(PICK(gs.stl,r),p,null,r):fill(PICK(KTXT.steal,r),p,null,r)};if(useS){e.sig=gs.lab;e.sp=p.n;e.sid=p.id}
         // chase-down block: a trait player on the beaten team, chance scaled by his block rate
         const ch=O.R.filter(y=>sigOf(y)&&sigOf(y).chase);if(ch.length){const c2=PICK(ch,r),pc=0.35*clamp(num(c2.blkp,1)/2.2,0.3,1);
