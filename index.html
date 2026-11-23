@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-nuK8Zk8FmKH2AoF2huIIICZWQLRA0znSxYv1aUE2DLQ=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-vnGTHDpu0CeP3XmfBSIpsnbtcWkEnQoMB4T9rjWmqv4=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -265,6 +265,25 @@ select:disabled{opacity:.6}
 .pk{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:5px 6px 5px 11px;border-radius:999px;background:#eef4ff;color:#2f5aa8;border:1px solid #cfdcf6}
 .pk button{width:22px;height:22px;border-radius:50%;background:#fff;color:#2f5aa8;font-size:15px;line-height:1;border:1px solid #cfdcf6}
 .ychips .chip{font-size:13px}
+/* playback */
+.pb{animation:screenIn .35s var(--ease) both}
+.pbh{display:flex;justify-content:space-between;margin:4px 2px 8px}
+.sb2{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:#fff;border-radius:20px;padding:16px 12px;box-shadow:0 6px 20px -12px rgba(30,40,80,.35)}
+.sb2 .tm{text-align:center;min-width:0}.sb2 .tn{font-weight:900;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dots{display:flex;gap:4px;justify-content:center;margin-top:6px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--c)}
+.sb2 .scr{font-family:var(--num);font-weight:800;font-size:52px;line-height:1;display:flex;gap:6px;align-items:baseline;font-variant-numeric:tabular-nums}
+.sb2 .scr i{font-style:normal;color:var(--mut);font-size:34px}
+.sb2 .clk{text-align:center;font-size:13px;font-weight:700;color:var(--mut);margin-top:4px;font-variant-numeric:tabular-nums}.sb2 .clk.end{color:#c0392b}
+.qt{width:100%;margin-top:10px;border-collapse:collapse;font-size:13px;background:#fff;border-radius:14px;overflow:hidden}
+.qt th,.qt td{padding:6px 4px;text-align:center;font-variant-numeric:tabular-nums}.qt th{color:var(--mut);font-weight:700;font-size:11px}
+.qt td:first-child{text-align:left;padding-left:12px;font-weight:800;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feed{margin-top:10px;display:grid;gap:6px;min-height:200px;align-content:start}
+.ev{background:#fff;border-radius:12px;padding:9px 12px;font-size:14px;font-weight:600;border-left:4px solid var(--line);animation:evIn .35s var(--ease) both}
+.ev .t{display:inline-block;min-width:66px;font-size:11px;font-weight:700;color:var(--mut);font-variant-numeric:tabular-nums}
+@keyframes evIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.pbfin{margin-top:10px;background:#fff8ef;border:1px solid #ffd7a8;border-radius:16px;padding:12px 14px;text-align:center;animation:pop .45s var(--ease) both}
+.pbfin .pog{font-size:15px;margin-top:2px}.pbfin .ser{margin-top:6px;font-weight:700}
+.pbc{display:grid;grid-template-columns:auto 1fr;gap:8px;margin-top:12px;align-items:stretch}.pbc .ghost{margin:0;padding:0 16px}.pbc .big{margin:0}
 
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
@@ -294,6 +313,8 @@ const LS='ballerbid_local_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
+const APPV='2026.11.24b';
+const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
 function shuffle(a,r=Math.random){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -355,7 +376,7 @@ const FEUDS=[
  {a:'butleji01',b:'wiggian01',lv:1,t:'2017–19 灰狼：Butler 2018 年練球時公開痛批 Wiggins 不夠拚。',u:'https://global.espn.com/nba/story/_/id/24950981/jimmy-butler-heated-practice-timberwolves'},
 ];
 const tsCache=new Map();
-function tsOf(id){if(!id||!LINKS)return null;if(tsCache.has(id))return tsCache.get(id);const s=LINKS.p[id];let set=null;if(s){set=new Set();for(let i=0;i<s.length;i+=3)set.add(s.substr(i,3))}tsCache.set(id,set);return set}
+function tsOf(id){if(!id||!LINKS)return null;if(tsCache.has(id))return tsCache.get(id);const s=own(LINKS.p,id)?LINKS.p[id]:null;let set=null;if(typeof s==='string'){set=new Set();for(let i=0;i<s.length;i+=3)set.add(s.substr(i,3))}tsCache.set(id,set);return set}
 function shared(a,b){const A=tsOf(a.id),B=tsOf(b.id);if(!A||!B)return 0;let k=0;for(const x of A)if(B.has(x))k++;return k}
 const feudOf=(a,b)=>a.id&&b.id?FEUDS.find(f=>(f.a===a.id&&f.b===b.id)||(f.a===b.id&&f.b===a.id)):null;
 const tmOn=g=>!(g.theme&&g.theme.cat==='陣容');
@@ -456,7 +477,7 @@ function fillFA(g){g.sides.forEach(s=>openSlots(g,s).forEach(x=>{const i=isBench
   g.rosters[s].push({slot:x,k,price:0});g.log.push({n:g.items[k].n,who:s,amt:0,slot:x,fa:1})}))}
 function nextCard(S){const g=S.game;g.idx++;g.bid={who:null,amt:0};g.pass={};g.pending=null;g.turn=null;
   if(!g.sides.every(s=>openN(g,s)===0)&&g.idx>=g.items.length&&!refill(g))fillFA(g);
-  if(isOver(g)){S.phase='lineup';g.ready={};g.lineupEnd=now()+T_LINEUP;return}
+  if(isOver(g)){S.phase='lineup';g.ready={};g.lineupEnd=now()+T_LINEUP*(g.size===10?1.5:1);return}
   startCard(S)}
 function assign(S,slot){
   const g=S.game,p=g.pending;if(!p||!openSlots(g,p.who).includes(slot))return false;
@@ -498,7 +519,7 @@ function apply(S,a,actor){
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
       if('era' in n)c.era=Array.isArray(n.era)&&n.era.length===2&&n.era.every(x=>DECS.includes(x))?[Math.min(...n.era),Math.max(...n.era)]:null;
-      if('team' in n)c.team=FRZH[n.team]?n.team:'';
+      if('team' in n)c.team=own(FRZH,n.team)?n.team:'';
       if(n.size===5||n.size===10){if(n.size===10&&c.size!==10&&c.budget<25)c.budget=25;if(n.size===5&&c.size===10&&c.budget===25)c.budget=15;c.size=n.size}
       if(Array.isArray(n.picks))c.picks=[...new Set(n.picks.filter(id=>typeof id==='string'&&THEMES.some(t=>t.id===id)))].slice(0,12);
       if(typeof n.pcat==='string'&&CATS.includes(n.pcat))c.pcat=n.pcat;
@@ -652,7 +673,7 @@ function mqttConnect(bi){return new Promise((res,rej)=>{let done=false;
   const to=setTimeout(()=>{if(!done){done=true;try{c.end(true)}catch(e){}rej(new Error('timeout'))}},8000);
   c.once('connect',()=>{if(done)return;done=true;clearTimeout(to);res(c)});})}
 function commit(){
-  if(!S)return;S.v=(S.v||0)+1;S.t=Date.now();
+  if(!S)return;S.v=(S.v||0)+1;S.t=Date.now();S.app=APPV;
   if(NET.mode==='local')lsSet(LS,S);
   if(NET.mode==='host')publishState();
   render();
@@ -668,7 +689,7 @@ async function onMsg(t,buf){
     if(NET.mode==='host'){if(m.auth!==CID&&m.v>S.v){NET.mode='guest';takeState(m);toast('另一位玩家接手了房主')}return}
     if(S&&m.v<S.v)return;takeState(m)}
 }
-function takeState(m){const prev=snapOf();S=m;NET.skew=(m.t||Date.now())-Date.now();if(Math.abs(NET.skew)<1500)NET.skew=0;
+function takeState(m){const prev=snapOf();if(m.app&&m.app!==APPV)ui.verWarn=true;S=m;NET.skew=(m.t||Date.now())-Date.now();if(Math.abs(NET.skew)<1500)NET.skew=0;
   if(S.auth===CID&&NET.mode==='guest'){NET.mode='host'}
   const ack=(S.acks&&S.acks[CID])||0;NET.pending=NET.pending.filter(x=>x.n>ack);fx(prev);render()}
 function wire(c){
@@ -740,7 +761,7 @@ function fx(prev){
 setInterval(()=>{snapPrev=snapOf();tickAuth()},250);
 
 /* ---------- views ---------- */
-let ui={quit:false,sel:null,themeOpen:false,reveal:new Set(),amt:{}};
+let ui={quit:false,sel:null,themeOpen:false,reveal:new Set(),amt:{},pb:null,pbDone:new Set(),pbSp:1};
 let tt;function toast(msg,ms=1900){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),ms)}
 const fmt=v=>v==null?'–':(Math.round(v*10)/10).toFixed(1);
 const yrs=p=>{if(!p.y0)return '';const s=y=>String(y%100).padStart(2,'0');return p.y0===p.y1?`${p.y0-1}-${s(p.y0)}`:`${p.y0-1}–${s(p.y1)}`};
@@ -797,7 +818,7 @@ function rulesCard(){return `<section class="card"><details><summary>📖 玩法
 function vRoomBar(){
   if(NET.mode==='local')return `<div class="roombar"><span>📱 同一台手機</span><span class="grow"></span><button class="small mut" data-act="exit">離開</button></div>`;
   const r=myRole(),label=ALL.includes(r)?nm(S,r):'觀眾';
-  return `<div class="roombar"><span class="mut">房號</span><span class="code">${esc((NET.code||'').toUpperCase())}</span><span class="grow small">你是 <b>${esc(label)}</b>${pend()}</span><button class="small mut" data-act="exit">離開</button></div>
+  return `<div class="roombar"><span class="mut">房號</span><span class="code">${esc((NET.code||'').toUpperCase())}</span><span class="grow small">你是 <b>${esc(label)}</b>${pend()}</span><button class="small mut" data-act="exit">離開</button></div>${ui.verWarn?'<div class="err">⚠️ 你和房間裡其他人的遊戲版本不同，可能會出錯。請大家都重新整理網頁後再開房。</div>':''}
   ${NET.conn===false?`<div class="err"><span class="spin"></span> 網路斷線，重新連線中…</div>`:''}${NET.err?`<div class="err">${esc(NET.err)}</div>`:''}
   ${NET.mode==='host'&&S.phase!=='results'?`<div class="note" style="margin-top:8px">📌 遊戲由你的手機運算，請保持畫面開著。如果你斷線，其他玩家會在 15 秒後自動接手。</div>`:''}`;
 }
@@ -866,12 +887,12 @@ function vLobby(){
 }
 /* ---------- short player intro (from Basketball-Reference awards & career totals) ---------- */
 const TEAMZH={ATL:'老鷹',STL:'老鷹',MLH:'老鷹',TRI:'老鷹',BOS:'塞爾提克',BRK:'籃網',NJN:'籃網',NYN:'籃網',CHA:'黃蜂',CHO:'黃蜂',CHH:'黃蜂',CHI:'公牛',CLE:'騎士',DAL:'獨行俠',DEN:'金塊',DNN:'金塊',DET:'活塞',FTW:'活塞',GSW:'勇士',SFW:'勇士',PHW:'勇士',HOU:'火箭',SDR:'火箭',IND:'溜馬',LAC:'快艇',SDC:'快艇',BUF:'快艇',LAL:'湖人',MNL:'湖人',MEM:'灰熊',VAN:'灰熊',MIA:'熱火',MIL:'公鹿',MIN:'灰狼',NOP:'鵜鶘',NOH:'黃蜂',NOK:'黃蜂',NYK:'尼克',OKC:'雷霆',SEA:'超音速',ORL:'魔術',PHI:'76人',SYR:'國民',PHO:'太陽',POR:'拓荒者',SAC:'國王',KCK:'國王',KCO:'國王',CIN:'皇家',ROC:'皇家',SAS:'馬刺',SAA:'馬刺',TOR:'暴龍',UTA:'爵士',NOJ:'爵士',WAS:'巫師',WSB:'子彈',CAP:'子彈',BAL:'子彈',CHZ:'包裝工',CHP:'包裝工'};
-function bioOf(p){if(!p.id||!BIOS||!BIOS.p[p.id])return null;const o={};BIOS.cols.forEach((c,i)=>o[c]=BIOS.p[p.id][i]);return o}
+function bioOf(p){if(!p.id||!BIOS||!own(BIOS.p,p.id))return null;const o={};BIOS.cols.forEach((c,i)=>o[c]=BIOS.p[p.id][i]);return o}
 function roleTags(p){const t=[];if(num(p.pts,0)>=25)t.push('得分機器');if(num(p.astp,0)>=30)t.push('組織大師');else if(num(p.astp,0)>=22)t.push('傳球好手');
   if(num(p.trbp,0)>=17)t.push('籃板怪');if(num(p.blkp,0)>=4)t.push('護框長人');if(num(p.stlp,0)>=2.6)t.push('抄截高手');if(peOf(p)>=3.8&&spc(p)>=0.6)t.push('空間型長人');if(num(p.usg,20)<17&&num(p.dbpm,0)>=1.5)t.push('防守悍將');return t.slice(0,2)}
 /* Taiwan fan nicknames: Jerry's list (PTT / 巴哈 / 痞客邦 sources), first nickname per player */
 const NICK={abdulka01:"天勾",adamsst01:"水行俠",adebaba01:"阿爹",allenra02:"糖",anderky01:"慢速先生",antetgi01:"字母哥",anthoca01:"甜瓜",arenagi01:"Agent 0",artesro01:"世界和平",barklch01:"惡漢",birdla01:"大鳥",boguemu01:"強盜",bookede01:"書人",bradlsh01:"竹竿",bryanko01:"黑曼巴",butleji01:"士官長",capelca01:"餅皇",cartevi01:"加拿大航空",cassesa01:"外星人",chambwi01:"籃球皇帝",curryse01:"咖哩弟",curryst01:"我家咖喱・浪花兄弟",davisan02:"濃眉",derozde01:"DDR",doncilu01:"東 77",drexlcl01:"滑翔機",duncati01:"石佛",duranke01:"死神",edwaran01:"蟻人",embiijo01:"大帝",ervinju01:"J博士",ewingpa01:"Gorilla",fishede01:"小魚",francst01:"老大",garneke01:"狼王",gasolpa01:"西班牙兔子",georgpa01:"PG-13",gervige01:"冰人",ginobma01:"妖刀",greenac01:"鐵人",greendr01:"追夢",hamilri01:"面具人",hardaan01:"便士",hardati01:"甲蟲",hardeja01:"大鬍子",havlijo01:"小偷",haywago01:"星海哥",hillgr01:"好孩子",horryro01:"關鍵先生",howardw01:"魔獸",ilgauzy01:"大Z",irvinky01:"德魯大叔",iversal01:"答案",jamesle01:"小皇帝",johnsla02:"大媽",johnsma02:"魔術師",jokicni01:"小丑",jordami01:"飛人",kempsh01:"雨人",kiddja01:"發動機",kirilan01:"AK-47",kuminjo01:"苦命",leonaka01:"可愛",linje01:"豪神",majerda01:"震雷",malonka01:"郵差",malonmo01:"孤獨的勇士",maravpe01:"手槍",marbust01:"獨狼",mariosh01:"駭客任務",mcgratr01:"T-Mac",millere01:"終結者",mingya01:"小巨人",moblecu01:"老貓",mournal01:"大佐",mullich01:"上帝左手",murraja01:"屁孩",mutomdi01:"非洲大山",nashst01:"助推器",nowitdi01:"德國坦克",nurkiju01:"巨獸",oaklech01:"老橡樹",olajuha01:"大夢",onealsh01:"大鯊魚",parisro01:"酋長",parketo01:"法國跑車",paulch01:"CP3",paytoga01:"手套",piercpa01:"真理",pippesc01:"皮蓬",porzikr01:"KP",princta01:"王子",randoza01:"Z-Bo",robinda01:"海軍上將",rodmade01:"小蟲",rosede01:"飆風玫瑰",russebi01:"指環王",sampsra01:"超級彈簧腿",schrode01:"8400萬",scolalu01:"大鑽石",siakapa01:"洗牙啃",sprewla01:"狂人",stockjo01:"將軍",stoudam01:"小霸王",stoudda01:"小飛鼠",terryja01:"噴射機",thomais01:"微笑刺客",thompkl01:"浪花兄弟",vanexni01:"小精靈",wadedw01:"閃電俠",wallabe01:"大本鐘",wallara01:"怒吼天尊",waltobi01:"紅色巨人",webbech01:"國王",wembavi01:"斑馬",westbru01:"威少",westje01:"教父",wiggian01:"圍巾",wilkido01:"人類電影精華",willija02:"白巧克力",willizi01:"胖虎",worthja01:"眼鏡蛇"};
-const nickOf=p=>p&&p.id?NICK[p.id]||'':'';
+const nickOf=p=>p&&own(NICK,p.id)?NICK[p.id]:'';
 function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
   if(b){if(b.hof)ch.push('🏛 名人堂');if(b.mvp)ch.push(`👑 MVP ×${b.mvp}`);if(b.dpoy)ch.push(`🛡 最佳防守 ×${b.dpoy}`);if(b.all1)ch.push(`年度第一隊 ×${b.all1}`);else if(b.alln)ch.push(`年度最佳陣容 ×${b.alln}`);
     if(b.as)ch.push(`全明星 ×${b.as}`);if(b.roy)ch.push('新人王');if(b.ad1)ch.push(`防守一隊 ×${b.ad1}`);if(b.ad2)ch.push(`防守二隊 ×${b.ad2}`);
@@ -881,7 +902,7 @@ function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
   const chips=ch.slice(0,6).map(x=>`<span>${esc(x)}</span>`).concat(sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`));
   const rev=ui.reveal.has(key);
   const line=b&&b.pts!=null?`生涯 ${b.g} 場・場均 ${fmt(b.pts)} 分 ${fmt(b.trb)} 籃板 ${fmt(b.ast)} 助攻`:'';
-  const era=b?`${b.from-1}–${String(b.to%100).padStart(2,'0')} 年・主要效力${TEAMZH[b.tm]||b.tm}${b.dy?`・${b.dy} 年選秀第 ${b.dp} 順位`:'・落選秀'}`:'';
+  const era=b?`${b.from-1}–${String(b.to%100).padStart(2,'0')} 年・主要效力${own(TEAMZH,b.tm)?TEAMZH[b.tm]:b.tm}${b.dy?`・${b.dy} 年選秀第 ${b.dp} 順位`:'・落選秀'}`:'';
   const hon=ch.slice(0,6).map(x=>`<span>${esc(x)}</span>`).join(''),sty=sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`).join('');
   return `<div class="intro2"><div class="irow"><i class="il">榮譽</i><div class="intro">${hon}</div></div>${sty?`<div class="irow"><i class="il">球風</i><div class="intro">${sty}</div></div>`:''}</div>${line?`<div class="small mut" style="margin-top:6px">${line}</div>`:''}
     ${b?(rev?`<div class="small" style="margin-top:4px">${esc(era)}</div>`:`<button class="link" data-act="reveal" data-v="${key}">看年代和球隊（會透露主題）</button>`):''}`}
@@ -939,12 +960,102 @@ function vLineup(){
       <button class="${rd?'ghost':'big'}" data-act="ready" data-who="${s}" data-v="${rd?0:1}">${rd?'取消準備':'準備好了 ✓'}</button></section>`};
   return `<div class="center" style="margin-top:14px"><div style="font-size:36px">📋</div><div style="font-weight:900;font-size:20px">賽前排陣</div>
     <div class="small mut" style="max-width:420px;margin:4px auto 0">同位置的球員會一對一。小個子打大位置靠速度、但籃板吃虧；大個子靠籃板和低位。對手的排法開打才公開。</div>
-    <div style="max-width:300px;margin:8px auto 0">${clock(g.lineupEnd,T_LINEUP,'時間到自動開打：')}</div></div>
+    <div style="max-width:300px;margin:8px auto 0">${clock(g.lineupEnd,T_LINEUP*(g.size===10?1.5:1),'時間到自動開打：')}</div></div>
     ${g.sides.map(panel).join('')}`;
 }
 const ar=(x,k,inv)=>{const m=x.m&&x.m[k];if(m==null||Math.abs(m-1)<0.1)return '';const good=inv?m<1:m>1;return `<i class="${good?'up':'dn'}">${m>1?'▲':'▼'}</i>`};
+/* ---------- game-by-game playback ----------
+ Built on each device from S.sim with seeded randomness, so every player sees the same games
+ without sending anything extra over the network. Final scores and series results are the simulation's own. */
+let pbCache={gid:null,d:null};
+const lastN_=p=>String(p.n||'').split(' ').slice(-1)[0];
+const callN=(p,r)=>{const k=nickOf(p);return k&&r()<0.5?k.split('・')[0]:lastN_(p)};
+function splitInt(total,parts,r,sd=0.18){const w=[...Array(parts)].map(()=>Math.max(0.4,1+gauss(r)*sd));return alloc(total,w)}
+function periods(sa,sb,ot,r){
+  const oa=[],ob=[];for(let i=0;i<ot;i++){if(i<ot-1){const x=4+Math.floor(r()*8);oa.push(x);ob.push(x)}else{const lo=4+Math.floor(r()*7),d=Math.abs(sa-sb);oa.push(sa>sb?lo+d:lo);ob.push(sb>sa?lo+d:lo)}}
+  const ra=sa-oa.reduce((t,x)=>t+x,0),rb=sb-ob.reduce((t,x)=>t+x,0);
+  return [splitInt(ra,4,r).concat(oa),splitInt(rb,4,r).concat(ob)]}
+function styleOf(p){const b=bioOf(p),f=String(b&&b.sk||''),pe=peOf(p);
+  return{three:f.includes('3')||spc(p)>=0.5,mid:f.includes('m'),rim:f.includes('r'),big:pe>=4,pass:num(p.astp,0)>=25,blk:num(p.blkp,0)>=3.5,stl:num(p.stlp,0)>=2.2}}
+function pickW(arr,w,r){const W=w.reduce((a,b)=>a+b,0);let x=r()*W;for(let i=0;i<arr.length;i++){x-=w[i];if(x<=0)return arr[i]}return arr[arr.length-1]}
+function playText(p,box,mates,r){const st=styleOf(p),nm=callN(p,r),opts=[];
+  if(st.three)opts.push(`${nm} 底角三分，刷！`,`${nm} 超遠三分命中！`);
+  if(st.mid)opts.push(`${nm} 後仰中距離，進！`,`${nm} 急停跳投命中`);
+  if(st.rim)opts.push(`${nm} 切入硬擠，打進還加罰！`,`${nm} 一步過人直搗籃下`);
+  if(st.big)opts.push(`${nm} 禁區轉身強攻得手`,`${nm} 搶下進攻籃板補進`,`${nm} 雙手暴扣！`);
+  if(!opts.length)opts.push(`${nm} 切入上籃得分`,`${nm} 快攻上籃`,`${nm} 中距離跳投命中`);
+  const passer=mates.filter(q=>q!==p&&styleOf(q).pass);
+  if(passer.length&&r()<0.35){const a=passer[Math.floor(r()*passer.length)];return `${callN(a,r)} 不看人妙傳，${nm} 輕鬆得分`}
+  return opts[Math.floor(r()*opts.length)]}
+function gameEvents(z,game,boxA,boxB,R,r){
+  const [sa,sb,ot]=game,[qa,qb]=game.q,P=qa.length,ev=[];
+  const teams={[z.a]:{box:boxA,R:R[z.a]},[z.b]:{box:boxB,R:R[z.b]}};
+  for(let q=0;q<P;q++){const n=q<4?3:2;
+    for(let i=0;i<n;i++){const side=r()<(qa[q]/(qa[q]+qb[q]||1))?z.a:z.b,T=teams[side],o=side===z.a?teams[z.b]:teams[z.a];
+      const frac=(i+0.5+r()*0.4)/n,len=q<4?12:5,mm=Math.max(0,len*(1-frac)),clk=`${Math.floor(mm)}:${String(Math.floor((mm%1)*60)).padStart(2,'0')}`;
+      let p,txt;const kind=r();
+      if(kind<0.14){const c=T.R.filter(x=>styleOf(x).blk);p=c.length?c[Math.floor(r()*c.length)]:pickW(T.R,T.R.map(x=>num(x.blk,0.3)+0.1),r);txt=`${callN(p,r)} 送出大火鍋！`}
+      else if(kind<0.24){p=pickW(T.R,T.R.map(x=>num(x.stl,0.5)+0.1),r);txt=`${callN(p,r)} 抄截，一路快攻！`}
+      else{const rows=T.box;p=pickW(T.R,T.R.map(x=>{const b=rows.find(y=>y.n===x.n);return (b?b.pts:2)+1}),r);txt=playText(p,T.box,T.R,r)}
+      ev.push({q,t:frac,clk,side,txt})}}
+  // closing moment
+  const win=sa>sb?z.a:z.b,diff=Math.abs(sa-sb),W=teams[win],star=W.R.slice().sort((x,y)=>{const bx=W.box.find(b=>b.n===x.n),by=W.box.find(b=>b.n===y.n);return (by?by.pts:0)-(bx?bx.pts:0)})[0];
+  if(ot)ev.push({q:3,t:0.999,clk:'0:00',side:null,txt:`平手！比賽進入延長賽`});
+  ev.push({q:P-1,t:diff>=15?0.75:0.97,clk:diff>=15?'3:'+String(10+Math.floor(r()*49)):'0:0'+(2+Math.floor(r()*7)),side:win,txt:diff<=4?`關鍵時刻！${callN(star,r)} 投進致勝球！`:diff>=15?`${callN(star,r)} 坐板凳休息，比賽提前分出勝負`:`${callN(star,r)} 連拿分數，鎖定勝局`});
+  return ev}
+function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)return pbCache.d;
+  const ro={},base={};g.sides.forEach(s=>{ro[s]=rosterOf(g,s);base[s]=baseRate(ro[s],g,left(g,s))});
+  const list=[];
+  sim.series.forEach((z,si)=>{const ra=pairRate(base[z.a],ro[z.a],ro[z.b]),rb=pairRate(base[z.b],ro[z.b],ro[z.a]);
+    const withB=(R,per)=>per.concat(benchOf(R).map(p=>({p,m:playerFx(p,null),bench:1}))),pa=withB(ro[z.a],ra.per),pbb=withB(ro[z.b],rb.per);
+    const r=rng(hash(g.gid+z.a+z.b+'pb'));let wa=0,wb=0;
+    z.games.forEach((gm,gi)=>{const [sa,sb,ot]=gm,last=gi===z.games.length-1;
+      const bA=last?z.box[z.a]:boxFor(pa.map(x=>x.p),pa,sa,r),bB=last?z.box[z.b]:boxFor(pbb.map(x=>x.p),pbb,sb,r);
+      const game=[sa,sb,ot];game.q=periods(sa,sb,ot,r);
+      const R={[z.a]:pa.map(x=>x.p).filter(p=>!isBench(p.slot)).concat(pa.map(x=>x.p).filter(p=>isBench(p.slot))),[z.b]:pbb.map(x=>x.p)};
+      const ev=gameEvents(z,game,bA,bB,{[z.a]:pa.map(x=>x.p),[z.b]:pbb.map(x=>x.p)},r);
+      sa>sb?wa++:wb++;
+      const all=bA.map(x=>({...x,s:z.a})).concat(bB.map(x=>({...x,s:z.b})));const pog=all.sort((x,y)=>(y.pts+1.2*y.reb+1.5*y.ast+2*y.stl+2*y.blk)-(x.pts+1.2*x.reb+1.5*x.ast+2*x.stl+2*x.blk))[0];
+      list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB})})});
+  pbCache={gid:g.gid+sim.champ,d:list};return list}
+const PB_Q=1700,PB_HOLD=2800;
+function pbDur(G){return G.q[0].length*PB_Q+PB_HOLD}
+function pbState(){const L=pbData(),p=ui.pb;if(!p||p.gid!==S.game.gid)return null;
+  const G=L[p.k];if(!G)return null;const e=(Date.now()-p.t0)*p.sp,P=G.q[0].length,pe=Math.min(P,e/PB_Q);return{L,G,e,P,pe,done:e>=P*PB_Q,next:e>=pbDur(G)}}
+function pbStart(){ui.pb={gid:S.game.gid,k:0,t0:Date.now(),sp:ui.pbSp||1}}
+function pbNext(){const L=pbData();if(ui.pb.k+1>=L.length){ui.pbDone.add(S.game.gid);ui.pb=null}else{ui.pb.k++;ui.pb.t0=Date.now()}render();scrollTo(0,0)}
+setInterval(()=>{if(!S||S.phase!=='results'||!S.sim||!ui.pb||ui.pbDone.has(S.game.gid))return;const st=pbState();if(st&&st.next&&ui.pb.auto!==false)return pbNext();render()},120);
+function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayback()}
+  const {L,G,e,P,pe,done}=st,z=G.z,two=g.sides.length===2,ns=S.sim.series.length;
+  const qa=G.q[0],qb=G.q[1],shown=k=>{const full=Math.floor(pe);let a=0,b=0;for(let i=0;i<P;i++){if(i<full){a+=qa[i];b+=qb[i]}else if(i===full){const f=pe-full;a+=Math.floor(qa[i]*f);b+=Math.floor(qb[i]*f)}}return[a,b]};
+  const [ca,cb]=done?[G.sa,G.sb]:shown();
+  const per=Math.min(P-1,Math.floor(pe)),pf=pe-Math.floor(pe),plen=per<4?12:5,left_=done?0:Math.max(0,plen*(1-pf));
+  const perLab=i=>i<4?`第 ${i+1} 節`:(P>5?`延長 ${i-3}`:'延長賽');
+  const clk=done?'終場':`${perLab(per)}・${Math.floor(left_)}:${String(Math.floor((left_%1)*60)).padStart(2,'0')}`;
+  const evs=G.ev.filter(x=>x.q<pe-1e-9&&(x.q+x.t)<=pe).slice().reverse().slice(0,6);
+  const prevW=L.filter(x=>x.z===z&&x.gi<G.gi),wa=prevW.filter(x=>x.sa>x.sb).length+(done&&G.sa>G.sb?1:0),wb=prevW.filter(x=>x.sb>x.sa).length+(done&&G.sb>G.sa?1:0);
+  const dots=s=>[0,1,2,3].map(i=>`<i class="${i<(s===z.a?wa:wb)?'on':''}" style="--c:${col(s)}"></i>`).join('');
+  const qt=`<table class="qt"><tr><th></th>${qa.map((_,i)=>`<th>${i<4?i+1:'OT'}</th>`).join('')}<th>總</th></tr>
+    ${[[z.a,qa,ca],[z.b,qb,cb]].map(([s,q,c])=>`<tr><td style="color:${col(s)}">${esc(nm(S,s))}</td>${q.map((x,i)=>`<td>${i<Math.floor(pe)||done?x:''}</td>`).join('')}<td><b>${c}</b></td></tr>`).join('')}</table>`;
+  const win=G.sa>G.sb?z.a:z.b,over=Math.max(G.wa,G.wb)===4;
+  const final=done?`<div class="pbfin" id="fin-${g.gid}-${G.si}-${G.gi}">
+      <div class="small mut">本場最佳</div><div class="pog"><b style="color:${col(G.pog.s)}">${esc(G.pog.n)}</b> ${G.pog.pts} 分 ${G.pog.reb} 籃板 ${G.pog.ast} 助攻${G.pog.blk>=3?` ${G.pog.blk} 阻攻`:''}${G.pog.stl>=3?` ${G.pog.stl} 抄截`:''}</div>
+      <div class="ser">${over?`🏁 系列賽結束：<b style="color:${col(win)}">${esc(nm(S,win))}</b> ${Math.max(G.wa,G.wb)}–${Math.min(G.wa,G.wb)} 勝出`:G.wa===G.wb?`系列賽 ${G.wa}–${G.wb} 平手`:`<b style="color:${col(G.wa>G.wb?z.a:z.b)}">${esc(nm(S,G.wa>G.wb?z.a:z.b))}</b> 系列賽 ${Math.max(G.wa,G.wb)}–${Math.min(G.wa,G.wb)} 領先`}</div></div>`:'';
+  const isLast=ui.pb.k===L.length-1;
+  return `<div class="pb">
+    <div class="pbh"><span class="small mut">${two?'七戰四勝系列賽':`循環賽 第 ${G.si+1}/${ns} 組・七戰四勝`}</span><span class="small mut">第 ${G.gi+1} 場</span></div>
+    <div class="sb2"><div class="tm"><div class="tn" style="color:${col(z.a)}">${esc(nm(S,z.a))}</div><div class="dots">${dots(z.a)}</div></div>
+      <div class="mid"><div class="scr"><span style="color:${col(z.a)}">${ca}</span><i>:</i><span style="color:${col(z.b)}">${cb}</span></div><div class="clk ${done?'end':''}">${clk}</div></div>
+      <div class="tm"><div class="tn" style="color:${col(z.b)}">${esc(nm(S,z.b))}</div><div class="dots">${dots(z.b)}</div></div></div>
+    ${qt}
+    <div class="feed">${evs.map((x,i)=>`<div class="ev" id="ev-${g.gid}-${G.si}-${G.gi}-${G.ev.indexOf(x)}" style="${x.side?`border-left-color:${col(x.side)}`:''}"><span class="t">${x.q<4?'Q'+(x.q+1):'OT'} ${x.clk}</span>${esc(x.txt)}</div>`).join('')||'<div class="small mut" style="text-align:center;padding:14px">跳球，比賽開始！</div>'}</div>
+    ${final}
+    <div class="pbc"><button class="ghost" data-act="pbsp">⏩ ${ui.pb.sp}x</button>
+      <button class="big" data-act="pbnext">${done?(isLast?'看最終結算 →':'下一場 →'):'直接看比分 →'}</button></div>
+    <button class="link" style="display:block;margin:10px auto 0" data-act="pbskip">跳過，直接看結算</button></div>`}
 function vResults(){
   const g=S.game,sim=S.sim,r=myRole();if(!sim)return `<div class="center mut" style="margin-top:60px"><span class="spin"></span> 模擬中…</div>`;
+  if(!ui.pbDone.has(g.gid))return vPlayback();
   const id=g.gid,sides=g.sides,T=sim.teams,N=s=>`<b style="color:${col(s)}">${esc(nm(S,s))}</b>`;
   const champ=sim.champ,two=sides.length===2,z0=sim.series[0];
   const head=two?`<div class="champ rs" style="--d:1.5s"><div class="t">CHAMPION</div><div class="w">🏆 ${N(champ)}</div><div class="small mut">七戰四勝系列賽 ${Math.max(z0.wa,z0.wb)}–${Math.min(z0.wa,z0.wb)}${z0.upset?'・😱 爆冷！':''}</div></div>`
@@ -990,8 +1101,7 @@ function vResults(){
   const boxT=(z,s)=>`<table class="box"><tr><th>${esc(nm(S,s))}</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TOV</th></tr>${z.box[s].map(x=>`<tr><td>${esc(isBench(x.slot)?'替':x.slot)} ${esc(x.n)}</td><td>${x.pts}${ar(x,'pts')}</td><td>${x.reb}${ar(x,'reb')}</td><td>${x.ast}${ar(x,'ast')}</td><td>${x.stl}${ar(x,'stl')}</td><td>${x.blk}${ar(x,'blk')}</td><td>${x.tov}${ar(x,'tov',1)}</td></tr>`).join('')}</table>`;
   const owned=new Set(sides.flatMap(s=>g.rosters[s].map(x=>g.items[x.k].n)));const leftover=g.pool.map(p=>p.n).filter(n=>!owned.has(n));
   const isP=r==='all'||ALL.includes(r);
-  return `<div class="simov" id="ov-${id}"><div class="ball">🏀</div><div>模擬對戰中…</div></div>
-  <div class="reveal rs" style="--d:1.3s"><div class="lab">THE THEME WAS</div><div class="tn">${esc(g.theme.name)}</div>${g.theme.tag?`<div class="tt">${esc(g.theme.tag)}</div>`:''}<div class="tt" style="margin-top:6px">比的是各自在當年的統治力（以當年聯盟平均為基準）</div></div>
+  return `  <div class="reveal rs" style="--d:1.3s"><div class="lab">THE THEME WAS</div><div class="tn">${esc(g.theme.name)}</div>${g.theme.tag?`<div class="tt">${esc(g.theme.tag)}</div>`:''}<div class="tt" style="margin-top:6px">比的是各自在當年的統治力（以當年聯盟平均為基準）</div></div>
   ${head}${board}${blocks}${chemCard}${muCard}${cmp}
   <section class="card rs" style="--d:${d+0.3}s">${sim.series.map(z=>`<details style="margin-top:6px"><summary>📊 決勝場 Box Score：${esc(nm(S,z.a))} ${z.games[z.games.length-1][0]}–${z.games[z.games.length-1][1]} ${esc(nm(S,z.b))}</summary>${boxT(z,z.a)}${boxT(z,z.b)}<div class="small mut" style="margin-top:4px">▲▼ 代表因為位置或對位，比他平常明顯多／少。</div></details>`).join('')}
   <details style="margin-top:12px"><summary>🧾 競標紀錄（${g.log.length} 張）</summary><div class="log">${g.log.map((l,k)=>`<div><span>${k+1}. ${esc(l.n)}</span><span style="color:${l.who?col(l.who):'var(--mut)'}">${l.who?esc(nm(S,l.who))+' $'+l.amt:'流標'}</span></div>`).join('')}</div></details>
@@ -1018,6 +1128,9 @@ document.addEventListener('click',e=>{
     case 'share':{const url=inviteLink(),txt='來玩 BALLER BID 球星喊價！點連結直接加入：';
       if(navigator.share){navigator.share({title:'BALLER BID 球星喊價',text:txt,url}).catch(()=>{})}else copyText(txt+url,'邀請連結已複製 ✅');return}
     case 'copy':return copyText(summaryText(),'已複製 ✅');
+    case 'pbsp':{const p=ui.pb;if(!p)return;const e=(Date.now()-p.t0)*p.sp,ns=p.sp===1?2:p.sp===2?4:1;p.sp=ui.pbSp=ns;p.t0=Date.now()-e/ns;return render()}
+    case 'pbnext':{const st=pbState();if(!st)return;if(!st.done){ui.pb.t0=Date.now()-(st.P*PB_Q)/ui.pb.sp;return render()}return pbNext()}
+    case 'pbskip':ui.pbDone.add(S.game.gid);ui.pb=null;render();return scrollTo(0,0);
     case 'reveal':ui.reveal.add(d.v);return render();
     case 'seat':return dispatch({a:'seat',seat:d.v,name:MYNAME});
     case 'theme':return dispatch({a:'cfg',cfg:{theme:d.id}});
