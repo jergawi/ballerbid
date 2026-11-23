@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-yDJ9JiZzeI6u4Nk9i2S798n3UFJFQrkcZXJ7afQbDA0=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-BLzNm88b719Lgz+lt143xokuEQgmQnc0PPA0lLWf4Kk=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -1174,7 +1174,7 @@ function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)retu
       const all=bA.map(x=>({...x,s:z.a})).concat(bB.map(x=>({...x,s:z.b})));const pog=all.sort((x,y)=>(y.pts+1.2*y.reb+1.5*y.ast+2*y.stl+2*y.blk)-(x.pts+1.2*x.reb+1.5*x.ast+2*x.stl+2*x.blk))[0];
       list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB,inc})})});
   pbCache={gid:g.gid+sim.champ,d:list};return list}
-const PB_Q=6000,PB_HOLD=2600,PB_SEG=1150,PB_POST=550;
+const PB_Q=10000,PB_HOLD=2600,PB_SEG=1150,PB_POST=550;
 function pbDur(G){return G.q[0].length*PB_Q+PB_HOLD}
 const pbDefSp=()=>1;
 function pbState(){const L=pbData(),p=ui.pb;if(!p||p.gid!==S.game.gid)return null;
