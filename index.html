@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-4AcRNPYiqg3BL87Leb2qw/IMKRPF0MpQN/B/H3vOkzE=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-jG9Qif03bMrrPb8013a400qkMvgkuQdY+U67cxLNQa4=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -403,7 +403,7 @@ function chem(roster,g){
 
 /* ---------- state & engine ---------- */
 function newState(){return{v:0,t:0,phase:'lobby',auth:null,code:null,
-  cfg:{players:2,budget:15,size:5,theme:'random',cats:[...CATS],era:null,team:'',picks:[],pcat:'夢幻隊',draw:12,showStats:false,hints:false,custom:{name:'',text:''}},
+  cfg:{players:2,budget:15,size:5,theme:'random',cats:[...CATS],era:null,teams:[],picks:[],pcat:'夢幻隊',draw:12,showStats:false,hints:false,custom:{name:'',text:''}},
   seats:{A:null,B:null,C:null},names:{A:'玩家 A',B:'玩家 B',C:'玩家 C'},game:null,acks:{},scores:{},sim:null,err:'',by:null}}
 const sidesOf=n=>ALL.slice(0,n);
 const SD=()=>S.game?S.game.sides:sidesOf(S.cfg.players);
@@ -429,7 +429,7 @@ const DECS=[1950,1960,1970,1980,1990,2000,2010,2020];
 // a theme fits the era filter when at least half of its years fall inside the chosen decades
 function eraOk(t,c){const e=c.era;if(!e)return true;if(t.y0==null)return false;const a=e[0],b=e[1]+9,y0=t.y0,y1=t.y1;
   const ov=Math.min(y1,b)-Math.max(y0,a)+1;return ov>=Math.max(1,0.5*(y1-y0+1))}
-const randPool=c=>THEMES.filter(t=>c.cats.includes(t.cat)&&themeOk(t,c)&&eraOk(t,c)&&(!c.team||t.fr===c.team));
+const randPool=c=>THEMES.filter(t=>c.cats.includes(t.cat)&&themeOk(t,c)&&eraOk(t,c)&&(!(c.teams&&c.teams.length)||c.teams.includes(t.fr)));
 function poolLenFor(cfg){if(cfg.theme==='random')return 0;if(cfg.theme==='pick')return pickPool(cfg.picks).items.length;if(cfg.theme==='custom')return parseCustom(cfg.custom.text).length;const t=THEMES.find(t=>t.id===cfg.theme);return t?t.items.length:0}
 function defaultDraw(cfg){const need=cfg.players*(cfg.size||5),L=poolLenFor(cfg);return L?Math.min(L,need+2):need+2}
 function drawItems(items,n,k){
@@ -536,7 +536,7 @@ function apply(S,a,actor){
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
       if('era' in n)c.era=Array.isArray(n.era)&&n.era.length===2&&n.era.every(x=>DECS.includes(x))?[Math.min(...n.era),Math.max(...n.era)]:null;
-      if('team' in n)c.team=own(FRZH,n.team)?n.team:'';
+      if(Array.isArray(n.teams))c.teams=[...new Set(n.teams.filter(k=>own(FRZH,k)))].slice(0,30);
       if(n.size===5||n.size===10){if(n.size===10&&c.size!==10&&c.budget<25)c.budget=25;if(n.size===5&&c.size===10&&c.budget===25)c.budget=15;c.size=n.size}
       if(Array.isArray(n.picks))c.picks=[...new Set(n.picks.filter(id=>typeof id==='string'&&THEMES.some(t=>t.id===id)))].slice(0,12);
       if(typeof n.pcat==='string'&&CATS.includes(n.pcat))c.pcat=n.pcat;
@@ -866,7 +866,8 @@ function vLobby(){
     const decOpt=(sel,first)=>`<option value="">${first}</option>`+DECS.map(d=>`<option value="${d}" ${sel===d?'selected':''}>${d} 年代</option>`).join('');
     themeBox+=`<div class="frow"><span class="fl">類別</span><div class="seg">${CATS.map(k=>`<button class="chip ${c.cats.includes(k)?'on':''}" data-act="cat" data-v="${k}" ${dis}>${k}</button>`).join('')}</div></div>
       <div class="frow"><span class="fl">年代</span><div class="sel2"><select data-in="era0" ${dis}>${decOpt(c.era?era[0]:null,'不限')}</select><span class="mut">到</span><select data-in="era1" ${dis}>${decOpt(c.era?era[1]:null,'不限')}</select></div></div>
-      <div class="frow"><span class="fl">球隊</span><select data-in="team" ${dis}><option value="">全部球隊</option>${Object.entries(FRZH).map(([k,v])=>`<option value="${k}" ${c.team===k?'selected':''}>${v}</option>`).join('')}</select></div>
+      <div class="frow"><span class="fl">球隊</span><select data-in="team" ${dis}><option value="">${(c.teams||[]).length?'＋ 再加一隊…':'全部球隊（可複選）'}</option>${Object.entries(FRZH).map(([k,v])=>`<option value="${k}" ${(c.teams||[]).includes(k)?'disabled':''}>${v}${(c.teams||[]).includes(k)?'（已選）':''}</option>`).join('')}</select></div>
+      ${(c.teams||[]).length?`<div class="picked" style="margin-left:44px">${c.teams.map(k=>`<span class="pk">${esc(FRZH[k])}<button data-act="tdel" data-v="${k}" ${dis} aria-label="移除">×</button></span>`).join('')}<button class="skipall" data-act="tclr" ${dis}>清除</button></div>`:''}
       <div class="small ${pool.length?'mut':'errt'}" style="margin-top:10px">${pool.length?`符合 ${pool.length} 個主題，開始時隨機抽一個，大家都不知道是哪個。`:'沒有符合的主題，請放寬條件（3 人玩需要較大的主題）。'}</div>`;
   }else if(mode==='pick'){
     const cat=c.pcat||'夢幻隊',picks=c.picks||[],list=THEMES.filter(t=>t.cat===cat),pp=pickPool(picks),need=c.players*(c.size||5);
@@ -1251,6 +1252,8 @@ document.addEventListener('click',e=>{
     case 'tmode':return dispatch({a:'cfg',cfg:{theme:d.v}});
     case 'ptog':{const p=new Set(S.cfg.picks||[]);p.has(d.v)?p.delete(d.v):p.add(d.v);return dispatch({a:'cfg',cfg:{picks:[...p]}})}
     case 'pall':{const ids=THEMES.filter(t=>t.cat===(S.cfg.pcat||'夢幻隊')&&t.id!=='usaall').map(t=>t.id);const p=new Set(S.cfg.picks||[]);const all=ids.every(x=>p.has(x));ids.forEach(x=>all?p.delete(x):p.add(x));return dispatch({a:'cfg',cfg:{picks:[...p]}})}
+    case 'tdel':return dispatch({a:'cfg',cfg:{teams:(S.cfg.teams||[]).filter(x=>x!==d.v)}});
+    case 'tclr':return dispatch({a:'cfg',cfg:{teams:[]}});
     case 'pdel':return dispatch({a:'cfg',cfg:{picks:(S.cfg.picks||[]).filter(x=>x!==d.v)}});
     case 'cat':{const c=new Set(S.cfg.cats);c.has(d.v)?c.delete(d.v):c.add(d.v);return dispatch({a:'cfg',cfg:{cats:[...c]}})}
     case 'cfg':{const val=['showStats','hints'].includes(d.k)?d.v==='1':+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
@@ -1280,7 +1283,7 @@ function bidTyped(who){const g=S.game;if(!g)return;const el=document.querySelect
 document.addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.in;if(!k||t.tagName!=='SELECT'||!S)return;const v=t.value,c=S.cfg;
   if(k==='era0'||k==='era1'){const o=c.era?[...c.era]:[null,null];o[k==='era0'?0:1]=v?+v:null;let era=null;
     if(o[0]!=null||o[1]!=null){const a=o[0]!=null?o[0]:o[1],b=o[1]!=null?o[1]:o[0];era=[a,b]}return dispatch({a:'cfg',cfg:{era}})}
-  if(k==='team')return dispatch({a:'cfg',cfg:{team:v}});
+  if(k==='team'){if(!v)return;t.value='';return dispatch({a:'cfg',cfg:{teams:[...(c.teams||[]),v]}})}
   if(k==='pcat')return dispatch({a:'cfg',cfg:{pcat:v}});
   if(k==='ptheme'){if(!v)return;t.value='';return dispatch({a:'cfg',cfg:{picks:[...(c.picks||[]),v]}})}
 });
