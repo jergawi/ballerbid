@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-tqtDz3izkmCUgCT6w2OuzzB9kjpOm6U4NngDsgp6K+g=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-hIIvzJWhr6aHqihuiZ5Ay0JgR7b/GZvs0Q5be/YHErU=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -369,7 +369,7 @@ const LS='ballerbid_local_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24d';
+const APPV='2026.11.24e';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -1034,7 +1034,7 @@ function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
   const rev=ui.reveal.has(key);
   const line=b&&b.pts!=null?`生涯 ${b.g} 場・場均 ${fmt(b.pts)} 分 ${fmt(b.trb)} 籃板 ${fmt(b.ast)} 助攻`:'';
   const era=b?`${b.from-1}–${String(b.to%100).padStart(2,'0')} 年・主要效力${own(TEAMZH,b.tm)?TEAMZH[b.tm]:b.tm}${b.dy?`・${b.dy} 年選秀第 ${b.dp} 順位`:'・落選秀'}`:'';
-  const hon=ch.slice(0,8).map(x=>`<span>${esc(x)}</span>`).join(''),sty=(sg?`<span class="sig">⭐ ${esc(sg.lab)}</span>`:'')+sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`).join('');
+  const hon=ch.slice(0,8).map(x=>`<span>${esc(x)}</span>`).join(''),sty=(sg?`<span class="sig">⭐ ${esc(sg.lab)}</span>`:'')+(TOMA.has(p.id)?`<span class="sig">🪓 戰斧暴扣</span>`:'')+sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`).join('');
   return `<div class="intro2"><div class="irow"><i class="il">榮譽</i><div class="intro">${hon}</div></div>${sty?`<div class="irow"><i class="il">球風</i><div class="intro">${sty}</div></div>`:''}</div>${line?`<div class="small mut" style="margin-top:6px">${line}</div>`:''}
     ${b?(rev?`<div class="small" style="margin-top:4px">${esc(era)}</div>`:`<button class="link" data-act="reveal" data-v="${key}">看年代和球隊（會透露主題）</button>`):''}`}
 const posChips=p=>`<div class="poss">${POS.map(s=>{const i=posInfo(p,s);return i.tier<=1?`<span class="${i.tier===0?'n':'c'}">${s}</span>`:''}).join('')}</div>`;
@@ -1127,7 +1127,7 @@ const KICO={three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'�
    tied to his numbers: chase-down blocks scale with block rate, swats only replace blocks the stats produce,
    clutch shooters get a bigger share of game-winners. */
 const SIG={
- jamesle01:{lab:'追魂鍋',kl:{dunk:'戰斧暴扣'},chase:1,k:{dunk:['{n} 一路衝刺，單手戰斧暴扣！']}},
+ jamesle01:{lab:'追魂鍋',chase:1},
  wadedw01:{lab:'閃電切入',chase:1,k:{rim:['{n} 閃電切入，空中換手上籃']}},
  pippesc01:{lab:'全能防守',chase:1,stl:['{n} 長臂抄截，一路快攻']},
  wembavi01:{lab:'長臂封阻',kl:{three:'外星人三分'},swat:['{n} 長臂一揮，把切入的上籃直接搧飛！','外星人 {n} 的臂展太誇張，上籃被搧到場邊'],k:{three:['{n} 7 呎 4 的高度投三分，根本蓋不到']}},
@@ -1152,8 +1152,8 @@ const SIG={
  nashst01:{lab:'穿針引線',pass:['{a} 鑽進禁區再穿針引線，{n} 輕鬆得分']},
  stockjo01:{lab:'經典擋拆',pass:['{a} 經典擋拆，把球塞給 {n} 輕鬆得分']},
  paulch01:{lab:'控衛之神',kl:{mid:'罰球線中距離'},pass:['{a} 擋拆後擊地傳球，{n} 接球得分'],k:{mid:['{n} 招牌罰球線中距離']}},
- malonka01:{lab:'擋拆順下',k:{mid:['{n} 擋拆後接球中距離，郵差送達 📮'],post:['{n} 背打轉身強硬得分']}},
- onealsh01:{lab:'大鯊魚灌籃',k:{dunk:['{n} 背框轉身暴扣，籃架都在晃！','{n} 雙手暴扣，差點把籃框扯下來'],post:['{n} 低位硬頂進禁區，強吃得分']}},
+ malonka01:{lab:'擋拆順下',kl:{post:'低位背打'},k:{mid:['{n} 擋拆後接球中距離，郵差送達 📮'],post:['{n} 背打轉身強硬得分']}},
+ onealsh01:{lab:'大鯊魚灌籃',kl:{post:'低位強攻'},k:{dunk:['{n} 背框轉身暴扣，籃架都在晃！','{n} 雙手暴扣，差點把籃框扯下來'],post:['{n} 低位硬頂進禁區，強吃得分']}},
  cartevi01:{lab:'飛人灌籃',k:{dunk:['{n} 起跳越過防守者，半人半神暴扣！']}},
  antetgi01:{lab:'歐洲步暴扣',k:{dunk:['{n} 三分線起步，兩步就到籃下暴扣！'],rim:['{n} 歐洲步長驅直入']}},
  leonaka01:{lab:'大手抄截',kl:{mid:'後仰跳投'},stl:['{n} 大手一伸，直接把球摸走'],k:{mid:['{n} 底角後仰跳投——彈框四下，進了！']},clutch:1},
@@ -1166,6 +1166,9 @@ const SIG={
  thompkl01:{lab:'手感爆發',k:{three:['{n} 接球就投，三分連發']}},
  butleji01:{lab:'Playoff Jimmy',clutch:1},
  rodmade01:{lab:'籃板蟲',k:{putback:['{n} 拼命搶下進攻籃板，補進']}}};
+// shared trait: the league's famous tomahawk / power dunkers (from all-time best-dunker lists: Wilkins, Carter, Dr. J, Kemp, Drexler...)
+const TOMA=new Set(['jamesle01','cartevi01','wilkido01','ervinju01','kempsh01','drexlcl01','thompda01','mcgratr01','griffbl01','moranja01','westbru01','edwaran01','willizi01','lavinza01','richaja01','smithjo03']);
+const TOMA_TXT=['{n} 高高舉起單手，戰斧暴扣！','{n} 空中把球拉到腦後，戰斧式重扣，籃框還在晃 🪓','{n} 衝進禁區起飛，頂著防守者戰斧暴扣！','{n} 快攻一路殺到底，戰斧劈扣，全場起立 🪓'];
 const sigOf=p=>p&&own(SIG,p.id)?SIG[p.id]:null;
 // movement shooters: they run off screens for their threes; athletic freaks can still recover onto a step-back/fadeaway
 const MOVERS=new Set(['curryst01','thompkl01','allenra02','millere01','redicjj01','korveky01','hamilri01','robindu01']);
@@ -1184,6 +1187,7 @@ function offKind(p,mates,r){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{cons
   add(st.big?'post':'rim',2);if(st.three)add('three',st.big?2:4);if(st.mid)add('mid',3);add('mid',1);
   if(st.rim)add('and1',1.2);if(st.big||st.rim)add('dunk',st.big?2:1.2);if(st.big)add('putback',1);if(st.guard)add('ankle',0.35);
   if(st.three&&st.star)add('logo',0.15);
+  if(TOMA.has(p.id)){const i=c.indexOf('dunk');if(i>=0)w[i]*=2;else add('dunk',1.5)}
   const g=sigOf(p);if(g&&g.k)Object.keys(g.k).forEach(k=>{const i=c.indexOf(k);if(i>=0)w[i]*=3;else if(k==='logo'&&st.three)add('logo',0.7)});
   const k=pickW(c,w,r),passers=mates.filter(q=>q!==p&&styleOf(q).pass);
   if(passers.length&&k!=='putback'&&k!=='ankle'&&k!=='logo'&&r()<0.3){const a=PICK(passers,r);return{k:(k==='dunk'||k==='rim')&&r()<0.5?'alley':k==='three'?'three':'assist',a}}
@@ -1210,6 +1214,7 @@ function gameEvents(z,game,boxA,boxB,R,r,inc){inc=inc||[];
           if(r()<pc){e.chase=c2.n;e.txt+=`……${callN(c2,r)} 從後面追上來，追魂鍋！🚫`;e.sig='追魂鍋';e.sp=c2.n;e.sid=c2.id}}}
       else{const p=pickW(T.R,T.R.map(y=>ptsOf(T,y)+1),r),o=offKind(p,T.R,r);
         if(o.k==='three'&&MOVERS.has(p.id)&&r()<0.55){e={kind:'three',side,p:p.n,play:'offball',txt:fill(PICK(OFFBALL_TXT,r),p,null,r)}}
+        else if(o.k==='dunk'&&TOMA.has(p.id)&&r()<0.65){e={kind:'dunk',side,p:p.n,txt:fill(PICK(TOMA_TXT,r),p,null,r),sig:'戰斧暴扣',sp:p.n,sid:p.id,ico:'🪓'}}
         else{const st2=sigText(p,o.k,o.a,r);e={kind:o.k,side,p:p.n,a:o.a&&o.a.n,txt:st2.txt};if(st2.sig){e.sig=st2.sig;e.sp=st2.sp;e.sid=st2.sid}}
         const hk=side+p.n;hot[hk]=(hot[hk]||0)+1;if(hot[hk]===3)ev.push({q,t:Math.min(0.99,frac+0.02),clk,side,kind:'hot',txt:`${callN(p,r)} 手感發燙！已經投進好幾球 🔥`})}
       e.q=q;e.t=frac;e.clk=clk;ev.push(e)}}
@@ -1448,7 +1453,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
   if(ball)drawBall(ctx,ball[0],ball[1],ball[2]);
   // signature moment: big sticker over the player who owns it
   if(E&&E.sig&&!done&&e>E.T-700&&e<E.T+PB_POST+500){let q=null;[z.a,z.b].forEach(s=>ro[s].forEach((p,i)=>{if(p.n===E.sp)q=P[s+i]}));
-    if(q){const v=cl01((e-E.T+700)/(PB_POST+1200)),bob=Math.sin(e/120)*2,ico=SIGICO[E.sid]||'⭐';ctx.save();ctx.translate(q[0],q[1]-24+bob);
+    if(q){const v=cl01((e-E.T+700)/(PB_POST+1200)),bob=Math.sin(e/120)*2,ico=E.ico||SIGICO[E.sid]||'⭐';ctx.save();ctx.translate(q[0],q[1]-24+bob);
       if(SIGMOVE[E.sid]==='wag')ctx.rotate(Math.sin(e/90)*0.6);const sc=v<0.15?v/0.15*1.4:1.4-(v-0.15)*0.3;ctx.scale(sc,sc);ctx.globalAlpha=v>0.85?(1-v)/0.15:1;
       ctx.font='18px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ico,0,0);ctx.restore()}}
   ctx.setTransform(k,0,0,k,0,0);
@@ -1489,7 +1494,7 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
       <div class="mid"><div class="scr"><span style="color:${col(z.a)}">${ca}</span><i>:</i><span style="color:${col(z.b)}">${cb}</span></div><div class="clk ${done?'end':''}">${clk}</div></div>
       <div class="tm"><div class="tn" style="color:${col(z.b)}">${esc(nm(S,z.b))}</div><div class="dots">${dots(z.b)}</div></div></div>
     <div class="courtw"><canvas id="court" width="${CW*2}" height="${CH*2}" aria-label="比賽動畫"></canvas></div>
-    ${done?final:`<div class="feed">${evs.map(x=>`<div class="ev ${x.sig?'sigev':''}" id="ev-${g.gid}-${G.si}-${G.gi}-${G.ev.indexOf(x)}" style="${x.side?`border-left-color:${col(x.side)}`:''}"><span class="t">${x.q<4?'Q'+(x.q+1):'OT'} ${x.clk}</span><span class="ic">${x.sig?(SIGICO[x.sid]||'⭐'):(KICO[x.kind]||'🏀')}</span>${x.sig?`<b class="sgl">⭐ ${esc(x.sig)}</b>`:''}${esc(x.txt)}</div>`).join('')||'<div class="small mut" style="text-align:center;padding:12px">跳球，比賽開始！</div>'}</div>`}
+    ${done?final:`<div class="feed">${evs.map(x=>`<div class="ev ${x.sig?'sigev':''}" id="ev-${g.gid}-${G.si}-${G.gi}-${G.ev.indexOf(x)}" style="${x.side?`border-left-color:${col(x.side)}`:''}"><span class="t">${x.q<4?'Q'+(x.q+1):'OT'} ${x.clk}</span><span class="ic">${x.sig?(x.ico||SIGICO[x.sid]||'⭐'):(KICO[x.kind]||'🏀')}</span>${x.sig?`<b class="sgl">⭐ ${esc(x.sig)}</b>`:''}${esc(x.txt)}</div>`).join('')||'<div class="small mut" style="text-align:center;padding:12px">跳球，比賽開始！</div>'}</div>`}
     ${qt}
     <div class="pbc"><button class="ghost" data-act="pbsp">⏩ ${ui.pb.sp}x</button>
       <button class="big" data-act="pbnext">${done?(isLast?'看最終結算 →':'下一場 →'):'⏭ 跳過這場'}</button></div>
