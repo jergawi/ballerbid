@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-SuMVD3yywdlKLfluw9BLvFz7j8RDoXOs6CxhM9qAf9I=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-IsQC8PXwGF3wnERo0MCxFsingpO5lRhSn8tVOVrAlcM=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -1167,6 +1167,10 @@ const SIG={
  butleji01:{lab:'Playoff Jimmy',clutch:1},
  rodmade01:{lab:'籃板蟲',k:{putback:['{n} 拼命搶下進攻籃板，補進']}}};
 const sigOf=p=>p&&own(SIG,p.id)?SIG[p.id]:null;
+// movement shooters: they run off screens for their threes; athletic freaks can still recover onto a step-back/fadeaway
+const MOVERS=new Set(['curryst01','thompkl01','allenra02','millere01','redicjj01','korveky01','hamilri01','robindu01']);
+const ATHL=new Set(['jamesle01','westbru01','antetgi01','davisan02','leonaka01','pippesc01','wembavi01','wadedw01','jordami01','garneke01','olajuha01','robinda01','moranja01','edwaran01']);
+const OFFBALL_TXT=['{n} 無球跑動，繞過兩道掩護，接球三分刷！','{n} 從底線一路跑到側翼，接球就投，進！','{n} 繞掩護甩開防守，空檔三分！'];
 function sigText(p,kind,a,r){const g=sigOf(p);if(g&&g.k&&g.k[kind]&&r()<0.85)return{txt:fill(PICK(g.k[kind],r),p,a,r),sig:g.lab,sp:p.n,sid:p.id};
   const ga=sigOf(a);if(a&&ga&&ga.pass&&(kind==='assist'||kind==='alley')&&r()<0.8)return{txt:fill(PICK(ga.pass,r),p,a,r),sig:ga.lab,sp:a.n,sid:a.id};
   return{txt:fill(PICK(KTXT[kind],r),p,a,r)}}
@@ -1204,7 +1208,9 @@ function gameEvents(z,game,boxA,boxB,R,r,inc){inc=inc||[];
         // chase-down block: a trait player on the beaten team, chance scaled by his block rate
         const ch=O.R.filter(y=>sigOf(y)&&sigOf(y).chase);if(ch.length){const c2=PICK(ch,r),pc=0.35*clamp(num(c2.blkp,1)/2.2,0.3,1);
           if(r()<pc){e.chase=c2.n;e.txt+=`……${callN(c2,r)} 從後面追上來，追魂鍋！🚫`;e.sig='追魂鍋';e.sp=c2.n;e.sid=c2.id}}}
-      else{const p=pickW(T.R,T.R.map(y=>ptsOf(T,y)+1),r),o=offKind(p,T.R,r),st2=sigText(p,o.k,o.a,r);e={kind:o.k,side,p:p.n,a:o.a&&o.a.n,txt:st2.txt};if(st2.sig){e.sig=st2.sig;e.sp=st2.sp;e.sid=st2.sid}
+      else{const p=pickW(T.R,T.R.map(y=>ptsOf(T,y)+1),r),o=offKind(p,T.R,r);
+        if(o.k==='three'&&MOVERS.has(p.id)&&r()<0.55){e={kind:'three',side,p:p.n,play:'offball',txt:fill(PICK(OFFBALL_TXT,r),p,null,r)}}
+        else{const st2=sigText(p,o.k,o.a,r);e={kind:o.k,side,p:p.n,a:o.a&&o.a.n,txt:st2.txt};if(st2.sig){e.sig=st2.sig;e.sp=st2.sp;e.sid=st2.sid}}
         const hk=side+p.n;hot[hk]=(hot[hk]||0)+1;if(hot[hk]===3)ev.push({q,t:Math.min(0.99,frac+0.02),clk,side,kind:'hot',txt:`${callN(p,r)} 手感發燙！已經投進好幾球 🔥`})}
       e.q=q;e.t=frac;e.clk=clk;ev.push(e)}}
   const N=nm2=>{const p=[...teams[z.a].R,...teams[z.b].R].find(x=>x.n===nm2);return p?callN(p,r):String(nm2).split(' ').slice(-1)[0]};
@@ -1301,6 +1307,8 @@ const SUFX=new Set(['Jr.','Sr.','II','III','IV']);
 function shortName(p){const nk=nickOf(p),k=nk?nk.split('・')[0]:'';const parts=String(p.n||'').split(' ').filter(Boolean);let last=parts[parts.length-1]||'';
   if(SUFX.has(last)&&parts.length>2)last=parts[parts.length-2];if(last.length>9&&k)return k;
   const s=(parts.length>1?parts[0][0]+'.':'')+last;return s.length>11?(k||last.slice(0,10)):s}
+function pathAt(pts,v){const seg2=[];let tot=0;for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);seg2.push(d);tot+=d}
+  let t=v*tot;for(let i=0;i<seg2.length;i++){if(t<=seg2[i]||i===seg2.length-1){const f=seg2[i]?Math.min(1,t/seg2[i]):1;return L2(pts[i],pts[i+1],f)}t-=seg2[i]}return pts[pts.length-1]}
 function guardAt(o,right,dist){const h=hoop(right),dx=h[0]-o[0],dy=h[1]-o[1],d=Math.hypot(dx,dy)||1,g=Math.min(dist,d*0.6);return[o[0]+dx/d*g,o[1]+dy/d*g-3]}
 function guard(o,right){const h=hoop(right),dx=h[0]-o[0],dy=h[1]-o[1],d=Math.hypot(dx,dy)||1,g=Math.min(16,d*0.35);return[o[0]+dx/d*g,o[1]+dy/d*g-5]}
 function setLayout(off,def,right,ro,jit){const P={};ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx+Math.sin(jit+i)*3,y+Math.cos(jit*1.2+i)*3)});
@@ -1338,7 +1346,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
         else{const v=seg(uE,0.9,1),rb=P[off+4];ball=[lerp(H2[0],rb[0],v),lerp(HY,rb[1],v),8*Math.sin(Math.PI*v)];flash=['🧱 沒進！籃板',v]}}
       L=SE;u=seg(u,0.42,1)}
     const si=E.kind==='steal'?1+(seed%4):E.kind==='block'?idx(off,E.d):idx(off,E.p),sp=ro[off][si]||ro[off][0];
-    const type=E.kind==='block'||E.kind==='steal'?'drive':playType(E,sp);
+    const type=E.kind==='block'||E.kind==='steal'?'drive':E.play||playType(E,sp);
     play:{if(inTrip)break play;
     const S0=setLayout(off,def,right,ro,jit),uA=ease(seg(u,0,0.3));
     Object.keys(S0).forEach(kk=>{P[kk]=L2(L[kk]||S0[kk],S0[kk],uA)});
@@ -1347,7 +1355,12 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
     const mv=E.sig&&E.sid&&E.sp===(ro[off][si]||{}).n?SIGMOVE[E.sid]:null,sdx=shotDx(E.kind)*(mv==='deep'&&E.kind==='three'?1.3:1);
     const spot=[right?H[0]-Math.cos(ang)*sdx:H[0]+Math.cos(ang)*sdx,HY+Math.sin(ang)*sdx*0.9];
     const uB=seg(u,0.3,0.72),uC=seg(u,0.72,1);
-    if(type==='swing'){const mid=si===1?2:1;pass.push([0.42,mid],[0.6,si]);P[off+si]=L2(P[off+si],spot,ease(seg(u,0.45,0.62)))}
+    let trail=null;
+    if(type==='offball'){const y0=P[off+si][1]>HY?1:-1,route=[P[off+si],at(right,34,HY+y0*46),at(right,10,HY+y0*8),at(right,12,HY-y0*40),at(right,40,HY-y0*78),spot];
+      const scr1=si===4?3:4,scr2=si===3?2:3;const v=ease(seg(u,0.3,0.66));P[off+si]=pathAt(route,v);trail=pathAt(route,Math.max(0,v-0.16));
+      P[off+scr1]=L2(P[off+scr1],at(right,14,HY+y0*6),ease(seg(u,0.3,0.45)));P[off+scr2]=L2(P[off+scr2],at(right,22,HY-y0*48),ease(seg(u,0.42,0.56)));
+      pass.push([0.66,si])}
+    else if(type==='swing'){const mid=si===1?2:1;pass.push([0.42,mid],[0.6,si]);P[off+si]=L2(P[off+si],spot,ease(seg(u,0.45,0.62)))}
     else if(type==='post'){P[off+si]=L2(P[off+si],at(right,24,HY+18),ease(seg(u,0.3,0.5)));pass.push([0.52,si])}
     else if(type==='pnr'){const scr=si===big?3:big,pg=0;const scrPos=[P[off+pg][0]+(right?14:-14),P[off+pg][1]+10];
       P[off+scr]=L2(P[off+scr],scrPos,ease(seg(u,0.3,0.45)));P[off+pg]=L2(P[off+pg],at(right,48,HY-10),ease(seg(u,0.48,0.64)));
@@ -1381,7 +1394,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
       const pi=pass.findIndex(x=>x[0]===t0),fromI=pi>0?pass[pi-1][1]:0;
       if(rimShot)P[off+si]=L2(P[off+si],[H[0]+(right?-9:9),HY+3],ease(uC));else P[off+si]=L2(P[off+si],spot,ease(seg(u,0.6,0.75)));
       // signature footwork
-      const away=right?-1:1,me=P[off+si]=[P[off+si][0],P[off+si][1]];
+      const away=right?-1:1,base=[P[off+si][0],P[off+si][1]],me=P[off+si]=[P[off+si][0],P[off+si][1]];
       if(mv==='fade'&&u>0.7)me[0]+=away*11*ease(seg(u,0.72,0.86));
       if(mv==='step'&&u>0.6)me[0]+=away*15*ease(seg(u,0.6,0.7));
       if(mv==='spin'&&u>0.5&&u<0.82){const a2=seg(u,0.5,0.8)*Math.PI*2;me[0]+=(Math.cos(a2)-1)*9*away;me[1]+=Math.sin(a2)*9}
@@ -1403,7 +1416,11 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
       if(type==='swing'&&t0>=0&&pi===pass.length-1){const cu=seg(u,t0,t0+0.16);D[si]=L2([lerp(bp[0],H[0],0.5),lerp(bp[1],HY,0.5)],guardAt(P[off+si],right,5),ease(cu))}
       if(rimShot&&u>0.55){let best=-1,bv=-1;ro[def].forEach((p,i)=>{if(i===si)return;const v=num(p.blkp,1)+peOf(p);if(v>bv){bv=v;best=i}});
         if(best>=0)D[best]=L2(D[best],[lerp(P[off+si][0],H[0],0.45),lerp(P[off+si][1],HY,0.45)],ease(seg(u,0.55,0.85)))}
-      if(!rimShot&&u>0.7)D[si]=L2(D[si],[lerp(P[off+si][0],H[0],0.1),P[off+si][1]-2],ease(seg(u,0.7,0.8)));
+      // contest: normally a step off the shooter; fadeaways / step-backs create space unless the defender is an athletic freak
+      if(type==='offball'&&trail&&u<0.7)D[si]=[trail[0]+(right?6:-6),trail[1]+4];
+      const cst=mv==='step'?0.6:0.7;if(!rimShot&&u>cst){const freak=ATHL.has((ro[def][si]||{}).id),sep=(mv==='fade'||mv==='step')?(freak?9:20):type==='offball'?(freak?10:18):9;
+        const from=(mv==='fade'||mv==='step')?base:P[off+si],dx=H[0]-from[0],dy=HY-from[1],dd=Math.hypot(dx,dy)||1;
+        D[si]=L2(D[si],[from[0]+dx/dd*sep,from[1]+dy/dd*sep-2],ease(seg(u,cst,cst+0.1)))}
       if(u>shotU)ro[def].forEach((p,i)=>{if(peOf(p)>=4&&i!==si)D[i]=L2(D[i],at(right,13,HY+(i%2?11:-11)),ease(seg(u,shotU,1)))});
       if(mv==='cross'&&u>0.55){D[si]=[D[si][0]-away*4,D[si][1]+16*ease(seg(u,0.55,0.66))];fallen=def+si}
       ro[def].forEach((p,i)=>{P[def+i]=L2(P[def+i],D[i],uA<1?uA*0.92:1)});
