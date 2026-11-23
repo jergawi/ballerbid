@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-9gNx+Ar2Xs0mckS3uRp63lnX5lMLnJdWr1i2VRIBx5I=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-Mz18oHicKmsP/gWbtYFjYG7PnQrptW/IA3jJMYWDJbM=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -825,15 +825,8 @@ const TEAMZH={ATL:'老鷹',STL:'老鷹',MLH:'老鷹',TRI:'老鷹',BOS:'塞爾提
 function bioOf(p){if(!p.id||!BIOS||!BIOS.p[p.id])return null;const o={};BIOS.cols.forEach((c,i)=>o[c]=BIOS.p[p.id][i]);return o}
 function roleTags(p){const t=[];if(num(p.pts,0)>=25)t.push('得分機器');if(num(p.astp,0)>=30)t.push('組織大師');else if(num(p.astp,0)>=22)t.push('傳球好手');
   if(num(p.trbp,0)>=17)t.push('籃板怪');if(num(p.blkp,0)>=4)t.push('護框長人');if(num(p.stlp,0)>=2.6)t.push('抄截高手');if(peOf(p)>=3.8&&spc(p)>=0.6)t.push('空間型長人');if(num(p.usg,20)<17&&num(p.dbpm,0)>=1.5)t.push('防守悍將');return t.slice(0,2)}
-/* Taiwan fan nicknames (common usage in Taiwanese NBA media / PTT) */
-const NICK={jamesle01:'小皇帝',birdla01:'大鳥',onealsh01:'大鯊魚',jordami01:'籃球之神',bryanko01:'小飛俠',johnsma02:'魔術強森',abdulka01:'天勾',olajuha01:'大夢',
- duncati01:'石佛',curryst01:'我家咖喱・浪花兄弟',thompkl01:'浪花兄弟',duranke01:'死神',antetgi01:'字母哥',jokicni01:'小丑',embiijo01:'大帝',davisan02:'濃眉',iversal01:'戰神',
- anthoca01:'甜瓜',wadedw01:'閃電俠',garneke01:'狼王',nowitdi01:'德國坦克',malonka01:'郵差',barklch01:'惡漢',ewingpa01:'金剛',robinda01:'海軍上將',paytoga01:'手套',
- rodmade01:'小蟲',pippesc01:'皮蛋',mingya01:'小巨人',linje01:'林來瘋',cartevi01:'半人半神',allenra02:'雷槍',piercpa01:'真理',ginobma01:'妖刀',parketo01:'法國跑車',
- howardw01:'魔獸',westbru01:'威少',hardeja01:'大鬍子',paulch01:'控衛之神',leonaka01:'可愛',georgpa01:'泡椒',greendr01:'追夢',irvinky01:'德魯大叔',ervinju01:'J 博士',
- russebi01:'指環王',roberos01:'大 O',westje01:'標誌哥',gervige01:'冰人',thomais01:'微笑刺客',drexlcl01:'滑翔機',wilkido01:'人類精華',worthja01:'神行太保',
- maravpe01:'手槍皮特',hardaan01:'便士',kempsh01:'雨人',mutomdi01:'非洲大山',wallabe01:'大 Ben',rosede01:'飆風玫瑰',willizi01:'胖虎',butleji01:'士官長',
- edwaran01:'蟻人',wembavi01:'外星人',mcgratr01:'T-Mac',doncilu01:'東 77',adamsst01:'水行俠',derozde01:'DDR'};
+/* Taiwan fan nicknames: Jerry's list (PTT / 巴哈 / 痞客邦 sources), first nickname per player */
+const NICK={abdulka01:"天勾",adamsst01:"水行俠",adebaba01:"阿爹",allenra02:"糖",anderky01:"慢速先生",antetgi01:"字母哥",anthoca01:"甜瓜",arenagi01:"0號特工",artesro01:"世界和平",barklch01:"飛豬",birdla01:"大鳥",boguemu01:"強盜",bookede01:"書人",bradlsh01:"竹竿",bryanko01:"黑曼巴",butleji01:"士官長",capelca01:"餅皇",cartevi01:"加拿大航空",cassesa01:"外星人",chambwi01:"籃球皇帝",curryse01:"咖哩弟",curryst01:"我家咖喱・浪花兄弟",davisan02:"濃眉",derozde01:"DDR",doncilu01:"東 77",drexlcl01:"滑翔機",duncati01:"石佛",duranke01:"KD",edwaran01:"蟻人",embiijo01:"大帝",ervinju01:"J博士",ewingpa01:"帝國大廈",fishede01:"小魚",francst01:"老大",garneke01:"狼王",gasolpa01:"西班牙兔子",georgpa01:"PG",gervige01:"冰人",ginobma01:"阿根廷飛人",greenac01:"鐵人",hamilri01:"面具人",hardaan01:"便士",hardati01:"甲蟲",hardeja01:"大鬍子",havlijo01:"小偷",haywago01:"星海哥",hillgr01:"好孩子",horryro01:"關鍵先生",howardw01:"魔獸",ilgauzy01:"大Z",iversal01:"答案",jamesle01:"小皇帝",johnsla02:"大媽",johnsma02:"魔術師",jokicni01:"小丑",jordami01:"飛人",kempsh01:"雨人",kiddja01:"發動機",kirilan01:"AK-47",kuminjo01:"苦命",leonaka01:"可愛",linje01:"豪神",majerda01:"震雷",malonka01:"郵差",malonmo01:"孤獨的勇士",maravpe01:"手槍",marbust01:"獨狼",mariosh01:"駭客任務",mcgratr01:"T-Mac",millere01:"終結者",mingya01:"小巨人",moblecu01:"老貓",mournal01:"大佐",mullich01:"上帝左手",murraja01:"屁孩",mutomdi01:"非洲大山",nashst01:"助推器",nowitdi01:"德國戰車",nurkiju01:"巨獸",oaklech01:"老橡樹",olajuha01:"大夢",onealsh01:"大鯊魚",parisro01:"酋長",paulch01:"CP3",paytoga01:"手套",piercpa01:"真理",pippesc01:"蝙蝠俠",porzikr01:"KP",princta01:"王子",randoza01:"Z-Bo",robinda01:"海軍上將",rodmade01:"小蟲",rosede01:"玫瑰",russebi01:"指環王",sampsra01:"超級彈簧腿",schrode01:"8400萬",scolalu01:"大鑽石",siakapa01:"洗牙啃",sprewla01:"狂人",stockjo01:"將軍",stoudam01:"小霸王",stoudda01:"小飛鼠",terryja01:"噴射機",thomais01:"微笑刺客",thompkl01:"KT",vanexni01:"小精靈",wadedw01:"閃電俠",wallabe01:"大本鐘",wallara01:"怒吼天尊",waltobi01:"紅色巨人",webbech01:"國王",wembavi01:"斑馬",westbru01:"西河",westje01:"教父",wiggian01:"圍巾",wilkido01:"人類電影精華",willija02:"白巧克力",willizi01:"胖虎",worthja01:"眼鏡蛇"};
 const nickOf=p=>p&&p.id?NICK[p.id]||'':'';
 function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
   if(b){if(b.hof)ch.push('🏛 名人堂');if(b.mvp)ch.push(`👑 MVP ×${b.mvp}`);if(b.dpoy)ch.push(`🛡 最佳防守 ×${b.dpoy}`);if(b.all1)ch.push(`年度第一隊 ×${b.all1}`);else if(b.alln)ch.push(`年度最佳陣容 ×${b.alln}`);
