@@ -94,6 +94,9 @@ function botCap(g,s){let cap=maxBid(g,s);const P=botLv(s).aware>1&&misProg(g,s);
     if(P.m.k==='left')cap=Math.min(cap,left(g,s)-t-(openN(g,s)-1));
     if(P.m.k==='cap')cap=Math.min(cap,t)}
   return Math.max(0,cap)}
+// what a card adds over a free agent in the same spot (the leftover table, where the alternative is a free agent)
+function botGainFA(g,s,p){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:pubVal(g.items[r.k])})),sm=slotMisOf(g,s);
+  return placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,-1).score-placeSearch(g,L.concat([{p,v:-1,flex:1}]),sm,-1).score}
 const realLeft=g=>g.items.slice(g.idx).filter(p=>!p.fa).length;
 // most this side would pay for card p. opt.est: a plain estimate for a rival (no noise, no extras, balanced style)
 function botMax(g,s,p,opt){p=p||cur(g);if(!p||!openN(g,s))return 0;const est=opt&&opt.est,C=botCache(g),ck=(est?'e':'m')+s+':'+g.items.indexOf(p);

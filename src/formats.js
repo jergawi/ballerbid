@@ -22,19 +22,30 @@ const fmtOf=g=>g&&FMTS[g.fmt]?g.fmt:'open';
 // format of the next game: fixed in a single game; in a season 'rotate' cycles through all three
 function fmtFor(S){const c=S.cfg;if(c.fmt==='rotate'&&S.season)return FMT_ROT[((S.season.fmt0||0)+S.season.rounds.length)%FMT_ROT.length];return FMTS[c.fmt]?c.fmt:'open'}
 const bidders=g=>g.sides.filter(s=>openN(g,s)>0&&maxBid(g,s)>=1);
-// a fair price from the card's standing in this deck (from what the card face shows): average price per spot, ~0.35x to ~2x
-function snatchPrice(g,p){const L=g.items.filter(x=>!x.fa).map(pubStar).sort((a,b)=>a-b),v=pubStar(p);
-  const pct=L.length>1?L.filter(x=>x<v).length/(L.length-1):0.5,avg=(g.budget||10)/(g.size||5);
+/* a card's standing among every card in the game, from what the card face shows. Measured against all cards rather
+   than this deck, so a price never hints at what is still face down. */
+let ALLSTAR=null;function starPct(p){if(!ALLSTAR){const seen=new Set();ALLSTAR=[];THEMES.forEach(t=>t.items.forEach(q=>{const k=q.id+':'+q.y0;if(!q.fa&&!seen.has(k)){seen.add(k);ALLSTAR.push(pubStar(q))}}));ALLSTAR.sort((a,b)=>a-b)}
+  const v=pubStar(p);let lo=0,hi=ALLSTAR.length;while(lo<hi){const m=(lo+hi)>>1;if(ALLSTAR[m]<v)lo=m+1;else hi=m}return ALLSTAR.length?lo/ALLSTAR.length:0.5}
+// Dutch clock start price: average price per spot, ~0.35x to ~2x
+function snatchPrice(g,p){const pct=starPct(p),avg=(g.budget||10)/(g.size||5);
   return clamp(Math.round(avg*(0.35+1.65*pct)),1,Math.max(1,Math.round(avg*2.2)))}
+/* last-team table: with no rival left a card is not free; it costs about what it would fetch in an auction
+   (a quarter to one and a half times the average price per spot), never more than the team can pay */
+function leftPrice(g,p){const avg=(g.budget||10)/(g.size||5);return clamp(Math.round(avg*(0.25+1.25*starPct(p))),1,Math.max(1,Math.round(avg*1.6)))}
+const leftOK=(g,s,p)=>leftPrice(g,p)<=maxBid(g,s);
 // the Dutch clock: price shown at time t (never below $1)
 const dutchAt=(g,t)=>g.price==null?null:clamp(g.price-Math.floor(Math.max(0,t-g.openAt)/(g.step||1000)),1,g.price);
 const market=g=>g.items.slice(g.idx,g.idx+MKT).map((p,i)=>({p,j:g.idx+i}));
 const leftovers=g=>g.items.slice(g.idx).map((p,i)=>({p,j:g.idx+i})).filter(x=>!x.p.fa);
 // the leftover card that helps this team most (timeouts, offline players, bots)
-function bestLeft(g,s){const L=leftovers(g);return L.length?L.slice().sort((a,b)=>botGain(g,s,b.p)-botGain(g,s,a.p))[0].j:null}
-function leftPick(S,j){const g=S.game;if(j<g.idx||j>=g.items.length||g.items[j].fa)return false;
+// the leftover card worth most to this team for its price (timeouts, offline players, bots); none if nothing is worth it
+// money only counts in the match up to the savings cap, so a team sitting on more than that pays with money it cannot use
+function bestLeft(g,s){const spare=Math.max(0,left(g,s)-openN(g,s)),useless=Math.max(0,spare-SAVE_CAP/SAVE_PT);
+  const L=leftovers(g).filter(x=>leftOK(g,s,x.p)).map(x=>{const pr=leftPrice(g,x.p)-1;return{j:x.j,v:botGainFA(g,s,x.p)-SAVE_PT*Math.max(0,pr-useless)}}).filter(x=>x.v>0);
+  return L.length?L.sort((a,b)=>b.v-a.v)[0].j:null}
+function leftPick(S,j){const g=S.game;if(j<g.idx||j>=g.items.length||g.items[j].fa)return false;const who=g.solo.who,pr=leftPrice(g,g.items[j]);if(!leftOK(g,who,g.items[j]))return false;
   if(j!==g.idx){const t=g.items[g.idx];g.items[g.idx]=g.items[j];g.items[j]=t}
-  g.stage=null;g.bid={who:g.solo.who,amt:1};sell(S,g.solo.who,1);return true}
+  g.stage=null;g.bid={who,amt:pr};sell(S,who,pr);return true}
 // sign nobody else: drop the rest of the deck, free agents fill the open spots
 function leftNone(S){const g=S.game;g.items.length=g.idx;g.idx--;g.stage=null;nextCard(S);return true}
 // called by startCard after the usual reset; returns true when the format took over the card

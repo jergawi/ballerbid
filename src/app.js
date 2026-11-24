@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25g';
+const APPV='2026.11.25i';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -108,7 +108,7 @@ const sidesOf=n=>ALL.slice(0,n);
 const openSlots=(g,s)=>{const u=g.rosters[s].map(r=>r.slot);return SLOTS(g).filter(x=>!u.includes(x))};
 const openN=(g,s)=>openSlots(g,s).length;
 const left=(g,s)=>(g.bud&&g.bud[s]!=null?g.bud[s]:g.budget)-g.spent[s];
-const maxBid=(g,s)=>openN(g,s)?(g.solo&&g.solo.who===s?1:left(g,s)-(openN(g,s)-1)):0;
+const maxBid=(g,s)=>openN(g,s)?left(g,s)-(openN(g,s)-1):0;
 /* when every other team is full, the last team no longer bids: each next card costs $1 and it may skip only a few,
    so it cannot flip through the whole pool for free */
 const fmtBusy=g=>!!(g.stage||g.sb||g.price!=null);
@@ -159,15 +159,26 @@ function starScore(p){const b=(p&&!p.fa&&bioOf(p))||{};return pval(p)+2*(b.mvp>0
 function starShuffle(items,r=Math.random){return items.map(p=>({p,k:Math.pow(r(),1/(1+Math.max(0,starScore(p))/3))})).sort((a,b)=>b.k-a.k).map(x=>x.p)}
 const EXTRA_MAX=3;
 // a card nobody wanted is replaced by one of the best players still in the reserve, at most EXTRA_MAX times per game
+/* the replacement comes up soon (one to three cards later), not at the bottom of the deck: a star parked at the end
+   would only reach whoever kept spots open the longest */
 function addExtra(g){if((g.extra||0)>=EXTRA_MAX)return false;const used=new Set(g.items.map(p=>p.n));
-  const res=g.pool.filter(p=>!used.has(p.n)).sort((a,b)=>starScore(b)-starScore(a)).slice(0,3);if(!res.length)return false;
-  const p=res[Math.floor(Math.random()*res.length)];g.items.push({...p,extra:1});g.extra=(g.extra||0)+1;return true}
-function drawItems(items,n,k){
+  const res=g.pool.filter(p=>!used.has(p.n)).sort((a,b)=>pubStar(b)-pubStar(a)).slice(0,3);if(!res.length)return false;
+  const p=res[Math.floor(Math.random()*res.length)],at=Math.min(g.items.length,g.idx+1+Math.floor(Math.random()*3));
+  g.items.splice(at,0,{...p,extra:1});g.extra=(g.extra||0)+1;return true}
+/* deck order. The cards beyond the number of roster spots are the weakest ones (by what the card face shows) and go
+   to the bottom, so nothing strong is left waiting for whoever keeps spots open. The rest is shuffled with a lean
+   toward the stars: a top card is about three times as likely as the weakest to come up at any point, so stars
+   usually show while everyone still has money and spots, yet any card can still turn up early or late. */
+function orderDeck(picked,need){const sc=p=>pubStar(p),srt=picked.slice().sort((a,b)=>sc(b)-sc(a)),tailN=Math.max(0,picked.length-need);
+  const head=srt.slice(0,srt.length-tailN),tail=shuffle(srt.slice(srt.length-tailN)),H=head.length;
+  const keyed=head.map((p,i)=>({p,k:Math.pow(Math.random(),1/(1+2*(H>1?1-i/(H-1):1)))}));
+  return keyed.sort((x,y)=>y.k-x.k).map(x=>x.p).concat(tail)}
+function drawItems(items,n,k,need){
   const pool=starShuffle(items),picked=[],used=new Set();
   for(const s of shuffle(POS)){let c=picked.filter(p=>posInfo(p,s).tier<=1).length;
     for(const p of pool){if(c>=k)break;if(used.has(p.n))continue;if(posInfo(p,s).tier<=1){picked.push(p);used.add(p.n);c++}}}
   for(const p of pool){if(picked.length>=n)break;if(!used.has(p.n)){picked.push(p);used.add(p.n)}}
-  return shuffle(picked);
+  return orderDeck(picked,need||picked.length);
 }
 function waitingFor(){if(!S.last||offline())return[];const on=onlineSet();on.add(CID);
   return sidesOf(S.cfg.players).filter(k=>S.seats[k]&&on.has(S.seats[k].cid)&&!(S.back&&S.back[S.seats[k].cid])).map(k=>S.seats[k].name)}
@@ -196,7 +207,7 @@ function startGame(S){
   const draw=c.theme==='random'||th.random?Math.min(th.items.length,need+2):clamp(c.draw|0,need,th.items.length);
   const t=now();
   S.game={gid:Math.random().toString(36).slice(2,9),theme:{id:th.id,name:th.name,tag:th.tag,cat:th.cat||'自訂',random:c.theme==='random'||!!th.random},
-    pool:th.items,items:drawItems(th.items,draw,n*size/5),extra:0,idx:0,sides,size,rosters:{},spent:{},
+    pool:th.items,items:drawItems(th.items,draw,n*size/5,n*size),extra:0,idx:0,sides,size,rosters:{},spent:{},
     bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,ovr:c.ovr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
   sides.forEach(s=>{S.game.rosters[s]=[];S.game.spent[s]=0});S.game.base=S.game.items.length;
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false,fmt0:Math.floor(Math.random()*FMT_ROT.length)};
@@ -700,8 +711,9 @@ function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</spa
     +R('降價搶標','標價一路往下掉，第一個按的人用當下價格買走。降到 $1 還沒人要就流標。')
     +R('看牌時間','每張卡先停幾秒才能出價（大廳可調），電腦也要等。大家都按「看好了」就提早開始。')
     +R('輪流提名','（選用）桌上翻 4 張，輪到的人挑一張拿出來拍。')
-    +R('流標與補牌','沒人要的牌流標，從保留池補一張明星，最多 3 張。牌用完還缺人就補自由球員（$0）。')
-    +R('最後一隊','其他人都滿了，剩下的牌全部翻開，每位 $1 自己挑。');
+    +R('牌序','明星比較容易早點出現，但任何牌都可能早或晚出。牌堆比空位多出來的那幾張是最弱的，一定在最後。')
+    +R('流標與補牌','沒人要的牌流標，接下來 1～3 張內會補一張明星（🔔），最多 3 張。牌用完還缺人就補自由球員（$0）。')
+    +R('最後一隊','其他人都滿了，剩下的牌全部翻開，照標價自己挑（大約是那張卡在拍賣會賣的價錢），不想買就用自由球員補。');
   if(t==='score')return R('實力','先發五人的攻守貢獻（該季 BPM）加總，用 1,230 支真實球隊校正。總評每差 1 分，每場約差 0.8 分。')
     +R('位置與對位','放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位。')
     +R('球權重疊','太多需要球的得分手同時上場會互相卡，扣分。')

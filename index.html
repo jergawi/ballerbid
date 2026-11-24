@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-j8kst4PJdpYuPEukhr/cFdYkd8svSEtNf7J9HgFmROY=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-+cJqQtTo2jJ1+o0KOpGQfRctaf/y2Rbc/AEmG0EloPg=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -660,6 +660,10 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .tc:disabled{opacity:.6}
 .tacd{font-size:12.5px;line-height:1.55;color:#cfd6ea;margin:6px 0 0 46px}.tacd b{color:#fff}.tacd .mut,.tacd.mut{color:#9aa6c4}
 
+.mcard2 .mpr{position:absolute;right:12px;top:10px;font-weight:900;font-size:16px;color:#e8711b}
+.mcard2.dim{opacity:.45}
+.mcard2.xtra .mpr{right:46px}
+
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
 <script src="https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js" integrity="sha384-ilRYg/zm2XqUafLvBoGVk40UfNRnvUkYMy+e/JPo4YgsFR6X9Q3jYEkqFQXquX4r" crossorigin="anonymous" async></script>
@@ -688,7 +692,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25g';
+const APPV='2026.11.25i';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -782,7 +786,7 @@ const sidesOf=n=>ALL.slice(0,n);
 const openSlots=(g,s)=>{const u=g.rosters[s].map(r=>r.slot);return SLOTS(g).filter(x=>!u.includes(x))};
 const openN=(g,s)=>openSlots(g,s).length;
 const left=(g,s)=>(g.bud&&g.bud[s]!=null?g.bud[s]:g.budget)-g.spent[s];
-const maxBid=(g,s)=>openN(g,s)?(g.solo&&g.solo.who===s?1:left(g,s)-(openN(g,s)-1)):0;
+const maxBid=(g,s)=>openN(g,s)?left(g,s)-(openN(g,s)-1):0;
 /* when every other team is full, the last team no longer bids: each next card costs $1 and it may skip only a few,
    so it cannot flip through the whole pool for free */
 const fmtBusy=g=>!!(g.stage||g.sb||g.price!=null);
@@ -833,15 +837,26 @@ function starScore(p){const b=(p&&!p.fa&&bioOf(p))||{};return pval(p)+2*(b.mvp>0
 function starShuffle(items,r=Math.random){return items.map(p=>({p,k:Math.pow(r(),1/(1+Math.max(0,starScore(p))/3))})).sort((a,b)=>b.k-a.k).map(x=>x.p)}
 const EXTRA_MAX=3;
 // a card nobody wanted is replaced by one of the best players still in the reserve, at most EXTRA_MAX times per game
+/* the replacement comes up soon (one to three cards later), not at the bottom of the deck: a star parked at the end
+   would only reach whoever kept spots open the longest */
 function addExtra(g){if((g.extra||0)>=EXTRA_MAX)return false;const used=new Set(g.items.map(p=>p.n));
-  const res=g.pool.filter(p=>!used.has(p.n)).sort((a,b)=>starScore(b)-starScore(a)).slice(0,3);if(!res.length)return false;
-  const p=res[Math.floor(Math.random()*res.length)];g.items.push({...p,extra:1});g.extra=(g.extra||0)+1;return true}
-function drawItems(items,n,k){
+  const res=g.pool.filter(p=>!used.has(p.n)).sort((a,b)=>pubStar(b)-pubStar(a)).slice(0,3);if(!res.length)return false;
+  const p=res[Math.floor(Math.random()*res.length)],at=Math.min(g.items.length,g.idx+1+Math.floor(Math.random()*3));
+  g.items.splice(at,0,{...p,extra:1});g.extra=(g.extra||0)+1;return true}
+/* deck order. The cards beyond the number of roster spots are the weakest ones (by what the card face shows) and go
+   to the bottom, so nothing strong is left waiting for whoever keeps spots open. The rest is shuffled with a lean
+   toward the stars: a top card is about three times as likely as the weakest to come up at any point, so stars
+   usually show while everyone still has money and spots, yet any card can still turn up early or late. */
+function orderDeck(picked,need){const sc=p=>pubStar(p),srt=picked.slice().sort((a,b)=>sc(b)-sc(a)),tailN=Math.max(0,picked.length-need);
+  const head=srt.slice(0,srt.length-tailN),tail=shuffle(srt.slice(srt.length-tailN)),H=head.length;
+  const keyed=head.map((p,i)=>({p,k:Math.pow(Math.random(),1/(1+2*(H>1?1-i/(H-1):1)))}));
+  return keyed.sort((x,y)=>y.k-x.k).map(x=>x.p).concat(tail)}
+function drawItems(items,n,k,need){
   const pool=starShuffle(items),picked=[],used=new Set();
   for(const s of shuffle(POS)){let c=picked.filter(p=>posInfo(p,s).tier<=1).length;
     for(const p of pool){if(c>=k)break;if(used.has(p.n))continue;if(posInfo(p,s).tier<=1){picked.push(p);used.add(p.n);c++}}}
   for(const p of pool){if(picked.length>=n)break;if(!used.has(p.n)){picked.push(p);used.add(p.n)}}
-  return shuffle(picked);
+  return orderDeck(picked,need||picked.length);
 }
 function waitingFor(){if(!S.last||offline())return[];const on=onlineSet();on.add(CID);
   return sidesOf(S.cfg.players).filter(k=>S.seats[k]&&on.has(S.seats[k].cid)&&!(S.back&&S.back[S.seats[k].cid])).map(k=>S.seats[k].name)}
@@ -870,7 +885,7 @@ function startGame(S){
   const draw=c.theme==='random'||th.random?Math.min(th.items.length,need+2):clamp(c.draw|0,need,th.items.length);
   const t=now();
   S.game={gid:Math.random().toString(36).slice(2,9),theme:{id:th.id,name:th.name,tag:th.tag,cat:th.cat||'自訂',random:c.theme==='random'||!!th.random},
-    pool:th.items,items:drawItems(th.items,draw,n*size/5),extra:0,idx:0,sides,size,rosters:{},spent:{},
+    pool:th.items,items:drawItems(th.items,draw,n*size/5,n*size),extra:0,idx:0,sides,size,rosters:{},spent:{},
     bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,ovr:c.ovr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
   sides.forEach(s=>{S.game.rosters[s]=[];S.game.spent[s]=0});S.game.base=S.game.items.length;
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false,fmt0:Math.floor(Math.random()*FMT_ROT.length)};
@@ -1522,19 +1537,30 @@ const fmtOf=g=>g&&FMTS[g.fmt]?g.fmt:'open';
 // format of the next game: fixed in a single game; in a season 'rotate' cycles through all three
 function fmtFor(S){const c=S.cfg;if(c.fmt==='rotate'&&S.season)return FMT_ROT[((S.season.fmt0||0)+S.season.rounds.length)%FMT_ROT.length];return FMTS[c.fmt]?c.fmt:'open'}
 const bidders=g=>g.sides.filter(s=>openN(g,s)>0&&maxBid(g,s)>=1);
-// a fair price from the card's standing in this deck (from what the card face shows): average price per spot, ~0.35x to ~2x
-function snatchPrice(g,p){const L=g.items.filter(x=>!x.fa).map(pubStar).sort((a,b)=>a-b),v=pubStar(p);
-  const pct=L.length>1?L.filter(x=>x<v).length/(L.length-1):0.5,avg=(g.budget||10)/(g.size||5);
+/* a card's standing among every card in the game, from what the card face shows. Measured against all cards rather
+   than this deck, so a price never hints at what is still face down. */
+let ALLSTAR=null;function starPct(p){if(!ALLSTAR){const seen=new Set();ALLSTAR=[];THEMES.forEach(t=>t.items.forEach(q=>{const k=q.id+':'+q.y0;if(!q.fa&&!seen.has(k)){seen.add(k);ALLSTAR.push(pubStar(q))}}));ALLSTAR.sort((a,b)=>a-b)}
+  const v=pubStar(p);let lo=0,hi=ALLSTAR.length;while(lo<hi){const m=(lo+hi)>>1;if(ALLSTAR[m]<v)lo=m+1;else hi=m}return ALLSTAR.length?lo/ALLSTAR.length:0.5}
+// Dutch clock start price: average price per spot, ~0.35x to ~2x
+function snatchPrice(g,p){const pct=starPct(p),avg=(g.budget||10)/(g.size||5);
   return clamp(Math.round(avg*(0.35+1.65*pct)),1,Math.max(1,Math.round(avg*2.2)))}
+/* last-team table: with no rival left a card is not free; it costs about what it would fetch in an auction
+   (a quarter to one and a half times the average price per spot), never more than the team can pay */
+function leftPrice(g,p){const avg=(g.budget||10)/(g.size||5);return clamp(Math.round(avg*(0.25+1.25*starPct(p))),1,Math.max(1,Math.round(avg*1.6)))}
+const leftOK=(g,s,p)=>leftPrice(g,p)<=maxBid(g,s);
 // the Dutch clock: price shown at time t (never below $1)
 const dutchAt=(g,t)=>g.price==null?null:clamp(g.price-Math.floor(Math.max(0,t-g.openAt)/(g.step||1000)),1,g.price);
 const market=g=>g.items.slice(g.idx,g.idx+MKT).map((p,i)=>({p,j:g.idx+i}));
 const leftovers=g=>g.items.slice(g.idx).map((p,i)=>({p,j:g.idx+i})).filter(x=>!x.p.fa);
 // the leftover card that helps this team most (timeouts, offline players, bots)
-function bestLeft(g,s){const L=leftovers(g);return L.length?L.slice().sort((a,b)=>botGain(g,s,b.p)-botGain(g,s,a.p))[0].j:null}
-function leftPick(S,j){const g=S.game;if(j<g.idx||j>=g.items.length||g.items[j].fa)return false;
+// the leftover card worth most to this team for its price (timeouts, offline players, bots); none if nothing is worth it
+// money only counts in the match up to the savings cap, so a team sitting on more than that pays with money it cannot use
+function bestLeft(g,s){const spare=Math.max(0,left(g,s)-openN(g,s)),useless=Math.max(0,spare-SAVE_CAP/SAVE_PT);
+  const L=leftovers(g).filter(x=>leftOK(g,s,x.p)).map(x=>{const pr=leftPrice(g,x.p)-1;return{j:x.j,v:botGainFA(g,s,x.p)-SAVE_PT*Math.max(0,pr-useless)}}).filter(x=>x.v>0);
+  return L.length?L.sort((a,b)=>b.v-a.v)[0].j:null}
+function leftPick(S,j){const g=S.game;if(j<g.idx||j>=g.items.length||g.items[j].fa)return false;const who=g.solo.who,pr=leftPrice(g,g.items[j]);if(!leftOK(g,who,g.items[j]))return false;
   if(j!==g.idx){const t=g.items[g.idx];g.items[g.idx]=g.items[j];g.items[j]=t}
-  g.stage=null;g.bid={who:g.solo.who,amt:1};sell(S,g.solo.who,1);return true}
+  g.stage=null;g.bid={who,amt:pr};sell(S,who,pr);return true}
 // sign nobody else: drop the rest of the deck, free agents fill the open spots
 function leftNone(S){const g=S.game;g.items.length=g.idx;g.idx--;g.stage=null;nextCard(S);return true}
 // called by startCard after the usual reset; returns true when the format took over the card
@@ -1783,6 +1809,9 @@ function botCap(g,s){let cap=maxBid(g,s);const P=botLv(s).aware>1&&misProg(g,s);
     if(P.m.k==='left')cap=Math.min(cap,left(g,s)-t-(openN(g,s)-1));
     if(P.m.k==='cap')cap=Math.min(cap,t)}
   return Math.max(0,cap)}
+// what a card adds over a free agent in the same spot (the leftover table, where the alternative is a free agent)
+function botGainFA(g,s,p){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:pubVal(g.items[r.k])})),sm=slotMisOf(g,s);
+  return placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,-1).score-placeSearch(g,L.concat([{p,v:-1,flex:1}]),sm,-1).score}
 const realLeft=g=>g.items.slice(g.idx).filter(p=>!p.fa).length;
 // most this side would pay for card p. opt.est: a plain estimate for a rival (no noise, no extras, balanced style)
 function botMax(g,s,p,opt){p=p||cur(g);if(!p||!openN(g,s))return 0;const est=opt&&opt.est,C=botCache(g),ck=(est?'e':'m')+s+':'+g.items.indexOf(p);
@@ -2029,9 +2058,9 @@ function fmtLobby(c,dis){const opts=Object.keys(FMTS).concat(c.season?['rotate']
 function miniTags(p){const b=(p&&!p.fa&&bioOf(p))||{},t=[];if(b.mvp)t.push(`👑MVP${b.mvp>1?'×'+b.mvp:''}`);if(b.ring)t.push(`🏆×${b.ring}`);if(b.as)t.push(`⭐×${b.as}`);
   if(!t.length&&b.roy)t.push('🌱新人王');const sg=typeof sigOf==='function'&&sigOf(p);if(sg)t.push(`✨${sg.lab}`);return t.slice(0,3)}
 function miniCard(g,x,opts){const p=x.p,nk=nickOf(p);
-  return `<${opts.btn?'button':'div'} class="mcard2 ${opts.sel?'sel':''} ${p.extra?'xtra':''}" ${opts.btn?`data-act="${opts.act||'nompick'}" data-v="${x.j}"`:''} style="--i:${opts.i||0}">${ovrBadge(p,g,1)}
+  return `<${opts.btn?'button':'div'} class="mcard2 ${opts.sel?'sel':''} ${p.extra?'xtra':''} ${opts.dim?'dim':''}" ${opts.btn?`data-act="${opts.act||'nompick'}" data-v="${x.j}"`:''} style="--i:${opts.i||0}">${ovrBadge(p,g,1)}
     <div class="mn">${esc(p.n)}</div>${nk?`<div class="mk">“${esc(nk)}”</div>`:''}${phaseBadge(p,g,1)}<div class="mp">${canPlay(p).map(x=>`<i>${x}</i>`).join('')}</div>
-    <div class="mt">${miniTags(p).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${opts.sel?'<span class="mck2">✓</span>':''}</${opts.btn?'button':'div'}>`}
+    <div class="mt">${miniTags(p).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${opts.price!=null?`<span class="mpr">$${opts.price}</span>`:''}${opts.sel?'<span class="mck2">✓</span>':''}</${opts.btn?'button':'div'}>`}
 function nomPanel(g,r){const mine=r==='all'||r===g.nomBy,M=market(g),sel=ui.nomSel&&ui.nomSel.gid===g.gid&&ui.nomSel.idx===g.idx?ui.nomSel.j:null;
   return `<div class="nomhd"><div class="nt"><b style="color:${col(g.nomBy)}">${esc(nm(S,g.nomBy))}</b> ${mine?'，選一位拿出來拍':'正在挑要拍的球員…'}</div>
     <div class="small mut">${mine?'挑你想要的，或丟一個對手想要的出來，讓他花錢':'桌上這幾位都可能被拿出來'}</div></div>
@@ -2101,9 +2130,9 @@ function aiLobby(sides,dis){const bots=sides.filter(isBot),lv=S.botLv||'normal';
 // last team with open spots: every card left is face up, sign the ones you want for $1
 function leftPanel(g,r){const who=g.solo.who,mine=r==='all'||r===who,L=leftovers(g),need=openN(g,who),sel=ui.leftSel&&ui.leftSel.gid===g.gid&&ui.leftSel.idx===g.idx?ui.leftSel.j:null;
   return `<div class="nomhd"><div class="nt">只剩 <b style="color:${col(who)}">${esc(nm(S,who))}</b> 有空位</div>
-    <div class="small mut">${mine?`對手都滿了，剩下的牌全部翻開。挑 <b>${need}</b> 位，每位 $1`:`剩下的牌全部翻開，${esc(nm(S,who))} 每位 $1 挑 ${need} 位`}</div></div>
-    ${L.length?`<div class="mkt left">${L.map((x,i)=>miniCard(g,x,{btn:mine,sel:sel===x.j,i,act:'lsel'})).join('')}</div>`:'<div class="center mut" style="margin:14px 0">牌堆空了</div>'}
-    <div class="nomft">${mine&&L.length?`<button class="big" data-act="lpick" data-v="${sel==null?'':sel}" ${sel==null?'disabled':''}>${sel==null?'先點一位球員':`✍️ 簽下 ${esc(String(g.items[sel].n))}（$1）`}</button>`:''}
+    <div class="small mut">${mine?`對手都滿了，剩下的牌全部翻開，照標價挑 <b>${need}</b> 位（你最多能出 $${maxBid(g,who)}）`:`剩下的牌全部翻開，${esc(nm(S,who))} 照標價挑 ${need} 位`}</div></div>
+    ${L.length?`<div class="mkt left">${L.map((x,i)=>miniCard(g,x,{btn:mine&&leftOK(g,who,x.p),sel:sel===x.j,i,act:'lsel',price:leftPrice(g,x.p),dim:!leftOK(g,who,x.p)})).join('')}</div>`:'<div class="center mut" style="margin:14px 0">牌堆空了</div>'}
+    <div class="nomft">${mine&&L.length?`<button class="big" data-act="lpick" data-v="${sel==null?'':sel}" ${sel==null?'disabled':''}>${sel==null?'先點一位球員':`✍️ 簽下 ${esc(String(g.items[sel].n))}（$${leftPrice(g,g.items[sel])}）`}</button>`:''}
     ${mine?`<button class="linkb" data-act="lnone">${ui.lnone?'再按一次確認：剩下的位置用自由球員補':`剩下的都不要，${need} 個位置用自由球員補`}</button>`:''}
     ${clock(g.leftEnd,T_LEFT,mine?'時間到自動簽最適合你的：':'挑選倒數：',mine&&r!=='all')}</div>`}
 
@@ -2623,8 +2652,9 @@ function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</spa
     +R('降價搶標','標價一路往下掉，第一個按的人用當下價格買走。降到 $1 還沒人要就流標。')
     +R('看牌時間','每張卡先停幾秒才能出價（大廳可調），電腦也要等。大家都按「看好了」就提早開始。')
     +R('輪流提名','（選用）桌上翻 4 張，輪到的人挑一張拿出來拍。')
-    +R('流標與補牌','沒人要的牌流標，從保留池補一張明星，最多 3 張。牌用完還缺人就補自由球員（$0）。')
-    +R('最後一隊','其他人都滿了，剩下的牌全部翻開，每位 $1 自己挑。');
+    +R('牌序','明星比較容易早點出現，但任何牌都可能早或晚出。牌堆比空位多出來的那幾張是最弱的，一定在最後。')
+    +R('流標與補牌','沒人要的牌流標，接下來 1～3 張內會補一張明星（🔔），最多 3 張。牌用完還缺人就補自由球員（$0）。')
+    +R('最後一隊','其他人都滿了，剩下的牌全部翻開，照標價自己挑（大約是那張卡在拍賣會賣的價錢），不想買就用自由球員補。');
   if(t==='score')return R('實力','先發五人的攻守貢獻（該季 BPM）加總，用 1,230 支真實球隊校正。總評每差 1 分，每場約差 0.8 分。')
     +R('位置與對位','放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位。')
     +R('球權重疊','太多需要球的得分手同時上場會互相卡，扣分。')

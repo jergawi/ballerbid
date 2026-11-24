@@ -648,3 +648,7 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .tc.on{background:#fff;color:#1b2233;border-color:#fff}.tc.on i{color:#2f6fd6}
 .tc:disabled{opacity:.6}
 .tacd{font-size:12.5px;line-height:1.55;color:#cfd6ea;margin:6px 0 0 46px}.tacd b{color:#fff}.tacd .mut,.tacd.mut{color:#9aa6c4}
+
+.mcard2 .mpr{position:absolute;right:12px;top:10px;font-weight:900;font-size:16px;color:#e8711b}
+.mcard2.dim{opacity:.45}
+.mcard2.xtra .mpr{right:46px}
