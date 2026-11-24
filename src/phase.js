@@ -19,7 +19,7 @@ function phaseOf(p){if(!p||p.fa||!p.y0||!p.y1)return null;if(PHC.has(p))return P
   PHC.set(p,r);return r}
 const yrLab=p=>!p||p.fa||!p.y0?'':p.y0===p.y1?`'${String(p.y0).slice(2)}`:`'${String(p.y0).slice(2)}–'${String(p.y1).slice(2)}`;
 function phaseBadge(p,g,small){const k=phaseOf(p),yr=g&&g.showYr&&yrLab(p);if(!k&&!yr)return '';const P=k&&PHASE[k];
-  return `<div class="phb ${small?'sm':''}">${P?`<span class="ph" style="--c:${P.c}">${P.ic} ${P.nm}</span>`:''}${yr?`<span class="yr">${yr}</span>`:''}</div>`}
+  return `<div class="phb ${small?'sm':''}">${P?`<span class="ph" style="--c:${P.c}">${P.nm}</span>`:''}${yr?`<span class="yr">${yr}</span>`:''}</div>`}
 /* what the badge tells a reader, in rating points: the typical gap between a card of that phase and the player's best
    stretch, measured over every card in the game. Bots use it, since people can see the badge too. */
 let PH_D=null;
