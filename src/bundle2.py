@@ -32,7 +32,7 @@ def csp(html,extra_connect=''):
     hs=[]
     for m in re.finditer(r'<script>(.*?)</script>',html,flags=re.S): hs.append("'sha256-"+base64.b64encode(hashlib.sha256(m.group(1).encode()).digest()).decode()+"'")
     pol=("default-src 'none'; script-src "+' '.join(hs)+" https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; "
-         "connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884"+extra_connect+"; style-src 'unsafe-inline' https://fonts.googleapis.com; "
+         "connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884"+extra_connect+"; style-src 'unsafe-inline' https://fonts.googleapis.com; "
          "font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'")
     return html.replace('<!--CSP-->','<meta http-equiv="Content-Security-Policy" content="'+pol+'">')
 def page(mqtt_tag):

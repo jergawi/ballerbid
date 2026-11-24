@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24s';
+const APPV='2026.11.24t';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -591,6 +591,12 @@ function fx(prev){
   else if(g.bid.amt>prev.bid)vibe(12);
 }
 setInterval(()=>{snapPrev=snapOf();tickAuth();tickBots()},250);
+/* new-version check: browsers cache the page and a tab left open keeps the old copy, so look for a newer build when the
+   app opens or comes back to the foreground (at most every 5 minutes) and offer a one-tap reload, never a forced one */
+let NEWV=null,lastChk=0;
+async function checkUpdate(){if(location.protocol!=='https:'||NEWV||Date.now()-lastChk<300000)return;lastChk=Date.now();
+  try{const t=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text(),m=/APP[V]='([^']+)'/.exec(t);if(m&&m[1]!==APPV){NEWV=m[1];render()}}catch(e){}}
+setTimeout(checkUpdate,3000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 
 /* ---------- views ---------- */
 let ui={quit:false,sel:null,themeOpen:false,reveal:new Set(),amt:{},pb:null,pbDone:new Set(),pbSp:null};
@@ -607,6 +613,7 @@ function render(){
   else if(!S||!NET.mode)html=`<div id="scr-home" class="screen">${vHome()}</div>`;
   else if(lastView())html=vRoomBar()+withView(()=>`<div id="scr-results${S.game.gid}" class="screen ${ui.pbFast?'fastrs':''}">${vResults()}</div>`);
   else html=vRoomBar()+`<div id="scr-${S.phase}${S.game?S.game.gid:''}" class="screen ${S.phase==='results'&&ui.pbFast?'fastrs':''}">${({lobby:vLobby,cards:vCards,mission:vMission,auction:vAuction,lineup:vLineup,results:vResults,season:vSeason}[S.phase]||vLobby)()}</div>`+(S.phase==='auction'&&S.game?cardFlash(S.game)+cardSheet():'');
+  if(NEWV)html=`<button class="updb" data-act="reload">有新版本，點這裡更新${S&&S.phase==='auction'?'（這局打完再按也可以）':''}</button>`+html;
   const next=document.createElement('div');next.id='app';next.className='wrap';next.innerHTML=html;
   if(window.morphdom)morphdom(app,next,{onBeforeElUpdated:(f,t)=>{if(f===document.activeElement&&(f.tagName==='INPUT'||f.tagName==='TEXTAREA'))return false;if(f.isEqualNode&&f.isEqualNode(t))return false;if(f.dataset&&f.dataset.counting)return false;return true}});
   else app.innerHTML=html;
@@ -663,6 +670,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>位置</b>：放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位；空間型長人能拉開，但籃板吃虧。</li>
   <li><b>化學</b>：真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。</li>
   <li><b>夢幻隊模式（10 人）</b>：替補約是先發 1/4 的影響力。火爆浪子可能吃兩次 T 被驅逐，犯規麻煩的人可能犯滿，都由最強的替補頂上。</li>
+  <li><b>版本</b>：${APPV}</li>
   <li><b>數據</b>：Basketball-Reference。1974 年前部分數據是推估，卡片上標「估」。</li></ul></details></section>`}
 function vRoomBar(){
   if(NET.mode==='ai')return `<div class="roombar"><span>🤖 挑戰電腦・${esc(botLv().nm)}</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
@@ -1344,6 +1352,7 @@ document.addEventListener('click',e=>{
     case 'create':return createRoom();
     case 'join':return joinRoom(document.querySelector('[data-in="code"]').value);
     case 'joinhash':{const m=/^#room-([a-z0-9]{6})(?:-(\d))?$/.exec(location.hash);if(m)joinRoom(m[1],m[2]!=null?+m[2]:undefined);return}
+    case 'reload':return location.reload();
     case 'exit':if(!offline())leaveNet();else NET.mode=null;S=null;return render();
     case 'share':{const url=inviteLink(),txt='來玩 BALLER BID 球星喊價！點連結直接加入：';
       if(navigator.share){navigator.share({title:'BALLER BID 球星喊價',text:txt,url}).catch(()=>{})}else copyText(txt+url,'邀請連結已複製 ✅');return}
