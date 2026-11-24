@@ -624,3 +624,15 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .pcard .ovrb:not(.sm) b{font-size:20px}.pcard .ovrb:not(.sm) i{font-size:11px;margin:0}
 
 .tag.ovs{background:#eef1f7;color:#4a5570}.tag.ovs.dn{background:#fdecea;color:#b3261e}.tag.ovs.up{background:#e7f6ec;color:#1e7a3c}
+
+/* 玩法 card: header toggle, tabs, key + one-line rows */
+.rules .rhd{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:0;padding:2px 0;font:inherit;font-weight:800;font-size:16px;color:var(--ink,#1b2233);cursor:pointer}
+.rules .rhd .mut{font-size:13px;font-weight:600}
+.rtabs{display:flex;gap:6px;overflow-x:auto;margin:12px -2px 10px;padding:2px;scrollbar-width:none}.rtabs::-webkit-scrollbar{display:none}
+.rtabs button{flex:none;border:1px solid #d9dfeb;background:#f6f8fc;color:#4a5570;border-radius:999px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:700;white-space:nowrap}
+.rtabs button.on{background:var(--acc,#f07a1e);border-color:var(--acc,#f07a1e);color:#fff}
+.rbody .rk{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:9px 0;border-top:1px dashed #e3e7f0;font-size:13.5px;line-height:1.55}
+.rbody .rk:first-child{border-top:0}.rbody .rk b{color:#1b2233}.rbody .rk span{color:#3d4458}
+.rq{list-style:none;counter-reset:q;padding:0!important;margin:0}.rq li{counter-increment:q;display:grid;grid-template-columns:28px 52px 1fr;align-items:start;gap:6px;padding:8px 0;border-top:1px dashed #e3e7f0;font-size:13.5px;line-height:1.55;margin:0!important}
+.rq li:first-child{border-top:0}.rq li::before{content:counter(q);width:22px;height:22px;border-radius:50%;background:#1b2233;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.rtip{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff5ea;color:#5a3a12;font-size:13.5px;line-height:1.55}

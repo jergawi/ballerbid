@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25b';
+const APPV='2026.11.25c';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -675,36 +675,44 @@ function vHome(){
     <div class="small mut" style="margin-top:6px">重新整理或斷線後，用同一個房號就能回到房間。</div></section>`}
   ${rulesCard()}`;
 }
-function rulesCard(){return `<section class="card rules"><details><summary>📖 玩法 & 對戰怎麼算</summary>
-  <h3>玩法</h3><ol>
-  <li><b>輪流出價</b>：兩人時每張牌輪流先喊，三人時蛇形（A→B→C，下一輪 C→B→A）。輪到你就輸入金額，或按「不要」。</li>
-  <li><b>時間</b>：沒人出價 20 秒、有人出價後 15 秒內沒動作，就算「不要」。其他人都不要，最高價得標。</li>
-  <li><b>牌堆</b>：明星比較容易出現在牌堆裡。大家都不要的牌直接流標，並從保留池補一張明星，一局最多補 3 張。牌用完還缺人，就補「自由球員」（$0）。</li>
-  <li><b>預算</b>：每個空位至少留 $1。沒花完的錢每 $1 加 0.3 實力，最多加 2.5。</li>
-  <li><b>排陣</b>：90 秒（10 人 120 秒），拖曳或點兩位球員互換。</li>
-  <li><b>對戰</b>：每兩隊打七戰四勝，系列賽贏最多的奪冠。</li>
-  <li><b>卡片版本</b>：每張卡是球員某一段時期的版本，比賽用的是那段時期的數據；卡面的生涯數據和榮譽是整個生涯。卡上的標籤告訴你是哪一段：新秀年、生涯早期、巔峰期（他最強的五季）、生涯晚期，年份（例如 '92）可在進階設定關掉。</li>
-  <li><b>挑戰電腦</b>：一個人跟 1～2 位 AI 總管對戰。電腦依自己陣容缺什麼、剩多少錢、場上還有哪些球員來估價，只能用跟你一樣的按鈕，看不到你的任務卡和暗標金額。新手常亂出價；普通會看陣容缺什麼；高手還會做任務、精算暗標。</li>
-  <li><b>拍賣方式</b>（大廳選）：🔨 一般喊價；🤫 暗標（同時偷偷出價，最高價得標，平手加賽一次，再平手空位多的一方得標，加賽時畫面會先告訴你）；⚡ 降價搶標（標價從高往下掉，第一個按的人用當下價格買走，0.6 秒內同時按下就抽籤；降到 $1 還沒人要就流標）。季賽可選「每局輪換」。</li>
-  <li><b>輪流提名</b>（選用）：桌上翻開 4 張，輪到的人挑一張拿出來拍，提名的人先出價。</li>
-  <li><b>替補</b>（10 人）：5 個替補自己分配「替補後衛／替補鋒線／第六人」，至少各 1 位、第六人只能 1 位。換人時由對應角色上場，第六人上場最多；放錯角色會扣分，沒有能補的角色也會扣分。</li>
-  <li><b>最後一隊</b>：其他人都滿了時，剩下那隊不用再競標：牌堆裡剩下的牌全部翻開，每位 $1，自己挑要哪幾位（不會再補新牌）。也可以都不要，讓自由球員補。</li>
-  <li><b>🃏 能力卡</b>（選用）：開局 4 選 2，帶哪幾張是秘密，每張用一次，用的時候大家都看得到。🔄 換一張：還沒人出價的牌移到牌堆最後；💸 打折券：下一次得標 $4 以上打 85 折；🏟️ 主場優勢：對戰戰力 +1；🕵️ 球探報告：偷看接下來 3 張和一位對手的任務。</li>
-  <li><b>🎯 任務卡</b>（選用）：開局每人 3 張選 1 張，任務保密，結算才揭曉。開打時達成就加戰力（卡片上寫多少就加多少）。會讓陣容變弱的任務（例如不靠 MVP）獎勵比較高。難度和獎勵依這次牌堆計算，牌堆不適合的任務不會發。</li>
-  <li><b>🏁 季賽</b>（選用）：連打 3／5／7 局，冠軍 3 分、${'三人第二名 1 分、兩人輸家打滿七場 1 分'}，任務 +1（★★★ +2）。同分比冠軍數、系列賽勝負、淨勝分。可開平衡機制：上局冠軍預算 −10%、墊底 +10%。</li></ol>
-  <h3>對戰怎麼算</h3><ul>
-  <li><b>傳奇組合</b>：湊齊三巨頭或王朝核心（公牛、Showtime、熱火、勇士、GDP…）另外加 0.8–2 戰力。</li>
-  <li><b>爆發之夜</b>：角色球員偶爾會打出生涯代表作，那場多拿好幾分。</li>
-  <li><b>綜合評分</b>：卡片左上角的數字（45–99），由生涯攻防效率（BPM）和生涯階段算出，跟電腦估價用的是同一個數字。比賽實際用的是那張卡所屬球季的表現，所以評分是很準的參考，但不是答案。大廳可關掉。</li>
-  <li><b>球星接管</b>：卡上標「爆發型」的球星（MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星），每場約 5–7% 機會接管比賽，那場球隊多約 4 分。巔峰期機率最高。電腦出價只看一般數據，不算這個。</li>
-  <li><b>看牌時間</b>：每張卡翻開先停幾秒（大廳可調），倒數完才能出價，電腦也得等。</li>
-  <li><b>實力</b>：先發五人的 BPM 加總（以當年聯盟平均為基準），用 1,230 支真實球隊校正過。</li>
-  <li><b>位置</b>：放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位；空間型長人能拉開，但籃板吃虧。</li>
-  <li><b>化學</b>：真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。</li>
-  <li><b>夢幻隊模式（10 人）</b>：替補約是先發 1/4 的影響力。火爆浪子可能吃兩次 T 被驅逐，犯規麻煩的人可能犯滿，都由最強的替補頂上。</li>
-  <li><b>版本</b>：${APPV}</li>
-  <li><b>遊戲紀錄</b>：每局打完會自動存在這台手機（最近 80 局，不會上傳）。結果頁的「匯出遊戲紀錄」可以把檔案傳給 Claude 分析平衡。</li>
-  <li><b>數據</b>：Basketball-Reference。1974 年前部分數據是推估，卡片上標「估」。</li></ul></details></section>`}
+/* 玩法: a small tabbed guide instead of one long list. 快速上手 is the default (the four things you need to play);
+   the other tabs are short key-and-one-line entries so a rule can be found at a glance. */
+const RULE_TABS=[['quick','入門'],['card','看懂卡片'],['auction','拍賣'],['score','勝負'],['more','更多']];
+function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</span></div>`;
+  if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這位球員對贏球的貢獻，看的是攻守效率（BPM），不是得分。刷分但不防守的球員會偏低，例如 Melo 78。電腦估價也用這個數字。')
+    +R('生涯 vs 本季','卡面的貢獻、數據和榮譽是整個生涯；比賽用的是卡片那一季。大多只差幾分，結果頁會揭曉「貢獻 88 → 本季 75」。')
+    +R('生涯階段','新秀年、生涯早期、巔峰期（最強五季）、生涯晚期。巔峰期通常比生涯平均更強。')
+    +R('爆發型','MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星。每場約 5–7% 機會接管比賽。')
+    +R('年份、估','\'92 是卡片球季（進階設定可關）。標「估」的是 1974 年前推估的數據。');
+  if(t==='auction')return R('一般喊價','輪流出價（三人蛇形），輪到你就喊或按「不要」。沒人出價 20 秒、有人出價後 15 秒沒動作，就算不要。')
+    +R('暗標','大家同時偷偷出價，最高價得標。平手加賽一次，再平手由空位多的一方得標。')
+    +R('降價搶標','標價一路往下掉，第一個按的人用當下價格買走。降到 $1 還沒人要就流標。')
+    +R('看牌時間','每張卡先停幾秒才能出價（大廳可調），電腦也要等。大家都按「看好了」就提早開始。')
+    +R('輪流提名','（選用）桌上翻 4 張，輪到的人挑一張拿出來拍。')
+    +R('流標與補牌','沒人要的牌流標，從保留池補一張明星，最多 3 張。牌用完還缺人就補自由球員（$0）。')
+    +R('最後一隊','其他人都滿了，剩下的牌全部翻開，每位 $1 自己挑。');
+  if(t==='score')return R('實力','先發五人的攻守貢獻（該季 BPM）加總，用 1,230 支真實球隊校正。總評每差 1 分，每場約差 0.8 分。')
+    +R('位置與對位','放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位。')
+    +R('球權重疊','太多需要球的得分手同時上場會互相卡，扣分。')
+    +R('化學','真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。三巨頭或王朝核心另加 0.8–2。')
+    +R('省錢','沒花完的錢每 $1 加 0.3，最多 2.5。')
+    +R('單場變數','球星接管（球隊那場多約 4 分）、角色球員爆發之夜，加上每場約 ±13 分的運氣，所以系列賽會爆冷。');
+  if(t==='more')return R('挑戰電腦','跟 1～2 位 AI 總管對戰，風格隨機。簡單會亂出價；普通看陣容缺什麼；困難還會做任務、精算暗標。電腦看不到你的任務和暗標。')
+    +R('能力卡','（選用）開局 4 選 2，每張用一次：換一張、打折券（85 折）、主場優勢（+1）、球探報告。')
+    +R('任務卡','（選用）3 選 1，保密到結算，達成加戰力。')
+    +R('季賽','（選用）連打 3／5／7 局。冠軍 3 分、三人第二 1 分、兩人輸家打滿七場 1 分，任務 +1。可開平衡：上局冠軍預算 −10%、墊底 +10%。')
+    +R('替補（10 人）','5 個替補分成替補後衛、替補鋒線、第六人，各至少 1 位，第六人只能 1 位。影響力約先發的 1/4。')
+    +R('遊戲紀錄','每局自動存在這台手機（最近 80 局，不上傳）。結果頁可匯出給 Claude 分析。')
+    +R('版本・數據',`${APPV}・Basketball-Reference`);
+  return `<ol class="rq"><li><b>出價</b>輪到你就喊價或按「不要」，其他人都不要時，最高價得標。</li>
+    <li><b>預算</b>每個空位至少留 $1，沒花完的錢會小加分。</li>
+    <li><b>排陣</b>把球員放到他會打的位置，替補也要分好角色。</li>
+    <li><b>對戰</b>每兩隊打七戰四勝，系列賽贏最多的奪冠。</li></ol>
+    <div class="rtip">看卡只要記一件事：<b>攻守貢獻</b>越高越能贏球，得分高不等於貢獻高。</div>`}
+function rulesCard(){const open=!!ui.rulesOpen,t=ui.rtab||'quick';
+  return `<section class="card rules"><button class="rhd" data-act="rules" aria-expanded="${open}"><span>玩法說明</span><span class="mut">${open?'收起':'展開'}</span></button>
+  ${open?`<div class="rtabs" role="tablist">${RULE_TABS.map(([k,l])=>`<button role="tab" class="${k===t?'on':''}" data-act="rtab" data-v="${k}">${l}</button>`).join('')}</div>
+  <div class="rbody">${rulesBody(t)}</div>`:''}</section>`}
 function vRoomBar(){
   if(NET.mode==='ai')return `<div class="roombar"><span>🤖 挑戰電腦・${esc(botLv().nm)}</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
   if(NET.mode==='local')return `<div class="roombar"><span>📱 同一台手機</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
@@ -788,7 +796,7 @@ function vLobby(){
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
       <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
       <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button>
-      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示綜合評分</button></div>
+      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示攻守貢獻</button></div>
       <div class="small mut" style="margin-top:6px">前兩個會透露主題的球隊和年代，預設關閉。年份只透露年代，預設開啟；想更神秘可以關掉。每張卡都會標巔峰期／生涯早期／生涯晚期。</div></section>
     ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
     ${isP?(waitingFor().length?`<button class="big" disabled>等 ${esc(waitingFor().join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">${c.season?`開始季賽（${c.season} 局）→`:'開始競標 →'}</button>`):`<div class="note">觀眾無法變更設定。</div>`}`;
@@ -1319,10 +1327,10 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
     <div class="small mut" style="text-align:center;margin-top:6px">第 ${gNo} / ${L.length} 場</div></div>`}
 /* who could take over: each team's 爆發型 players, the chance per game that one of them takes over, and how often it
    happened, so a run with no takeovers reads as the dice it is rather than as something rigged */
-/* after the games: the card's 評分 next to what that season actually played like, so a surprise (Wade's injured
+/* after the games: the card's 攻守貢獻 next to what that season actually played like, so a surprise (Wade's injured
    2007-08 shows 88 on the card and plays like a 75) is visible instead of feeling rigged */
 function ovrShift(p,g){if(!p||p.fa||g.ovr===false)return '';const a=ovrOf(p),b=seasonOvr(p),d=b-a;
-  return `<i class="tag ovs ${d<=-4?'dn':d>=3?'up':''}">評分 ${a} → 本季 ${b}</i>`}
+  return `<i class="tag ovs ${d<=-4?'dn':d>=3?'up':''}">貢獻 ${a} → 本季 ${b}</i>`}
 function tkSummary(g,sim){const rows=g.sides.map(s=>{const R=rosterOf(g,s).filter(p=>tkRate(p)>0),ch=1-R.reduce((t,p)=>t*(1-tkRate(p)),1);
     let n=0,gp=0;sim.series.forEach(z=>{if(z.a!==s&&z.b!==s)return;gp+=z.games.length;(z.tk||[]).forEach(t=>{if(t[s])n++})});
     return `<span style="color:${col(s)}">${esc(nm(S,s))}</span> ${R.length?`${R.length} 人・每場約 ${Math.round(ch*100)}%・實際 ${n}/${gp} 場`:'沒有爆發型球員'}`});
@@ -1479,6 +1487,8 @@ document.addEventListener('click',e=>{
       const lo=g.tie?g.tie.amt:0,mx=maxBid(g,d.who);if(isNaN(v)||v<lo)return toast(`至少 $${lo}`);if(v>mx)return toast(`你最多只能出 $${mx}（要留錢補滿陣容）`);return dispatch({a:'sbid',who:d.who,amt:v,idx:g.idx})}
     case 'rdone':{const g=S.game,me=myRole();return dispatch({a:'rdone',who:me==='all'||!g.sides.includes(me)?g.sides[0]:me})}
     case 'logexp':logExport();return;
+    case 'rules':ui.rulesOpen=!ui.rulesOpen;return render();
+    case 'rtab':ui.rtab=d.v;return render();
     case 'grab':sfx('grab');return dispatch({a:'grab',who:d.who,idx:S.game.idx,p:dutchAt(S.game,now())});
     case 'spass':return dispatch({a:'spass',who:d.who,idx:S.game.idx});
     case 'brole':return dispatch({a:'brole',who:d.who,slot:d.v,role:d.role});
