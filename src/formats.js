@@ -30,8 +30,11 @@ let ALLSTAR=null;function starPct(p){if(!ALLSTAR){const seen=new Set();ALLSTAR=[
 function snatchPrice(g,p){const pct=starPct(p),avg=(g.budget||10)/(g.size||5);
   return clamp(Math.round(avg*(0.35+1.65*pct)),1,Math.max(1,Math.round(avg*2.2)))}
 /* last-team table: with no rival left a card is not free; it costs about what it would fetch in an auction
-   (a quarter to one and a half times the average price per spot), never more than the team can pay */
-function leftPrice(g,p){const avg=(g.budget||10)/(g.size||5);return clamp(Math.round(avg*(0.25+1.25*starPct(p))),1,Math.max(1,Math.round(avg*1.6)))}
+   ($1 for the weaker half of the deck, up to about one and a half times the average price per spot for the best) */
+// Measured within this game's deck: at the last table every card in it is face up or already sold, so this tells
+// nobody anything new, and the weakest cards of even a Dream Team deck cost $1.
+function leftPrice(g,p){const avg=(g.budget||10)/(g.size||5),L=g.items.filter(x=>!x.fa).map(pubStar).sort((a,b)=>a-b),v=pubStar(p);
+  const pct=L.length>1?L.filter(x=>x<v).length/(L.length-1):0.5;return clamp(Math.round(avg*1.5*Math.pow(pct,1.5)),1,Math.max(1,Math.round(avg*1.6)))}
 const leftOK=(g,s,p)=>leftPrice(g,p)<=maxBid(g,s);
 // the Dutch clock: price shown at time t (never below $1)
 const dutchAt=(g,t)=>g.price==null?null:clamp(g.price-Math.floor(Math.max(0,t-g.openAt)/(g.step||1000)),1,g.price);

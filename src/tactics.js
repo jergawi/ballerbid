@@ -8,30 +8,32 @@
      well both sides fit their schemes, every game draws its own execution, and a team that loses a game adjusts;
    - variance: three-point-heavy offenses and gambling defenses widen a team's range of scores, fast pace narrows it
      (more possessions, the better team shows through). A weaker team can take on risk on purpose;
-   - 核心擋拆 (heliocentric): one creating star with shooters around him plays above the sum of the parts, and that
+   - 持球核心 (heliocentric): one creating star with shooters around him plays above the sum of the parts, and that
      star gets more chances to take a game over.
    Magnitudes: fit about -1..+1.5 rating points, the star system up to +1.2, a counter up to about +-1.3, against
    typical team ratings of 15-30, so tactics swing close matchups but do not overturn a clear talent gap. */
 const TAC_O={
-  five:{nm:'五外拉開',d:'五個人都能站外線，拉開空間找三分和切入',need:'射手，尤其是會投的長人'},
-  helio:{nm:'核心擋拆',d:'球交給一位持球核心，其他人拉開等球',need:'一位會組織的球星＋射手，球權不要太分散'},
-  post:{nm:'內線強攻',d:'球往禁區送，低位單打、搶進攻籃板',need:'低位得分手、籃板好的長人'},
-  run:{nm:'跑轟快攻',d:'搶斷、搶到籃板就全速推進',need:'抄截高手、會傳球的後衛'},
-  motion:{nm:'傳導進攻',d:'不停傳球跑位，人人都可能出手',need:'三位以上會傳球的人'}};
+  five:{nm:'五外拉開',d:'五個人都站外線，拉開空間找三分和切入（勇士死亡五小、塞爾提克）',need:'射手，尤其是會投三分的 PF、C'},
+  helio:{nm:'持球核心',d:'球交給一位又能得分又能傳的球星，其他四人拉開等球（Harden 的火箭、Luka 的獨行俠）',need:'一位會組織的球星＋四個射手，球權不要太分散'},
+  pnr:{nm:'擋拆雙人組',d:'控衛和長人反覆擋拆，長人順下灌籃或外彈投籃（Stockton-Malone、Nash-Stoudemire）',need:'會傳球的後衛＋會順下或外彈的長人，旁邊要有射手'},
+  post:{nm:'內線強攻',d:'球往禁區送，低位單打、搶進攻籃板（俠客湖人、灰熊雙塔）',need:'低位得分手、籃板好的長人，兩個長人更好'},
+  run:{nm:'跑轟快攻',d:'搶斷、搶到籃板就全速推進（Showtime 湖人、7 秒太陽）',need:'抄截高手、會傳球的後衛、跑得動的鋒線'},
+  motion:{nm:'傳導進攻',d:'不停傳球跑位，人人都可能出手（2014 馬刺、金塊）',need:'三位以上會傳球的人，沒有誰特別霸球'}};
 const TAC_D={
   switch:{nm:'全員換防',d:'遇到掩護就換人，不讓擋拆成形',need:'能守多個位置的人'},
   drop:{nm:'護框收縮',d:'長人守在籃下，放對手投中距離',need:'護框長人'},
   zone:{nm:'區域聯防',d:'各守一區塞住禁區，藏住弱防守者',need:'護框長人＋外圍有人能抄'},
   blitz:{nm:'包夾壓迫',d:'包夾持球者，逼他把球交出去',need:'抄截高手、防守好的人'}};
 const TO_K=Object.keys(TAC_O),TD_K=Object.keys(TAC_D);
-// offense advantage before centering (+ = the offense tends to do well). Double-centered below so neither an offense
-// nor a defense is better in general; only the pairing matters.
-const TAC_RAW={five:{switch:-0.5,drop:1,zone:1,blitz:0},helio:{switch:-1,drop:0.5,zone:-0.5,blitz:-1},post:{switch:1,drop:-1,zone:-1,blitz:0.5},
-  run:{switch:0,drop:0.5,zone:0.5,blitz:-0.5},motion:{switch:0,drop:0,zone:1,blitz:1}};
-const TAC_M=(()=>{const M={};const rm={},cm={};let all=0;TO_K.forEach(o=>{rm[o]=TD_K.reduce((t,d)=>t+TAC_RAW[o][d],0)/TD_K.length});
-  TD_K.forEach(d=>{cm[d]=TO_K.reduce((t,o)=>t+TAC_RAW[o][d],0)/TO_K.length});TO_K.forEach(o=>TD_K.forEach(d=>all+=TAC_RAW[o][d]));all/=TO_K.length*TD_K.length;
-  TO_K.forEach(o=>{M[o]={};TD_K.forEach(d=>M[o][d]=+(TAC_RAW[o][d]-rm[o]-cm[d]+all).toFixed(3))});return M})();
-const TAC_VAR_O={five:0.14,helio:0.06,post:0,run:-0.07,motion:-0.04},TAC_VAR_D={switch:0,drop:0,zone:0.06,blitz:0.08};
+// offense advantage against each defense (+ = the offense tends to do well). Every row sums to zero, so no offense is
+// better in general; only the pairing matters. Sources: switching smothers pick-and-roll and off-ball screens but
+// invites post-ups and isolation hunting; drop coverage protects the rim and gives up pull-ups and pick-and-pop;
+// zones pack the paint and give up threes to good shooting and ball movement; blitzing the ball handler takes the
+// ball out of a star's hands but leaves 4-on-3 behind it.
+const TAC_RAW={five:{switch:-1,drop:0.5,zone:1,blitz:-0.5},helio:{switch:0.5,drop:1,zone:-0.5,blitz:-1},pnr:{switch:-1,drop:0.5,zone:0,blitz:0.5},
+  post:{switch:1,drop:-1,zone:-1,blitz:1},run:{switch:0.5,drop:0.5,zone:0,blitz:-1},motion:{switch:-1,drop:-0.5,zone:0.75,blitz:0.75}};
+const TAC_M=TAC_RAW;
+const TAC_VAR_O={five:0.14,helio:0.06,pnr:0.03,post:0,run:-0.07,motion:-0.04},TAC_VAR_D={switch:0,drop:0,zone:0.06,blitz:0.08};
 const FIT_O=2.4,FIT_D=1.6,HELIO_K=1.2,CNT_K=1.3,TK_HELIO=1.6;
 
 // player traits used by the schemes (0..1)
@@ -44,6 +46,9 @@ function tacRaw(Rall){const R=starters(Rall),bigs=R.filter(p=>p.slot==='PF'||p.s
   const sh=R.map(tShoot),star=helioStar(R),oth=R.filter(p=>p!==star),us=tTop(oth.map(p=>num(p.usg,18)),1)[0]||18;
   const O={five:0.6*tMean(sh)+0.4*tMean(bigs.map(tShoot)),
     helio:star?0.45*crea(star)*clamp(pval(star)/7,0,1)+0.35*tMean(oth.map(tShoot))+0.2*(1-clamp((us-22)/10,0,1)):0,
+    pnr:(()=>{const hv=p=>0.6*crea(p)+0.4*tPass(p),bv=p=>Math.max(0.5*rebS(p)+0.5*clamp(pval(p)/5,0,1),tShoot(p));
+      const h=R.filter(p=>p.slot==='PG'||p.slot==='SG').sort((x,y)=>hv(y)-hv(x))[0],b=bigs.slice().sort((x,y)=>bv(y)-bv(x))[0],rest=R.filter(p=>p!==h&&p!==b);
+      return 0.4*(h?hv(h):0)+0.35*(b?bv(b):0)+0.25*tMean(rest.map(tShoot))})(),
     post:0.4*Math.max(0,...R.map(postS))+0.3*tMean(bigs.map(rebS))+0.3*Math.min(1,R.filter(p=>peOf(p)>=4).length/2),
     run:0.35*tMean(tTop(R.map(tStl),3))+0.35*Math.max(0,...R.filter(p=>p.slot==='PG'||p.slot==='SG').map(tPass))+0.3*R.filter(p=>peOf(p)<=3.5).length/5,
     motion:0.6*Math.min(1,R.filter(p=>tPass(p)>=0.3).length/3)+0.4*(1-clamp((Math.max(...R.map(p=>num(p.usg,18)))-tMean(R.map(p=>num(p.usg,18))))/14,0,1))};
@@ -67,6 +72,7 @@ function tacOf(g,s){const t=g.tac&&g.tac[s],F=tacFit(rosterOf(g,s));return{o:t&&
 /* bots: easy picks among its three best fits at random, normal takes its best fit, hard also looks at what the
    other teams are likely to run (their best fits) and adds the expected counter */
 function botTac(g,s){const lv=(S.bots&&S.bots[s]&&S.bots[s].lv)||S.botLv||'normal',F=tacFit(rosterOf(g,s)),r=rng(hash(g.gid+s+'tac'));
+  const sys=typeof botSys==='function'&&botSys(g,s);if(sys&&F.O[sys]>=0.3)return{o:sys,d:bestOf(F.D)};   // the system coach runs his system
   if(lv==='easy'){const pk=o=>{const k=Object.keys(o).sort((a,b)=>o[b]-o[a]).slice(0,3);return k[Math.floor(r()*k.length)]};return{o:pk(F.O),d:pk(F.D)}}
   if(lv!=='hard')return{o:bestOf(F.O),d:bestOf(F.D)};
   const opp=g.sides.filter(x=>x!==s).map(x=>tacScout(g,x));
@@ -92,14 +98,15 @@ function tacHint(kind,k){if(kind==='o'){const row=TAC_M[k],good=TD_K.filter(d=>r
   return (good.length?`通常守得住：${good.join('、')}`:'')+(good.length&&bad.length?'；':'')+(bad.length?`比較怕：${bad.join('、')}`:'')}
 function tacPanel(g,s,rd){const t=tacOf(g,s),bo=bestOf(t.F.O),bd=bestOf(t.F.D),pc=x=>Math.round(x*100);
   const chip=(kind,k,nm,fit,best,on)=>`<button class="tc ${on?'on':''}" data-act="tac" data-who="${s}" data-k="${kind}" data-v="${k}" ${rd?'disabled':''}>${nm}<i>${pc(fit)}</i>${best?'<em>推薦</em>':''}</button>`;
-  const O=TAC_O[t.o],D=TAC_D[t.d];
-  return `<div class="tacbox"><div class="blab">戰術 <span class="tacsub">數字是陣容契合度</span></div>
+  const O=TAC_O[t.o],D=TAC_D[t.d],eo=FIT_O*(t.F.O[t.o]-0.45),ed=FIT_D*(t.F.D[t.d]-0.45),eh=t.o==='helio'?HELIO_K*clamp(t.F.starGap/6,0,1)*t.F.O.helio:0,sg=x=>(x>=0?'+':'')+x.toFixed(1);
+  return `<div class="tacbox"><div class="blab">戰術 <span class="tacsub">數字＝契合度（比幾 % 的隨機陣容適合），不是強度</span></div>
     <div class="tacrow"><span class="tl">進攻</span><div class="tcs">${TO_K.map(k=>chip('o',k,TAC_O[k].nm,t.F.O[k],k===bo,k===t.o)).join('')}</div></div>
     <div class="tacd"><b>${O.nm}</b>：${O.d}。需要${O.need}。<span class="mut">${tacHint('o',t.o)}</span></div>
     <div class="tacrow"><span class="tl">防守</span><div class="tcs">${TD_K.map(k=>chip('d',k,TAC_D[k].nm,t.F.D[k],k===bd,k===t.d)).join('')}</div></div>
     <div class="tacd"><b>${D.nm}</b>：${D.d}。需要${D.need}。<span class="mut">${tacHint('d',t.d)}</span></div>
     ${t.o==='helio'&&t.F.star?`<div class="tacd">核心：<b>${esc(t.F.star)}</b>。他越比隊友強、隊友越會投，這套越好用，他接管比賽的機會也變多。</div>`:''}
-    <div class="tacd mut">克制只是傾向：每場執行好壞不同，輸球的一方也會調整。對手選什麼要開打才知道。</div></div>`}
+    <div class="tacd">目前加成：進攻 <b>${sg(eo)}</b>、防守 <b>${sg(ed)}</b>${eh?`、核心 <b>${sg(eh)}</b>`:''}（總評每 1 分 ≈ 每場多 0.8 分）</div>
+    <div class="tacd mut">契合 45 左右等於沒加成；100 比 99 只多 0.02。克制只是傾向：每場執行不同，輸球的一方也會調整。對手選什麼開打才知道。</div></div>`}
 // one line per series for the results
 function tacLine(z){if(!z.tac)return '';const A=z.tac[z.a],B=z.tac[z.b],nmA=esc(nm(S,z.a)),nmB=esc(nm(S,z.b));
   const ca=tacCounter(A,B),cb=tacCounter(B,A),edge=x=>x>=0.35?'佔上風':x<=-0.35?'被限制':'互有來回';

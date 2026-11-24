@@ -31,18 +31,62 @@ const BOT_LV={
   easy:{nm:'新手',d:'常亂出價，適合熟悉規則',noise:0.3,aware:0,shade:[0.45,0.95],react:[1000,2000],think:[1600,3600],jump:0.3},
   normal:{nm:'普通',d:'看陣容缺什麼出價，懂傳奇組合',noise:0.2,aware:1,react:[600,1300],think:[1100,2900],jump:0.2},
   hard:{nm:'高手',d:'再加上做任務、精算暗標，反應更快',noise:0.1,aware:2,react:[330,800],think:[900,2400],jump:0.12}};
-// c bends dollars per rating point: above 1 pays a premium for stars (auctions do), below 1 spreads money
-const BOT_STYLE={bal:{nm:'🤖 穩健派',c:1.2},star:{nm:'🤖 巨星控',c:1.6},depth:{nm:'🤖 精算師',c:0.85}};
+/* styles. Every style works from the same public facts (card face, rosters, money, cards shown so far); what differs
+   is the central rule it bids by:
+     c      bends dollars per rating point (above 1 pays a premium for the best cards, below 1 spreads money)
+     top/rest  multiplier for the deck's top cards / the rest (as far as the bot can estimate the deck)
+     fame   how much honours and a high career scoring average count on top of 攻守貢獻 (negative: distrusts fame)
+     sys    a system coach: picks one offense for the game and pays extra for players whose face tags fit it
+     disc   pays only this share of what a card is worth to it (bargain hunting), and never jump-bids
+     pace   [early, late] spending lean across the deck
+     spoil  chance to keep raising a card a rival clearly wants, past its own value, to drain the rival's money
+   mix: a blend of two styles (numbers averaged, the system coach and the spoiler keep their own rule). */
+const BOT_STYLE={
+  bal:{nm:'🤖 穩健派',sh:'穩健',d:'預算平均分配，陣容缺什麼補什麼',c:1.2},
+  star:{nm:'🤖 巨星控',sh:'巨星',d:'愛砸大錢買牌堆裡最強的幾張',c:1.6,top:1.4,rest:0.95},
+  depth:{nm:'🤖 精算師',sh:'精算',d:'不追巨星，買便宜好用的深度',c:0.85,top:0.85,rest:1.08},
+  sys:{nm:'🤖 體系派',sh:'體系',d:'先定好戰術，再買適合的拼圖',c:1.15,sys:0.9},
+  value:{nm:'🤖 撿便宜',sh:'撿便宜',d:'只買被低估的人，不跟人搶價',c:1.05,disc:0.92,fame:-0.15},
+  early:{nm:'🤖 衝鋒派',sh:'衝鋒',d:'開局就砸錢，後面撿便宜補',c:1.3,pace:[1.3,0.75]},
+  late:{nm:'🤖 耐心派',sh:'耐心',d:'前面省錢，等別人錢花光再出手',c:1.1,pace:[0.8,1.25]},
+  fame:{nm:'🤖 名氣派',sh:'名氣',d:'看榮譽和得分買人，常高估刷分王',c:1.3,fame:0.7},
+  spoil:{nm:'🤖 攪局者',sh:'攪局',d:'專門抬高對手想要的牌',c:1.15,spoil:0.6}};
+const STYLE_K=Object.keys(BOT_STYLE),STYLE_DEF={c:1.2,top:1,rest:1,fame:0,sys:0,disc:1,pace:[1,1],spoil:0};
 const SAVE_PT=0.3,SAVE_CAP=2.5;   // savAdj in baseRate: 0.3 rating per leftover $, capped at 2.5
 const isBot=s=>NET.mode==='ai'&&!!(S&&S.bots&&S.bots[s]);
 const botLv=s=>BOT_LV[S&&S.bots&&s&&S.bots[s]&&S.bots[s].lv||S&&S.botLv]||BOT_LV.normal;   // per-seat level is for tests
-const BOT_DESC={bal:'預算平均分配',star:'愛砸大錢買巨星',depth:'追求便宜好用'};
-// st is the chosen style or 'rand'; play is the style actually used this game
-const botSt=s=>{const b=S.bots&&S.bots[s];return BOT_STYLE[b&&(b.st==='rand'?b.play:b.st)]||BOT_STYLE.bal};
-// before each game: random styles get rolled (once per season, so a season keeps the same opponents), names follow the style
-function aiAssign(S){if(!S.bots)return;const sides=Object.keys(S.bots),taken=sides.filter(s=>S.bots[s].st!=='rand').map(s=>S.bots[s].st);
-  sides.forEach(s=>{const b=S.bots[s];if(b.st==='rand'&&(!S.season||!b.play)){const free=Object.keys(BOT_STYLE).filter(k=>!taken.includes(k));b.play=free[Math.floor(Math.random()*free.length)]||'bal'}
-    if(b.st==='rand')taken.push(b.play);S.names[s]=BOT_STYLE[b.st==='rand'?b.play:b.st].nm})}
+const BOT_DESC=Object.fromEntries(STYLE_K.map(k=>[k,BOT_STYLE[k].d]));BOT_DESC.mix='每局混合兩種風格';
+function styleParams(keys){const P={...STYLE_DEF};const L=keys.map(k=>({...STYLE_DEF,...BOT_STYLE[k]}));
+  ['c','top','rest','fame','disc'].forEach(x=>P[x]=L.reduce((t,s)=>t+s[x],0)/L.length);P.pace=[0,1].map(i=>L.reduce((t,s)=>t+s.pace[i],0)/L.length);
+  P.sys=Math.max(...L.map(s=>s.sys));P.spoil=Math.max(...L.map(s=>s.spoil));P.keys=keys;return P}
+// the style actually played this game: a fixed style, the style a random seat rolled, or a two-style mix
+const botSt=s=>{const b=S.bots&&S.bots[s];if(!b)return styleParams(['bal']);const k=b.st==='rand'||b.st==='mix'?b.play:b.st;
+  return styleParams(k==='mix'&&b.mix?b.mix:[BOT_STYLE[k]?k:'bal'])};
+const styleName=b=>{const k=b.st==='rand'||b.st==='mix'?b.play:b.st;return k==='mix'&&b.mix?'🤖 '+b.mix.map(x=>BOT_STYLE[x].sh).join('×'):BOT_STYLE[k]?BOT_STYLE[k].nm:'🤖 電腦'};
+// before each game: random seats roll a style (a quarter of the time a mix of two), once per season so a season
+// keeps its opponents; names follow the style
+function aiAssign(S){if(!S.bots)return;const sides=Object.keys(S.bots),taken=sides.filter(s=>!['rand','mix'].includes(S.bots[s].st)).map(s=>S.bots[s].st);
+  sides.forEach(s=>{const b=S.bots[s];if((b.st==='rand'||b.st==='mix')&&(!S.season||!b.play)){const free=STYLE_K.filter(k=>!taken.includes(k));
+      const pick=()=>free.splice(Math.floor(Math.random()*free.length),1)[0]||'bal';
+      if(b.st==='mix'||Math.random()<0.25){b.play='mix';b.mix=[pick(),pick()]}else{b.play=pick();delete b.mix}}
+    if(b.st==='rand'||b.st==='mix')taken.push(...(b.play==='mix'?b.mix:[b.play]));S.names[s]=styleName(b)})}
+/* the system coach's offense for this game, drawn from the game id (fixed, and the same on a reload) */
+const botSys=(g,s)=>{const P=botSt(s);if(!P.sys)return null;const K=typeof TO_K!=='undefined'?TO_K:['five'];return K[Math.floor(rng(hash(g.gid+s+'sys'))()*K.length)]};
+/* public player traits, read only from what the card face shows: the skill chips (三分射手, 傳球好手, 籃板怪, 護框長人 …,
+   exactly the ones on the card), the positions he can play, his honours and career scoring average */
+function pubTraits(p){const t=new Set(faceSkills(p,S&&S.game)),pos=canPlay(p),big=pos.includes('C')||(pos.includes('PF')&&!pos.includes('SG'));
+  return{shoot:t.has('三分射手')||t.has('空間型長人')?1:t.has('中投機器')?0.4:0,pass:t.has('組織大師')?1:t.has('傳球好手')?0.6:0,reb:t.has('籃板怪')?1:0,
+    rim:t.has('護框長人')?1:0,stl:t.has('抄截高手')?1:0,def:t.has('防守悍將')?1:0,post:t.has('禁區殺手')?1:0,score:t.has('得分機器')?1:0,big,guard:pos.includes('PG')||pos.includes('SG')}}
+function sysMatch(g,s,p,sys){const T=pubTraits(p),R=g.rosters[s].map(r=>pubTraits(g.items[r.k]));
+  switch(sys){case 'five':return T.big?T.shoot:0.8*T.shoot;
+    case 'helio':return R.some(x=>x.pass&&x.score)?T.shoot:(T.pass&&T.score?1:0.5*T.pass);
+    case 'pnr':return T.guard?T.pass:T.big?Math.max(T.reb,T.rim,T.shoot):0.7*T.shoot;
+    case 'post':return T.big?Math.max(T.post,T.reb):0.4*T.shoot;
+    case 'run':return Math.max(T.stl,T.guard?T.pass:0,0.5*T.def);
+    case 'motion':return Math.max(T.pass,0.5*T.shoot);default:return 0}}
+// fame on top of impact: honours (what pubStar adds over 攻守貢獻) and a career scoring average above 15
+const fameOf=p=>{if(!p||p.fa)return 0;const b=bioOf(p)||{};return 0.5*(pubStar(p)-pubVal(p))+0.08*(num(b.pts,10)-15)};
+const valFor=(s,p)=>{if(!p||p.fa)return FA_V();const f=botSt(s).fame;return pubVal(p)+(f?f*fameOf(p):0)};
 function gauss(R){const u=Math.max(1e-9,R()),v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 /* What a bot may know about a card: only what the card face shows. The match sim uses the numbers of the card's own
    season(s), which stay hidden unless 顯示數據 is on; the face shows the player's career numbers and honours. So bots
@@ -50,7 +94,10 @@ function gauss(R){const u=Math.max(1e-9,R()),v=R();return Math.sqrt(-2*Math.log(
    person reading the card, and switch to the season numbers only when everyone can see them. Tapping 看年代和球隊 can still reward a fan who knows
    which season a card is. */
 const PUBV=new WeakMap();
-function pubVal(p){if(!p||p.fa)return -1;if(S&&S.game&&S.game.showStats)return pval(p);if(PUBV.has(p))return PUBV.get(p);
+/* a free agent is worth what the match sim gives it (about -2.3), not more: bots used to rate it -1 and took free
+   agents over real players too often */
+let FAV=null;const FA_V=()=>FAV!=null?FAV:(FAV=+pval(FA).toFixed(2));
+function pubVal(p){if(!p||p.fa)return FA_V();if(S&&S.game&&S.game.showStats)return pval(p);if(PUBV.has(p))return PUBV.get(p);
   const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:c.g})+phaseGap(phaseOf(p)):pval(p);PUBV.set(p,v);return v}
 const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
@@ -72,15 +119,16 @@ function deckEst(g){const vis=(g.stage==='left'?leftovers(g).map(x=>x.p):g.stage
 function botMarket(g){const C=botCache(g);if(C.m)return C.m;
   const vals=deckEst(g);
   let os=0,ob=0;g.sides.forEach(t=>openSlots(g,t).forEach(x=>isBench(x)?ob++:os++));
-  const N=os+ob,vN=N>0&&vals.length>=N?vals[N-1]:-1;
+  const tight=realLeft(g)+Math.max(0,EXTRA_MAX-(g.extra||0))<=os+ob+2;   // public counts: few cards to spare, a pass may end in a free agent
+  const N=os+ob,vN=tight?FA_V():N>0&&vals.length>=N?vals[N-1]:FA_V();
   const money=g.sides.reduce((a,t)=>a+Math.max(0,left(g,t)-openN(g,t)),0);
   return C.m={vals,os,ob,N,vN,money}}
 // dollars per rating point for a style curve
 function botLam(g,c){const M=botMarket(g);let sum=0;M.vals.slice(0,M.N).forEach((v,r)=>{sum+=(r<M.os?1:PLACE_BENCH)*Math.pow(Math.max(0,v-M.vN),c)});return M.money/Math.max(sum,0.3)}
 // what this card adds to the side's roster over a replacement-level player
 function botGain(g,s,p){const C=botCache(g),ck='g'+s+':'+g.items.indexOf(p);if(C.v[ck]!=null)return C.v[ck];
-  const L=g.rosters[s].map(r=>({p:g.items[r.k],v:pubVal(g.items[r.k])})),sm=slotMisOf(g,s),vN=botMarket(g).vN;
-  const a=placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,vN).score,b=placeSearch(g,L.concat([{p,v:vN,flex:1}]),sm,vN).score;
+  const L=g.rosters[s].map(r=>({p:g.items[r.k],v:valFor(s,g.items[r.k])})),sm=slotMisOf(g,s),vN=botMarket(g).vN;
+  const a=placeSearch(g,L.concat([{p,v:valFor(s,p)}]),sm,vN).score,b=placeSearch(g,L.concat([{p,v:vN,flex:1}]),sm,vN).score;
   return C.v[ck]=a-b}
 const misBonus=x=>x.bonus!=null?x.bonus:MTIER[x.tier].bonus;
 function botExtra(g,s,p){let x=0;
@@ -95,24 +143,26 @@ function botCap(g,s){let cap=maxBid(g,s);const P=botLv(s).aware>1&&misProg(g,s);
     if(P.m.k==='cap')cap=Math.min(cap,t)}
   return Math.max(0,cap)}
 // what a card adds over a free agent in the same spot (the leftover table, where the alternative is a free agent)
-function botGainFA(g,s,p){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:pubVal(g.items[r.k])})),sm=slotMisOf(g,s);
-  return placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,-1).score-placeSearch(g,L.concat([{p,v:-1,flex:1}]),sm,-1).score}
+function botGainFA(g,s,p){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:valFor(s,g.items[r.k])})),sm=slotMisOf(g,s);
+  return placeSearch(g,L.concat([{p,v:valFor(s,p)}]),sm,FA_V()).score-placeSearch(g,L.concat([{p,v:FA_V(),flex:1}]),sm,FA_V()).score}
 const realLeft=g=>g.items.slice(g.idx).filter(p=>!p.fa).length;
 // most this side would pay for card p. opt.est: a plain estimate for a rival (no noise, no extras, balanced style)
 function botMax(g,s,p,opt){p=p||cur(g);if(!p||!openN(g,s))return 0;const est=opt&&opt.est,C=botCache(g),ck=(est?'e':'m')+s+':'+g.items.indexOf(p);
   if(C.v[ck]!=null)return C.v[ck];
-  const lv=botLv(s),c=est?1.2:botSt(s).c,M=botMarket(g);
-  const sur=botGain(g,s,p)+(!est&&lv.aware?botExtra(g,s,p):0);
+  const lv=botLv(s),P=botSt(s),c=est?1.2:P.c,M=botMarket(g),sys=!est&&botSys(g,s);
+  const sur=botGain(g,s,p)+(!est&&lv.aware?botExtra(g,s,p):0)+(sys?P.sys*sysMatch(g,s,p,sys):0);
   const nz=est?1:Math.exp(lv.noise*gauss(rng(hash(g.gid+':'+g.items.indexOf(p)+':'+s))));
   // a team holding more spare money than the table average can afford to pay more (money left past the savings cap is wasted)
   const spare=t=>Math.max(0,left(g,t)-openN(g,t)),avg=g.sides.reduce((x,t)=>x+spare(t),0)/g.sides.length,rich=avg>0?clamp(Math.sqrt(spare(s)/avg),0.6,1.6):1;
-  // style attitude to the deck's top cards: 巨星控 pays a premium for them, 精算師 lets them go and pays a bit more for depth
-  const top=M.vals.length?pubVal(p)>=M.vals[Math.min(2,M.vals.length-1)]:false,att=est?1:{star:top?1.4:0.95,depth:top?0.85:1.08}[S.bots&&S.bots[s]&&(S.bots[s].st==='rand'?S.bots[s].play:S.bots[s].st)]||1;
-  let v=sur>0?1+botLam(g,c)*(est?1:rich)*att*Math.pow(sur,c)*nz:0;
+  // style attitude to the deck's top cards (巨星控 pays a premium, 精算師 lets them go), spending pace across the deck,
+  // and the bargain hunter's discount
+  const top=M.vals.length?pubVal(p)>=M.vals[Math.min(2,M.vals.length-1)]:false,att=est?1:top?P.top:P.rest;
+  const d=g.items.length?g.idx/g.items.length:0,pace=est?1:P.pace[0]+(P.pace[1]-P.pace[0])*d,disc=est?1:P.disc+(1-P.disc)*d*d;   // the bargain hunter loosens up as the deck runs down
+  let v=sur>0?1+botLam(g,c)*(est?1:rich)*att*pace*disc*Math.pow(sur,c)*nz:0;
   // cards are running out: the alternative is a free agent. Unspent money is worth SAVE_PT rating per $ in the match
   // sim, and nothing past SAVE_CAP, so money a team cannot spend well is better spent on anyone above a free agent
   if(realLeft(g)<=M.N+1){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:pubVal(g.items[r.k])})),sm=slotMisOf(g,s);
-    const gFA=placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,-1).score-placeSearch(g,L.concat([{p,v:-1,flex:1}]),sm,-1).score;
+    const gFA=placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,FA_V()).score-placeSearch(g,L.concat([{p,v:FA_V(),flex:1}]),sm,FA_V()).score;
     const spare=left(g,s)-openN(g,s);
     if(gFA>0)v=Math.max(v,1+gFA/SAVE_PT+Math.max(0,spare-SAVE_CAP/SAVE_PT)/Math.max(1,openN(g,s)))}
   if(!est&&lv.aware>1){const P=misProg(g,s);                        // 一擲千金 / 標王: be ready to pay big for a top card
@@ -150,10 +200,14 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
     return{a:'sbid',who:s,amt:clamp(amt,lo,Math.max(lo,Math.min(mx,maxBid(g,s)))),idx:g.idx}}
   // Dutch clock: choose the price to stop at (like a sealed bid), then tap when the clock gets there
   if(g.price!=null){const thr=Math.min(g.price,botFirstPrice(g,s,R,lv,botMax(g,s)));return thr>=1?{a:'grab',who:s,idx:g.idx,p:thr}:{a:'spass',who:s,idx:g.idx}}
-  const mx=botMax(g,s),b=g.bid.amt;if(mx<=b)return{a:'pass',who:s,idx:g.idx};
+  const mx=botMax(g,s),b=g.bid.amt;
+  // the spoiler: a rival leads and is expected (from public facts) to go well past this price; push it up, risking
+  // being left holding the card at up to a quarter over its own value
+  if(mx<=b){const P=botSt(s);if(P.spoil&&g.bid.who&&g.bid.who!==s){const riv=botRivalMax(g,s),cap=Math.min(maxBid(g,s),Math.floor(Math.max(mx,1)*1.25)+1);
+      if(riv>=b+3&&b+1<=cap&&R()<P.spoil)return{a:'bid',who:s,amt:b+1,idx:g.idx}}return{a:'pass',who:s,idx:g.idx}}
   const rivalCap=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0&&!g.pass[t]).map(t=>maxBid(g,t)));
-  let amt=!b?Math.max(1,Math.round(mx*(lv.aware?rr(0.3,0.5):rr(0.2,0.7)))):b+1;
-  if(b&&mx-b>=5&&R()<lv.jump)amt=b+1+Math.ceil((mx-b)*rr(0.15,0.35));   // the odd jump bid, like people do
+  const P=botSt(s);let amt=!b?Math.max(1,Math.round(mx*(P.disc<1?rr(0.15,0.3):lv.aware?rr(0.3,0.5):rr(0.2,0.7)))):b+1;
+  if(b&&mx-b>=5&&P.disc>=1&&R()<lv.jump)amt=b+1+Math.ceil((mx-b)*rr(0.15,0.35));   // the odd jump bid, like people do (not the bargain hunter)
   return{a:'bid',who:s,amt:clamp(amt,b+1,Math.min(mx,Math.max(b+1,rivalCap+1))),idx:g.idx}}
 
 /* ---------- driver: runs on the 250 ms tick, one pending decision per bot ---------- */

@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25i';
+const APPV='2026.11.25j';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -287,7 +287,7 @@ function apply(S,a,actor){
       if(seat!=='spec'&&S.seats[seat]&&S.seats[seat].cid!==actor.cid)return false;
       for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===actor.cid&&k!==seat)S.seats[k]=null;
       if(seat!=='spec')S.seats[seat]={cid:actor.cid,name:clean(a.name)||'無名氏'};return true}
-    case 'aist':{if(NET.mode!=='ai'||S.phase!=='lobby'||S.season||!S.bots||!S.bots[a.s]||!(own(BOT_STYLE,a.v)||a.v==='rand'))return false;S.bots[a.s].st=a.v;if(a.v!=='rand')S.names[a.s]=BOT_STYLE[a.v].nm;return true}
+    case 'aist':{if(NET.mode!=='ai'||S.phase!=='lobby'||S.season||!S.bots||!S.bots[a.s]||!(own(BOT_STYLE,a.v)||a.v==='rand'||a.v==='mix'))return false;const B=S.bots[a.s];B.st=a.v;delete B.play;delete B.mix;aiAssign(S);return true}
     case 'ailv':{if(NET.mode!=='ai'||S.phase!=='lobby'||S.season||!own(BOT_LV,a.v))return false;S.botLv=a.v;return true}
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
@@ -438,8 +438,11 @@ function boCands(R,gi){const v=R.filter(p=>!p.fa).map(p=>pval(p)).sort((a,b)=>a-
 const TK_PTS=4;
 function tkRate(p){if(!p||p.fa)return 0;const b=bioOf(p)||{};let v=b.mvp>0?0.065:(b.all1>=2||b.as>=8||b.fmvp)?0.05:0;
   if(!v)return 0;const ph=typeof phaseOf==='function'?phaseOf(p):null;return v*({prime:1.15,early:0.85,late:0.7,rook:0.6}[ph]||1)}
-function tkPick(R,gi,r,mul){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n)),rt=p=>tkRate(p)*((mul&&mul[p.n])||1);
-  const c=R.filter(p=>!out.has(p.n)&&tkRate(p)>0);for(let i=c.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
+/* a team's chance of a takeover in one game is capped at TK_TEAM: a roster of five MVPs (a Dream Team deck) should not
+   turn the special night into a weekly event; the rates are scaled down together so who takes over stays fair */
+const TK_TEAM=0.16;
+function tkPick(R,gi,r,mul){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n)),rt0=p=>tkRate(p)*((mul&&mul[p.n])||1);
+  const c=R.filter(p=>!out.has(p.n)&&tkRate(p)>0),all=1-c.reduce((t,p)=>t*(1-rt0(p)),1),sc=all>TK_TEAM?Math.log(1-TK_TEAM)/Math.log(1-all):1,rt=p=>1-Math.pow(1-rt0(p),sc);for(let i=c.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
   for(const p of c)if(r()<rt(p))return p.n;return null}
 function boxFor(R,per,score,r,bo,tk){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{reb:1.3,ast:1.3}[k]||1:x.p.n===tk?{reb:1.15,ast:1.25}[k]||1:1;
   const w=k=>per.map(x=>{const b=st(x.p);return mf(x)*bx(x,k)*{pts:Math.pow(Math.max(2,b.pts*x.m.pts),0.65),reb:Math.max(1,b.trb*x.m.reb),ast:Math.max(.5,b.ast*x.m.ast),stl:Math.max(.2,b.stl*x.m.stl),blk:Math.max(.1,b.blk*x.m.blk),tov:Math.max(.3,b.tov*x.m.tov)}[k]*(0.75+0.5*r())});
@@ -699,7 +702,7 @@ function vHome(){
 }
 /* 玩法: a small tabbed guide instead of one long list. 快速上手 is the default (the four things you need to play);
    the other tabs are short key-and-one-line entries so a rule can be found at a glance. */
-const RULE_TABS=[['quick','入門'],['card','看懂卡片'],['auction','拍賣'],['score','勝負'],['more','更多']];
+const RULE_TABS=[['quick','入門'],['card','卡片'],['auction','拍賣'],['tac','戰術'],['score','勝負'],['more','更多']];
 function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</span></div>`;
   if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這位球員對贏球的貢獻，看的是攻守效率（BPM），不是得分。刷分但不防守的球員會偏低，例如 Melo 78。電腦估價也用這個數字。')
     +R('生涯 vs 本季','卡面的貢獻、數據和榮譽是整個生涯；比賽用的是卡片那一季。大多只差幾分，結果頁會揭曉「貢獻 88 → 本季 75」。')
@@ -714,14 +717,30 @@ function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</spa
     +R('牌序','明星比較容易早點出現，但任何牌都可能早或晚出。牌堆比空位多出來的那幾張是最弱的，一定在最後。')
     +R('流標與補牌','沒人要的牌流標，接下來 1～3 張內會補一張明星（🔔），最多 3 張。牌用完還缺人就補自由球員（$0）。')
     +R('最後一隊','其他人都滿了，剩下的牌全部翻開，照標價自己挑（大約是那張卡在拍賣會賣的價錢），不想買就用自由球員補。');
+  if(t==='tac')return `<div class="rtip" style="margin:0 0 8px">戰術是<b>建隊方針</b>：先想好要打哪一套，拍賣時就照它買人。排陣時選一套進攻、一套防守。</div>`
+    +R('契合度','戰術旁的數字（0–100）：你的先發五人比幾 % 的隨機陣容更適合這套。45 左右等於沒加成，越高加越多、越低反而扣分；100 和 99 只差 0.02 分。選中後會直接寫出加成。')
+    +R('加成多大','契合度最多約 +1.3（進攻）、+0.9（防守），持球核心再加最多 +1.2，克制約 ±1.3。總評每 1 分 ≈ 每場多 0.8 分，所以能翻轉接近的對戰，翻不了實力差很多的。')
+    +R('五外拉開','五人都站外線投三分、切入。最關鍵是 PF、C 也要會投（看卡上的「三分射手」「空間型長人」）。例：勇士死亡五小、2024 塞爾提克。好打區域聯防、護框收縮；怕全員換防。變數大，適合弱隊賭一把。')
+    +R('持球核心','一位又能得分又能傳的球星＋四個射手（Harden 火箭、Luka 獨行俠、LeBron）。核心比隊友強越多越好，他接管比賽的機會 ×1.6。好打護框收縮、也能找換防的錯位單打；怕包夾。')
+    +R('擋拆雙人組','會傳的後衛＋會順下（籃板好、灌籃）或外彈（會投）的長人，旁邊放射手。例：Stockton-Malone、Nash-Stoudemire、CP3-Chandler。好打護框收縮、包夾（長人接球後 4 打 3）；怕全員換防。')
+    +R('內線強攻','球往禁區送：低位得分手（「禁區殺手」）、籃板好的長人，兩個長人更好。例：俠客湖人、灰熊雙塔。好打換防和包夾（小個子守不住）；怕護框收縮、區域聯防。')
+    +R('跑轟快攻','抄截、搶到籃板就快攻：抄截高手、會傳的後衛、跑得動的鋒線。例：Showtime 湖人、7 秒太陽。比分比較穩，強隊不容易被爆冷。怕包夾壓迫。')
+    +R('傳導進攻','三位以上會傳球、沒人特別霸球，不停傳導。例：2014 馬刺。好打區域聯防、包夾；怕全員換防。')
+    +R('全員換防','五人都能守多個位置（卡上能打三個位置以上）。剋擋拆、五外、傳導；怕內線錯位，也會被持球核心找錯位單打。')
+    +R('護框收縮','靠一位護框長人（「護框長人」）守籃下。剋內線強攻；怕持球核心拔起來投、會外彈的長人。')
+    +R('區域聯防','護框長人＋外圍有人能抄，塞住禁區、藏住弱防守者。剋內線、持球核心；怕五外和傳導。')
+    +R('包夾壓迫','抄截高手和防守好的人去包夾持球者。剋持球核心、跑轟、五外；怕擋拆、內線和傳導。變數大。')
+    +R('不是絕對','克制只是傾向：每場執行度不同，輸球的一方會調整，下一場對手的克制優勢少兩成。');
   if(t==='score')return R('實力','先發五人的攻守貢獻（該季 BPM）加總，用 1,230 支真實球隊校正。總評每差 1 分，每場約差 0.8 分。')
     +R('位置與對位','放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位。')
     +R('球權重疊','太多需要球的得分手同時上場會互相卡，扣分。')
     +R('化學','真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。三巨頭或王朝核心另加 0.8–2。')
     +R('省錢','沒花完的錢每 $1 加 0.3，最多 2.5。')
-    +R('戰術','排陣時選進攻和防守。陣容越適合加越多（選不適合的會扣分）；有些戰術通常剋某些戰術，但每場執行不同，輸球方也會調整。核心擋拆讓「一位球星＋射手」發揮得比數字更好。三分多的打法變數大，跑轟讓強隊更穩。')
+    +R('戰術','排陣時選一套進攻、一套防守，細節看「戰術」分頁。')
     +R('單場變數','球星接管（球隊那場多約 4 分）、角色球員爆發之夜，加上每場約 ±13 分的運氣，所以系列賽會爆冷。');
-  if(t==='more')return R('挑戰電腦','跟 1～2 位 AI 總管對戰，風格隨機。簡單會亂出價；普通看陣容缺什麼；困難還會做任務、精算暗標。電腦看不到你的任務和暗標。')
+  if(t==='more')return R('挑戰電腦','跟 1～2 位電腦總管對戰。難度：新手常亂出價；普通看陣容缺什麼；高手還會做任務、精算暗標、猜你的戰術。')
+    +R('電腦風格','穩健派（平均分配）、巨星控（重金買最強幾張）、精算師（買深度）、體系派（先定戰術再買拼圖）、撿便宜（只買被低估的人）、衝鋒派（開局就砸錢）、耐心派（後面才出手）、名氣派（看榮譽和得分，常高估刷分王）、攪局者（抬高你想要的牌）。隨機時有時是兩種混搭，名字會寫出來，你可以針對它。')
+    +R('公平','電腦看不到還沒翻的牌、主題名單、你的任務、暗標、戰術，也看不到其他電腦的底價；它讀球員只用卡面上看得到的東西。')
     +R('能力卡','（選用）開局 4 選 2，每張用一次：換一張、打折券（85 折）、主場優勢（+1）、球探報告。')
     +R('任務卡','（選用）3 選 1，保密到結算，達成加戰力。')
     +R('季賽','（選用）連打 3／5／7 局。冠軍 3 分、三人第二 1 分、兩人輸家打滿七場 1 分，任務 +1。可開平衡：上局冠軍預算 −10%、墊底 +10%。')
@@ -836,6 +855,11 @@ function roleTags(p){const t=[];if(num(p.pts,0)>=25)t.push('得分機器');if(nu
 /* Taiwan fan nicknames: Jerry's list (PTT / 巴哈 / 痞客邦 sources), first nickname per player */
 const NICK={gilgesh01:"SGA",loveke01:"愛神",abdulka01:"天勾",adamsst01:"水行俠",adebaba01:"阿爹",allenra02:"糖",anderky01:"慢速先生",antetgi01:"字母哥",anthoca01:"甜瓜",arenagi01:"Agent 0",artesro01:"世界和平",barklch01:"惡漢",birdla01:"大鳥",boguemu01:"強盜",bookede01:"書人",bradlsh01:"竹竿",bryanko01:"黑曼巴",butleji01:"士官長",capelca01:"餅皇",cartevi01:"加拿大航空",cassesa01:"外星人",chambwi01:"籃球皇帝",curryse01:"咖哩弟",curryst01:"我家咖喱・浪花兄弟",davisan02:"濃眉",derozde01:"DDR",doncilu01:"東 77",drexlcl01:"滑翔機",duncati01:"石佛",duranke01:"死神",edwaran01:"蟻人",embiijo01:"大帝",ervinju01:"J博士",ewingpa01:"Gorilla",fishede01:"小魚",francst01:"老大",garneke01:"狼王",gasolpa01:"西班牙兔子",georgpa01:"PG-13",gervige01:"冰人",ginobma01:"妖刀",greenac01:"鐵人",greendr01:"追夢",hamilri01:"面具人",hardaan01:"便士",hardati01:"甲蟲",hardeja01:"大鬍子",havlijo01:"小偷",haywago01:"星海哥",hillgr01:"好孩子",horryro01:"關鍵先生",howardw01:"魔獸",ilgauzy01:"大Z",irvinky01:"德魯大叔",iversal01:"答案",jamesle01:"小皇帝",johnsla02:"大媽",johnsma02:"魔術師",jokicni01:"小丑",jordami01:"飛人",kempsh01:"雨人",kiddja01:"發動機",kirilan01:"AK-47",kuminjo01:"苦命",leonaka01:"可愛",linje01:"豪神",majerda01:"震雷",malonka01:"郵差",malonmo01:"孤獨的勇士",maravpe01:"手槍",marbust01:"獨狼",mariosh01:"駭客任務",mcgratr01:"T-Mac",millere01:"終結者",mingya01:"小巨人",moblecu01:"老貓",mournal01:"大佐",mullich01:"上帝左手",murraja01:"屁孩",mutomdi01:"非洲大山",nashst01:"助推器",nowitdi01:"德國坦克",nurkiju01:"巨獸",oaklech01:"老橡樹",olajuha01:"大夢",onealsh01:"大鯊魚",parisro01:"酋長",parketo01:"法國跑車",paulch01:"CP3",paytoga01:"手套",piercpa01:"真理",pippesc01:"皮蓬",porzikr01:"KP",princta01:"王子",randoza01:"Z-Bo",robinda01:"海軍上將",rodmade01:"小蟲",rosede01:"飆風玫瑰",russebi01:"指環王",sampsra01:"超級彈簧腿",schrode01:"8400萬",scolalu01:"大鑽石",siakapa01:"洗牙啃",sprewla01:"狂人",stockjo01:"將軍",stoudam01:"小霸王",stoudda01:"小飛鼠",terryja01:"噴射機",thomais01:"微笑刺客",thompkl01:"浪花兄弟",vanexni01:"小精靈",wadedw01:"閃電俠",wallabe01:"大本鐘",wallara01:"怒吼天尊",waltobi01:"紅色巨人",webbech01:"國王",wembavi01:"斑馬",westbru01:"威少",westje01:"教父",wiggian01:"圍巾",wilkido01:"人類電影精華",willija02:"白巧克力",willizi01:"胖虎",worthja01:"眼鏡蛇"};
 const nickOf=p=>p&&own(NICK,p.id)?NICK[p.id]:'';
+/* the skill chips a card face shows (at most three), in display order. The bots read players through exactly this
+   list (bot.js pubTraits), so they never know a trait a person cannot see. */
+function faceSkills(p,g){if(!p||p.fa)return[];const b=bioOf(p),sk=[];if(b){const f=String(b.sk||'');if(f.includes('3'))sk.push('三分射手');if(f.includes('m'))sk.push('中投機器');if(f.includes('r'))sk.push('禁區殺手')}
+  if(g&&g.size===10){if(foulProne(p))sk.unshift('犯規麻煩');if(isHot(p))sk.unshift('火爆浪子')}
+  roleTags(p).forEach(t=>{if(!sk.includes(t))sk.push(t)});return sk.slice(0,3)}
 function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
   if(b){if(b.hof)ch.push('🏛 名人堂');if(b.ring)ch.push(`🏆 總冠軍 ×${b.ring}`);if(b.fmvp)ch.push(`🏅 FMVP ×${b.fmvp}`);if(b.mvp)ch.push(`👑 MVP ×${b.mvp}`);if(b.dpoy)ch.push(`🛡 最佳防守 ×${b.dpoy}`);if(b.all1)ch.push(`年度第一隊 ×${b.all1}`);else if(b.alln)ch.push(`年度最佳陣容 ×${b.alln}`);
     if(b.as)ch.push(`全明星 ×${b.as}`);if(b.roy)ch.push('新人王');if(b.ad1)ch.push(`防守一隊 ×${b.ad1}`);if(b.ad2)ch.push(`防守二隊 ×${b.ad2}`);
@@ -848,7 +872,7 @@ function introBlock(p,key){const b=bioOf(p),tags=roleTags(p),ch=[],sk=[];
   const rev=ui.reveal.has(key);
   const line=b&&b.pts!=null?`生涯 ${b.g} 場・場均 ${fmt(b.pts)} 分 ${fmt(b.trb)} 籃板 ${fmt(b.ast)} 助攻`:'';
   const era=b?`${b.from-1}–${String(b.to%100).padStart(2,'0')} 年・主要效力${own(TEAMZH,b.tm)?TEAMZH[b.tm]:b.tm}${b.dy?`・${b.dy} 年選秀第 ${b.dp} 順位`:'・落選秀'}`:'';
-  const hon=ch.slice(0,8).map(x=>`<span>${esc(x)}</span>`).join(''),sty=(sg?`<span class="sig">⭐ ${esc(sg.lab)}</span>`:'')+(TOMA.has(p.id)?`<span class="sig">🪓 戰斧暴扣</span>`:'')+sk.slice(0,3).map(x=>`<span class="sk">${esc(x)}</span>`).join('');
+  const hon=ch.slice(0,8).map(x=>`<span>${esc(x)}</span>`).join(''),sty=(sg?`<span class="sig">⭐ ${esc(sg.lab)}</span>`:'')+(TOMA.has(p.id)?`<span class="sig">🪓 戰斧暴扣</span>`:'')+faceSkills(p,S&&S.game).map(x=>`<span class="sk">${esc(x)}</span>`).join('');
   return `<div class="intro2"><div class="irow"><i class="il">榮譽</i><div class="intro">${hon}</div></div>${sty?`<div class="irow"><i class="il">球風</i><div class="intro">${sty}</div></div>`:''}</div>${line?`<div class="small mut" style="margin-top:6px">${line}</div>`:''}
     ${b?(rev?`<div class="small" style="margin-top:4px">${esc(era)}</div>`:`<button class="link" data-act="reveal" data-v="${key}">看年代和球隊（會透露主題）</button>`):''}`}
 const posChips=p=>`<div class="poss">${POS.map(s=>{const i=posInfo(p,s);return i.tier<=1?`<span class="${i.tier===0?'n':'c'}">${s}</span>`:''}).join('')}</div>`;
