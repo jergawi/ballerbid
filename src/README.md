@@ -15,7 +15,7 @@
 | `season.js` | Season mode |
 | `legend.js` | Legendary groups (三巨頭, 王朝) |
 | `sfx.js` | Synthesised sound effects (Web Audio, no audio files) |
-| `views2.js`, `views3.js` | Views for missions/season and for formats/bench/sound |
+| `views2.js`, `views3.js, log.js` | Views for missions/season and for formats/bench/sound |
 | `style4.css` | Styles |
 | `*.json` | Player data (Basketball-Reference via sumitrodatta/bball-reference-datasets) |
 

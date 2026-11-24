@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24x';
+const APPV='2026.11.25a';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -426,10 +426,18 @@ function tkRate(p){if(!p||p.fa)return 0;const b=bioOf(p)||{};let v=b.mvp>0?0.065
 function tkPick(R,gi,r){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n));
   const c=R.filter(p=>!out.has(p.n)&&tkRate(p)>0);for(let i=c.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
   for(const p of c)if(r()<tkRate(p))return p.n;return null}
-function boxFor(R,per,score,r,bo,tk){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{pts:2.8,reb:1.3,ast:1.3}[k]||1:x.p.n===tk?{pts:2.3,reb:1.15,ast:1.25}[k]||1:1;
+function boxFor(R,per,score,r,bo,tk){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{reb:1.3,ast:1.3}[k]||1:x.p.n===tk?{reb:1.15,ast:1.25}[k]||1:1;
   const w=k=>per.map(x=>{const b=st(x.p);return mf(x)*bx(x,k)*{pts:Math.pow(Math.max(2,b.pts*x.m.pts),0.65),reb:Math.max(1,b.trb*x.m.reb),ast:Math.max(.5,b.ast*x.m.ast),stl:Math.max(.2,b.stl*x.m.stl),blk:Math.max(.1,b.blk*x.m.blk),tov:Math.max(.3,b.tov*x.m.tov)}[k]*(0.75+0.5*r())});
   const tot=k=>per.reduce((t,x)=>{const b=st(x.p);return t+b[k==='reb'?'trb':k]*x.m[k]*mf(x)},0);
-  const pts=alloc(score,w('pts')),reb=alloc(Math.round(clamp(tot('reb')*1.05,34,58)+gauss(r)*3),w('reb')),ast=alloc(Math.round(clamp(tot('ast'),18,32)+gauss(r)*2),w('ast'));
+  /* a big night is set as a share of the team's points rather than a multiplier, so it stays believable whatever the
+     roster size: a takeover is about 30-40% of the scoring (at most ~50 points), a role player's career night a clear
+     step above his usual share (at most ~40) */
+  const wp=w('pts'),sum0=wp.reduce((t,x)=>t+x,0),norm=i=>wp[i]/sum0,
+    share=(i,sh)=>{if(i<0||sh<=norm(i))return;const oth=wp.reduce((t,x,k)=>k===i?t:t+x,0);wp[i]=oth*sh/(1-sh)},
+    ti=tk?per.findIndex(x=>x.p.n===tk):-1,bi=bo?per.findIndex(x=>x.p.n===bo):-1,sc=Math.max(score,60);
+  if(ti>=0)share(ti,Math.min(Math.max(norm(ti)+0.1,0.29+0.07*r()),0.42,50/sc));
+  if(bi>=0&&bi!==ti)share(bi,Math.min(Math.max(norm(bi)*2.2,norm(bi)+0.15),0.3,40/sc));
+  const pts=alloc(score,wp),reb=alloc(Math.round(clamp(tot('reb')*1.05,34,58)+gauss(r)*3),w('reb')),ast=alloc(Math.round(clamp(tot('ast'),18,32)+gauss(r)*2),w('ast'));
   const stl=alloc(Math.round(clamp(tot('stl'),4,12)+r()*2),w('stl')),blk=alloc(Math.round(clamp(tot('blk'),2,10)+r()*2),w('blk')),tov=alloc(Math.round(clamp(tot('tov'),8,20)+gauss(r)*2),w('tov'));
   return R.map((p,i)=>{const m=per[i].m;return{n:p.n,slot:p.slot,pts:pts[i],reb:reb[i],ast:ast[i],stl:stl[i],blk:blk[i],tov:tov[i],
     m:{pts:+m.pts.toFixed(2),reb:+m.reb.toFixed(2),ast:+m.ast.toFixed(2),tov:+m.tov.toFixed(2),stl:+m.stl.toFixed(2),blk:+m.blk.toFixed(2)}}})}
@@ -606,7 +614,7 @@ function fx(prev){
     if(me!=='all'&&g.turn===me&&prev.turn!==me)sfx('turn');
     if(g.stage==='nom'&&prev.stage!=='nom'&&mine(g.nomBy)&&me!=='all')sfx('turn');
     if(g.ev&&g.ev.n!==prev.ev&&prev.gid===g.gid){sfx(g.ev.id==='coupon'?'coupon':'card');vibe(20)}}
-  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];if(S.phase!=='auction'||window.BB_FAST)toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
+  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];if(S.phase!=='auction'||window.BB_FAST)toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot&&!String(l.n).includes(l.slot)?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
     if(l.who){sfx('sold');if(l.full)sfx('coupon',0.25);if(mine(l.who)&&me!=='all')sfx('win',0.14)}else sfx('pass');
     if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,3800);ui.hold={gid:g.gid,k:prev.idx,l,at:Date.now(),until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
   else if(g.bid.amt>prev.bid)vibe(12);
@@ -629,7 +637,7 @@ const myRole=()=>S?roleOf(S,CID):'spec';
 const col=s=>`var(--${{A:'a',B:'b',C:'c3'}[s]})`;
 const pend=()=>NET.mode==='guest'&&NET.pending.length?'<span class="spin" style="margin-left:6px"></span>':'';
 function render(){
-  const app=document.getElementById('app');let html;
+  const app=document.getElementById('app');let html;if(S&&S.phase==='results'&&typeof logRecord==='function')logRecord();
   if(!THEMES.length)html=`<div class="center mut" style="margin-top:80px"><span class="spin"></span> 載入球員資料…</div>`;
   else if(!S||!NET.mode)html=`<div id="scr-home" class="screen">${vHome()}</div>`;
   else if(lastView())html=vRoomBar()+withView(()=>`<div id="scr-results${S.game.gid}" class="screen ${ui.pbFast?'fastrs':''}">${vResults()}</div>`);
@@ -695,6 +703,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>化學</b>：真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。</li>
   <li><b>夢幻隊模式（10 人）</b>：替補約是先發 1/4 的影響力。火爆浪子可能吃兩次 T 被驅逐，犯規麻煩的人可能犯滿，都由最強的替補頂上。</li>
   <li><b>版本</b>：${APPV}</li>
+  <li><b>遊戲紀錄</b>：每局打完會自動存在這台手機（最近 80 局，不會上傳）。結果頁的「匯出遊戲紀錄」可以把檔案傳給 Claude 分析平衡。</li>
   <li><b>數據</b>：Basketball-Reference。1974 年前部分數據是推估，卡片上標「估」。</li></ul></details></section>`}
 function vRoomBar(){
   if(NET.mode==='ai')return `<div class="roombar"><span>🤖 挑戰電腦・${esc(botLv().nm)}</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
@@ -1308,6 +1317,12 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
     <div class="pbc"><button class="ghost" data-act="pbsp">⏩ ${ui.pb.sp}x</button>
       <button class="big" data-act="pbnext">${done?(isLast?'看最終結算 →':'下一場 →'):'⏭ 跳過這場'}</button></div>
     <div class="small mut" style="text-align:center;margin-top:6px">第 ${gNo} / ${L.length} 場</div></div>`}
+/* who could take over: each team's 爆發型 players, the chance per game that one of them takes over, and how often it
+   happened, so a run with no takeovers reads as the dice it is rather than as something rigged */
+function tkSummary(g,sim){const rows=g.sides.map(s=>{const R=rosterOf(g,s).filter(p=>tkRate(p)>0),ch=1-R.reduce((t,p)=>t*(1-tkRate(p)),1);
+    let n=0,gp=0;sim.series.forEach(z=>{if(z.a!==s&&z.b!==s)return;gp+=z.games.length;(z.tk||[]).forEach(t=>{if(t[s])n++})});
+    return `<span style="color:${col(s)}">${esc(nm(S,s))}</span> ${R.length?`${R.length} 人・每場約 ${Math.round(ch*100)}%・實際 ${n}/${gp} 場`:'沒有爆發型球員'}`});
+  return `<div class="small mut" style="margin-top:6px;line-height:1.6">爆發型：${rows.join('<br>')}</div>`}
 function boLine(z,k){const has=A=>A&&A.some(x=>x&&Object.keys(x).length);if(!has(z.bo)&&!has(z.tk))return '';let L=[];try{L=pbData().filter(G=>G.si===k)}catch(e){}
   const row=(A,lab)=>{if(!has(A))return '';const items=[];A.forEach((bg,gi)=>Object.entries(bg||{}).forEach(([s,n])=>{const G=L.find(x=>x.gi===gi),b=G&&(s===z.a?G.bA:G.bB).find(x=>x.n===n);
     items.push(`<span style="color:${col(s)}">G${gi+1} ${esc(String(n).split(' ').slice(-1)[0])}${b?` ${b.pts} 分`:''}</span>`)}));
@@ -1327,7 +1342,7 @@ function vResults(){
       <div class="sc"><span id="s${k}a-${id}" data-count="${z.wa}" data-delay="${ui.pbFast?0.5:2.0}" style="color:${col(z.a)}">${z.wa}</span>–<span id="s${k}b-${id}" data-count="${z.wb}" data-delay="${ui.pbFast?0.5:2.0}" style="color:${col(z.b)}">${z.wb}</span></div></div>`}).join('');
   const std=two?'':`<table class="std"><tr><th>排名</th><th>系列勝</th><th>場次</th><th>實力</th></tr>${sim.order.map((s,i)=>`<tr><td>${i+1}. ${N(s)}</td><td>${T[s].sw}</td><td>${T[s].gw}–${T[s].gl}</td><td>${T[s].grade}</td></tr>`).join('')}</table>`;
   const board=`<div class="board rs" style="--d:1.8s"><div class="lab">${two?'系列賽':'循環賽'}</div><div style="text-align:left;margin-top:6px">${ser}</div>${std}
-    ${sim.mvp?`<div class="small mut" style="margin-top:8px">冠軍 MVP：${esc(sim.mvp.n)}（決勝場 ${sim.mvp.pts} 分 ${sim.mvp.reb} 籃板 ${sim.mvp.ast} 助攻）</div>`:''}</div>`;
+    ${sim.mvp?`<div class="small mut" style="margin-top:8px">冠軍 MVP：${esc(sim.mvp.n)}（決勝場 ${sim.mvp.pts} 分 ${sim.mvp.reb} 籃板 ${sim.mvp.ast} 助攻）</div>`:''}${tkSummary(g,sim)}</div>`;
   const teamBlock=(s,d0)=>{const R=rosterOf(g,s),t=T[s];
     const rows=R.map((p,i)=>{const pi=posInfo(p,p.slot);return `<div class="srow ${s} rs ${isBench(p.slot)?'bench':''}" style="--d:${(d0+0.1*i).toFixed(2)}s"><div class="sl">${isBench(p.slot)?roleLab(p.role,true):esc(p.slot)}</div><div class="bd"><span class="pr">$${p.price}</span><div class="nm">${esc(p.n)}</div>
       <div class="sb">${esc(sub(p))}${p.est&&p.est.length?' · 估':''}${pi.tier>0?`<i class="tag t${pi.tier}">${pi.lab}</i>`:''}</div>
@@ -1371,7 +1386,7 @@ function vResults(){
   <section class="card rs" style="--d:${d+0.3}s">${sim.series.map(z=>`<details style="margin-top:6px"><summary>📊 決勝場 Box Score：${esc(nm(S,z.a))} ${z.games[z.games.length-1][0]}–${z.games[z.games.length-1][1]} ${esc(nm(S,z.b))}</summary>${boxT(z,z.a)}${boxT(z,z.b)}<div class="small mut" style="margin-top:4px">▲▼ 代表因為位置或對位，比他平常明顯多／少。</div></details>`).join('')}
   <details style="margin-top:12px"><summary>🧾 競標紀錄（${g.log.length} 張）</summary><div class="log">${g.log.map((l,k)=>`<div><span>${k+1}. ${esc(l.n)}</span><span style="color:${l.who?col(l.who):'var(--mut)'}">${l.who?esc(nm(S,l.who))+' $'+l.amt:'流標'}</span></div>`).join('')}</div></details>
   ${leftover.length?`<details style="margin-top:12px"><summary>👀 主題裡沒被標走的 ${leftover.length} 位</summary><div class="small" style="margin-top:8px;color:#3d4458">${leftover.map(esc).join('、')}</div></details>`:''}</section>
-  <div class="rs" style="--d:${d+0.4}s"><button class="ghost" data-act="copy">📋 複製結果（貼到群組）</button>
+  <div class="rs" style="--d:${d+0.4}s"><button class="ghost" data-act="copy">📋 複製結果（貼到群組）</button>${logBtn()}
   ${g.round?seasonWaitNote():''}${isP?`<button class="big" data-act="again">${g.round?(S.season&&S.season.done?'🏆 看季賽頒獎 →':'🏁 看季賽積分榜 →'):'回到大廳 →'}</button>`:`<button class="big" data-act="specback">${g.round?'看季賽積分榜 →':'回到大廳 →'}</button>`}</div>`;
 }
 function seasonGain(g,sim){if(!g.round)return '';const se=S.season||S.lastSeason;if(!se)return '';const R=se.rounds.find(x=>x.k===g.round);if(!R)return '';
@@ -1459,6 +1474,7 @@ document.addEventListener('click',e=>{
     case 'sbid':{const g=S.game,k='s'+g.idx+d.who,el=document.querySelector(`[data-in="samt"][data-who="${d.who}"]`);let v=+d.amt;if(el&&!t.classList.contains('pass'))v=parseInt(el.value,10);
       const lo=g.tie?g.tie.amt:0,mx=maxBid(g,d.who);if(isNaN(v)||v<lo)return toast(`至少 $${lo}`);if(v>mx)return toast(`你最多只能出 $${mx}（要留錢補滿陣容）`);return dispatch({a:'sbid',who:d.who,amt:v,idx:g.idx})}
     case 'rdone':{const g=S.game,me=myRole();return dispatch({a:'rdone',who:me==='all'||!g.sides.includes(me)?g.sides[0]:me})}
+    case 'logexp':logExport();return;
     case 'grab':sfx('grab');return dispatch({a:'grab',who:d.who,idx:S.game.idx,p:dutchAt(S.game,now())});
     case 'spass':return dispatch({a:'spass',who:d.who,idx:S.game.idx});
     case 'brole':return dispatch({a:'brole',who:d.who,slot:d.v,role:d.role});
