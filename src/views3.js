@@ -5,7 +5,8 @@ function fmtLobby(c,dis){const opts=Object.keys(FMTS).concat(c.season?['rotate']
   const cur=c.fmt==='rotate'&&!c.season?'open':c.fmt||'open';
   return `<div class="fl" style="margin-top:14px">拍賣方式</div><div class="fgrid">${opts.map(k=>{const [ic,nm,d]=lab(k);
       return `<button class="fopt ${cur===k?'on':''}" data-act="cfg" data-k="fmt" data-v="${k}" ${dis}><span class="fic">${ic}</span><b>${nm}</b><small>${d}</small></button>`}).join('')}</div>
-    <button class="crow ${c.nom?'on':''}" style="margin-top:10px" data-act="cfg" data-k="nom" data-v="${c.nom?0:1}" ${dis}><span class="ck">${c.nom?'✓':''}</span><span class="grow"><b>🎯 輪流提名</b><small>桌上翻開 ${MKT} 張牌，輪到的人挑一張拿出來拍</small></span></button>`}
+    <div class="fl" style="margin-top:16px">出牌方式</div><div class="small mut" style="margin:-2px 0 6px">決定「下一張拍誰」，可以搭配上面任何一種拍賣方式</div>
+    <button class="crow ${c.nom?'on':''}" data-act="cfg" data-k="nom" data-v="${c.nom?0:1}" ${dis}><span class="ck">${c.nom?'✓':''}</span><span class="grow"><b>🎯 輪流提名</b><small>桌上翻開 ${MKT} 張牌，輪到的人挑一張拿出來拍（不勾＝照牌堆順序翻牌）</small></span></button>`}
 // honours line for the small market cards
 function miniTags(p){const b=(p&&!p.fa&&bioOf(p))||{},t=[];if(b.mvp)t.push(`👑MVP${b.mvp>1?'×'+b.mvp:''}`);if(b.ring)t.push(`🏆×${b.ring}`);if(b.as)t.push(`⭐×${b.as}`);
   if(!t.length&&b.roy)t.push('🌱新人王');const sg=typeof sigOf==='function'&&sigOf(p);if(sg)t.push(`✨${sg.lab}`);return t.slice(0,3)}

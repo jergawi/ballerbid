@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24p';
+const APPV='2026.11.24q';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -1371,7 +1371,7 @@ document.addEventListener('click',e=>{
     case 'tclr':return dispatch({a:'cfg',cfg:{teams:[]}});
     case 'pdel':return dispatch({a:'cfg',cfg:{picks:(S.cfg.picks||[]).filter(x=>x!==d.v)}});
     case 'cat':{const c=new Set(S.cfg.cats);c.has(d.v)?c.delete(d.v):c.add(d.v);return dispatch({a:'cfg',cfg:{cats:[...c]}})}
-    case 'cfg':{const val=['showStats','hints','mis','bal','cards'].includes(d.k)?d.v==='1':d.k==='pmode'?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
+    case 'cfg':{const val=['showStats','hints','mis','bal','cards'].includes(d.k)?d.v==='1':['pmode','fmt'].includes(d.k)?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
     case 'csel':{const g=S.game,who=d.who||(NET.mode==='local'?g.sides.find(s=>!g.cards[s].pick):myRole());let L=(ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===who?ui.csel.ids:g.cards[who]&&g.cards[who].pick)||[];L=L.slice();
       const i=L.indexOf(d.v);if(i>=0)L.splice(i,1);else{L.push(d.v);if(L.length>CARD_PICK)L.shift()}ui.csel={gid:g.gid,who,ids:L};return render()}
     case 'cpick':{const g=S.game;const ids=ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===d.who?ui.csel.ids:g.cards[d.who].pick;ui.csel=null;return dispatch({a:'card',id:'pick',who:d.who,ids})}

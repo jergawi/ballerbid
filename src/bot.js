@@ -30,7 +30,8 @@ const BOT_LV={
   easy:{nm:'新手',d:'常亂出價，適合熟悉規則',noise:0.3,aware:0,shade:[0.45,0.95],react:[1000,2000],think:[1600,3600],jump:0.3},
   normal:{nm:'普通',d:'看陣容缺什麼出價，懂傳奇組合',noise:0.15,aware:1,react:[600,1300],think:[1100,2900],jump:0.2},
   hard:{nm:'高手',d:'再加上做任務、精算暗標，反應更快',noise:0.06,aware:2,react:[330,800],think:[900,2400],jump:0.12}};
-const BOT_STYLE={bal:{nm:'🤖 穩健派',c:1},star:{nm:'🤖 巨星控',c:1.3},depth:{nm:'🤖 精算師',c:0.8}};
+// c bends dollars per rating point: above 1 pays a premium for stars (auctions do), below 1 spreads money
+const BOT_STYLE={bal:{nm:'🤖 穩健派',c:1.2},star:{nm:'🤖 巨星控',c:1.6},depth:{nm:'🤖 精算師',c:0.85}};
 const SAVE_PT=0.3,SAVE_CAP=2.5;   // savAdj in baseRate: 0.3 rating per leftover $, capped at 2.5
 const isBot=s=>NET.mode==='ai'&&!!(S&&S.bots&&S.bots[s]);
 const botLv=s=>BOT_LV[S&&S.bots&&s&&S.bots[s]&&S.bots[s].lv||S&&S.botLv]||BOT_LV.normal;   // per-seat level is for tests
@@ -42,11 +43,20 @@ function aiAssign(S){if(!S.bots)return;const sides=Object.keys(S.bots),taken=sid
   sides.forEach(s=>{const b=S.bots[s];if(b.st==='rand'&&(!S.season||!b.play)){const free=Object.keys(BOT_STYLE).filter(k=>!taken.includes(k));b.play=free[Math.floor(Math.random()*free.length)]||'bal'}
     if(b.st==='rand')taken.push(b.play);S.names[s]=BOT_STYLE[b.st==='rand'?b.play:b.st].nm})}
 function gauss(R){const u=Math.max(1e-9,R()),v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+/* What a bot may know about a card: only what the card face shows. The match sim uses the numbers of the card's own
+   season(s), which stay hidden unless 顯示數據 is on; the face shows the player's career numbers and honours. So bots
+   value that reputation, exactly like a person reading the card (a 1992 Bird looks like Larry Bird to both), and
+   switch to the season numbers only when everyone can see them. Tapping 看年代和球隊 can still reward a fan who knows
+   which season a card is. */
+const PUBV=new WeakMap();
+function pubVal(p){if(!p||p.fa)return -1;if(S&&S.game&&S.game.showStats)return pval(p);if(PUBV.has(p))return PUBV.get(p);
+  const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:c.g}):pval(p);PUBV.set(p,v);return v}
+const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
 const BC={k:''};
 function botCache(g){const k=g.gid+':'+g.idx+':'+g.log.length+':'+(g.stage||'')+':'+g.items.length;if(BC.k!==k){BC.k=k;BC.m=null;BC.v={}}return BC}
 function botMarket(g){const C=botCache(g);if(C.m)return C.m;
-  const vals=g.items.slice(g.idx).filter(p=>!p.fa).map(pval).sort((a,b)=>b-a);
+  const vals=g.items.slice(g.idx).filter(p=>!p.fa).map(pubVal).sort((a,b)=>b-a);
   let os=0,ob=0;g.sides.forEach(t=>openSlots(g,t).forEach(x=>isBench(x)?ob++:os++));
   const N=os+ob,vN=N>0&&vals.length>=N?vals[N-1]:-1;
   const money=g.sides.reduce((a,t)=>a+Math.max(0,left(g,t)-openN(g,t)),0);
@@ -55,8 +65,8 @@ function botMarket(g){const C=botCache(g);if(C.m)return C.m;
 function botLam(g,c){const M=botMarket(g);let sum=0;M.vals.slice(0,M.N).forEach((v,r)=>{sum+=(r<M.os?1:PLACE_BENCH)*Math.pow(Math.max(0,v-M.vN),c)});return M.money/Math.max(sum,0.3)}
 // what this card adds to the side's roster over a replacement-level player
 function botGain(g,s,p){const C=botCache(g),ck='g'+s+':'+g.items.indexOf(p);if(C.v[ck]!=null)return C.v[ck];
-  const L=g.rosters[s].map(r=>({p:g.items[r.k],v:placeVal(g.items[r.k])})),sm=slotMisOf(g,s),vN=botMarket(g).vN;
-  const a=placeSearch(g,L.concat([{p,v:placeVal(p)}]),sm,vN).score,b=placeSearch(g,L.concat([{p,v:vN,flex:1}]),sm,vN).score;
+  const L=g.rosters[s].map(r=>({p:g.items[r.k],v:pubVal(g.items[r.k])})),sm=slotMisOf(g,s),vN=botMarket(g).vN;
+  const a=placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,vN).score,b=placeSearch(g,L.concat([{p,v:vN,flex:1}]),sm,vN).score;
   return C.v[ck]=a-b}
 const misBonus=x=>x.bonus!=null?x.bonus:MTIER[x.tier].bonus;
 function botExtra(g,s,p){let x=0;
@@ -74,20 +84,22 @@ const realLeft=g=>g.items.slice(g.idx).filter(p=>!p.fa).length;
 // most this side would pay for card p. opt.est: a plain estimate for a rival (no noise, no extras, balanced style)
 function botMax(g,s,p,opt){p=p||cur(g);if(!p||!openN(g,s))return 0;const est=opt&&opt.est,C=botCache(g),ck=(est?'e':'m')+s+':'+g.items.indexOf(p);
   if(C.v[ck]!=null)return C.v[ck];
-  const lv=botLv(s),c=est?1:botSt(s).c,M=botMarket(g);
+  const lv=botLv(s),c=est?1.2:botSt(s).c,M=botMarket(g);
   const sur=botGain(g,s,p)+(!est&&lv.aware?botExtra(g,s,p):0);
   const nz=est?1:Math.exp(lv.noise*gauss(rng(hash(g.gid+':'+g.items.indexOf(p)+':'+s))));
   // a team holding more spare money than the table average can afford to pay more (money left past the savings cap is wasted)
   const spare=t=>Math.max(0,left(g,t)-openN(g,t)),avg=g.sides.reduce((x,t)=>x+spare(t),0)/g.sides.length,rich=avg>0?clamp(Math.sqrt(spare(s)/avg),0.6,1.6):1;
-  let v=sur>0?1+botLam(g,c)*(est?1:rich)*Math.pow(sur,c)*nz:0;
+  // style attitude to the deck's top cards: 巨星控 pays a premium for them, 精算師 lets them go and pays a bit more for depth
+  const top=M.vals.length?pubVal(p)>=M.vals[Math.min(2,M.vals.length-1)]:false,att=est?1:{star:top?1.4:0.95,depth:top?0.85:1.08}[S.bots&&S.bots[s]&&(S.bots[s].st==='rand'?S.bots[s].play:S.bots[s].st)]||1;
+  let v=sur>0?1+botLam(g,c)*(est?1:rich)*att*Math.pow(sur,c)*nz:0;
   // cards are running out: the alternative is a free agent. Unspent money is worth SAVE_PT rating per $ in the match
   // sim, and nothing past SAVE_CAP, so money a team cannot spend well is better spent on anyone above a free agent
-  if(realLeft(g)<=M.N+1){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:placeVal(g.items[r.k])})),sm=slotMisOf(g,s);
-    const gFA=placeSearch(g,L.concat([{p,v:placeVal(p)}]),sm,-1).score-placeSearch(g,L.concat([{p,v:-1,flex:1}]),sm,-1).score;
+  if(realLeft(g)<=M.N+1){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:pubVal(g.items[r.k])})),sm=slotMisOf(g,s);
+    const gFA=placeSearch(g,L.concat([{p,v:pubVal(p)}]),sm,-1).score-placeSearch(g,L.concat([{p,v:-1,flex:1}]),sm,-1).score;
     const spare=left(g,s)-openN(g,s);
     if(gFA>0)v=Math.max(v,1+gFA/SAVE_PT+Math.max(0,spare-SAVE_CAP/SAVE_PT)/Math.max(1,openN(g,s)))}
   if(!est&&lv.aware>1){const P=misProg(g,s);                        // 一擲千金 / 標王: be ready to pay big for a top card
-    if(P&&!P.dead&&P.done!==true&&(P.m.k==='big'||P.m.k==='topbid')&&M.vals.length&&pval(p)>=M.vals[Math.min(2,M.vals.length-1)]){
+    if(P&&!P.dead&&P.done!==true&&(P.m.k==='big'||P.m.k==='topbid')&&M.vals.length&&pubVal(p)>=M.vals[Math.min(2,M.vals.length-1)]){
       const t=P.m.k==='big'?misT(P.m,budOf(g,s)):Math.max(0,...g.sides.filter(x=>x!==s).flatMap(x=>g.rosters[x].map(r=>r.price)))+1;
       if(t<=maxBid(g,s))v=Math.max(v,t)}}
   return C.v[ck]=Math.max(0,Math.min(Math.floor(v),est?maxBid(g,s):botCap(g,s)))}
@@ -105,7 +117,7 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
   if(S.phase==='lineup')return{a:'ready',who:s,v:true};
   if(g.stage==='left'){const j=bestLeft(g,s);return j==null?{a:'lnone',who:s,idx:g.idx}:{a:'lpick',who:s,j,idx:g.idx}}
   if(g.stage==='nom'){const Mk=market(g),me=left(g,s)-openN(g,s),rich=g.sides.every(t=>t===s||left(g,t)-openN(g,t)<=me);
-    const sc=x=>{if(!lv.aware)return starScore(x.p)+R()*3;const mine=botMax(g,s,x.p),opp=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).map(t=>botMax(g,t,x.p,{est:1})));
+    const sc=x=>{if(!lv.aware)return pubStar(x.p)+R()*3;const mine=botMax(g,s,x.p),opp=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).map(t=>botMax(g,t,x.p,{est:1})));
       return rich&&mine>=opp?mine*1.2:opp-0.7*mine};
     const best=Mk.slice().sort((a,b)=>sc(b)-sc(a))[0];return{a:'nominate',who:s,j:best.j,idx:g.idx}}
   if(g.sb){const lo=g.tie?g.tie.amt:0,mx=Math.max(lo,botMax(g,s));let amt;
