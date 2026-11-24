@@ -25,7 +25,9 @@ function mktStrip(g){if(!g.nom||g.stage)return '';const M=market(g).slice(1);if(
   return `<div class="mstrip2"><span class="small mut">桌上還有</span>${M.map(x=>`<span class="mchip2">${esc(String(x.p.n).split(' ').slice(-1)[0])}</span>`).join('')}</div>`}
 // sealed: status of every bidder, never the amounts
 function sealedBox(g){const el=g.tie?g.tie.sides:bidders(g);
+  const tb=g.tie&&g.tie.tb,why=tb&&(openN(g,tb)>Math.min(...el.filter(x=>x!==tb).map(x=>openN(g,x)))?'空位比較多':'這張出價順序在前');
   return `<div class="cur sealed"><div class="sh">${g.tie?`⚖️ 平手加賽：${el.map(s=>`<b style="color:${col(s)}">${esc(nm(S,s))}</b>`).join('、')} 再出一次（至少 $${g.tie.amt}）`:'🤫 暗標：大家同時出價，揭曉後最高價得標'}</div>
+    ${tb?`<div class="tbn">如果又一樣：<b style="color:${col(tb)}">${esc(nm(S,tb))}</b> 得標（${why}）。其他人要加價才贏得到。</div>`:''}
     <div class="sst">${el.map(s=>`<span class="${g.sb[s]!=null?'done':''}" style="--c:${col(s)}">${esc(nm(S,s))} ${g.sb[s]!=null?'✓ 已出價':'思考中…'}</span>`).join('')}</div>
     ${clock(g.deadline,g.tie?T_SEAL_TIE:T_SEAL,'時間到沒出價就算 $'+(g.tie?g.tie.amt:0)+'：',ALL.includes(myRole())&&el.includes(myRole())&&g.sb[myRole()]==null)}</div>`}
 function snatchBox(g){const t=now(),wait=g.openAt>t;
@@ -81,3 +83,9 @@ function leftPanel(g,r){const who=g.solo.who,mine=r==='all'||r===who,L=leftovers
     <div class="nomft">${mine&&L.length?`<button class="big" data-act="lpick" data-v="${sel==null?'':sel}" ${sel==null?'disabled':''}>${sel==null?'先點一位球員':`✍️ 簽下 ${esc(String(g.items[sel].n))}（$1）`}</button>`:''}
     ${mine?`<button class="linkb" data-act="lnone">${ui.lnone?'再按一次確認：剩下的位置用自由球員補':`剩下的都不要，${need} 個位置用自由球員補`}</button>`:''}
     ${clock(g.leftEnd,T_LEFT,mine?'時間到自動簽最適合你的：':'挑選倒數：',mine&&r!=='all')}</div>`}
+
+// the beat after a card: who won, for how much, where he goes, and a bar running down to the next card
+function soldBanner(g,H){const l=H.l,p=g.items[H.k],d=Math.max(300,H.until-H.at),last=String(p&&p.n||'').split(' ').slice(-1)[0];
+  if(!l.who)return `<div class="soldb pass" style="--d:${d}ms"><div class="sd1">流標</div><div class="sd2">沒有人要 ${esc(last)}</div><div class="sdbar"><i></i></div></div>`;
+  return `<div class="soldb" style="--c:${col(l.who)};--d:${d}ms"><div class="sd1">成交</div>
+    <div class="sd2"><b>${esc(nm(S,l.who))}</b> 標下 ${esc(last)}</div><div class="sd3"><b class="sdp">$${l.amt}</b>${l.full?`<s>$${l.full}</s><small>打折券</small>`:''}${l.slot?`<span>${esc(l.slot)}</span>`:''}</div><div class="sdbar"><i></i></div></div>`}

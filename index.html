@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-1i0zogg7fxEXlYgnTnfZgQHX7H56W7oFZbLLctvpk88=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-9BIqegQxWayPDtK88BL2m6Z9leumn9UtY7c/Jd4HT00=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -576,6 +576,26 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .phb .yr{font-family:var(--num);font-size:15px;font-weight:800;color:#5a6275;background:#f1f3f8;border:1.5px solid var(--line);padding:1px 9px;border-radius:999px}
 .phb.sm{justify-content:flex-start;margin:4px 0 0}.phb.sm .ph{font-size:11.5px;padding:2px 8px}.phb.sm .yr{font-size:12.5px;padding:0 7px}
 .updb{display:block;width:100%;margin:0 0 10px;padding:11px 14px;border:0;border-radius:14px;background:#1c2333;color:#fff;font:inherit;font-weight:800;font-size:14px;cursor:pointer}
+/* the beat after each card */
+.soldb{position:relative;margin-top:12px;border-radius:18px;padding:14px 16px 16px;text-align:center;color:#fff;overflow:hidden;
+  background:linear-gradient(135deg,var(--c,#8d95a8),color-mix(in srgb,var(--c,#8d95a8) 70%,#000));box-shadow:0 14px 28px -14px color-mix(in srgb,var(--c,#8d95a8) 80%,#000);
+  animation:soldIn .45s var(--pop) both}
+.soldb.pass{--c:#8d95a8}
+.soldb .sd1{font-family:var(--disp);font-size:15px;font-weight:800;letter-spacing:.3em;opacity:.85}
+.soldb .sd2{font-size:21px;font-weight:900;margin-top:2px;animation:fadein .3s .15s both}
+.soldb .sd3{display:flex;justify-content:center;align-items:baseline;gap:10px;margin-top:4px;animation:fadein .3s .3s both}
+.soldb .sdp{font-family:var(--num);font-size:40px;line-height:1}
+.soldb .sd3 s{opacity:.7;font-size:16px}.soldb .sd3 small{font-size:11px;font-weight:800;background:rgba(255,255,255,.2);padding:2px 6px;border-radius:6px}
+.soldb .sd3 span{font-size:13px;font-weight:800;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:999px}
+.soldb .sdbar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.18)}
+.soldb .sdbar i{display:block;height:100%;background:rgba(255,255,255,.85);transform-origin:left;animation:sdbar var(--d) linear both}
+@keyframes sdbar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@keyframes soldIn{0%{opacity:0;transform:translateY(14px) scale(.96)}100%{opacity:1;transform:none}}
+.reveal+.soldb{animation-delay:.9s}
+.brow.won{box-shadow:0 0 0 3px color-mix(in srgb,var(--c,var(--acc)) 55%,transparent),var(--sh);animation:wonP 1s ease-in-out 2}
+@keyframes wonP{50%{transform:scale(1.015)}}
+.tbn{font-size:13px;font-weight:700;color:#5a6275;background:#f4f6fa;border-radius:10px;padding:6px 10px;margin:6px auto 2px;max-width:420px}
+@media (prefers-reduced-motion:reduce){.soldb,.soldb .sd2,.soldb .sd3,.brow.won{animation:none}}
 
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
@@ -605,7 +625,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24t';
+const APPV='2026.11.24u';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -822,7 +842,8 @@ function nextCard(S){const g=S.game;g.gapEnd=now()+gapMs(g);g.idx++;g.bid={who:n
   startCard(S)}
 /* a short authoritative pause after each card so everyone sees the result (SOLD stamp, sealed-bid reveal) before the
    next card's clock starts; actions inside the pause are ignored */
-const gapMs=g=>window.BB_FAST?0:g.reveal&&g.reveal.idx===g.idx&&g.reveal.win?(g.reveal.grab?1500:2400):1000;
+const gapMs=g=>{if(window.BB_FAST)return 0;const v=g.reveal&&g.reveal.idx===g.idx?g.reveal:null,sold=g.log.length&&g.log[g.log.length-1].who;
+  return v&&v.win&&!v.grab?3400:sold?2300:1300};   // sealed reveal (bars, then the winner) / any sale / a pass
 const t0=g=>Math.max(now(),g.gapEnd||0),inGap=g=>now()<(g.gapEnd||0)-200;
 // a won card goes straight onto the roster (see autoPlace); every card ends here or in skipCard
 function sell(S,who,amt){const g=S.game;g.turn=null;const pay=couponPay(g,who,amt);g.rosters[who].push({slot:null,k:g.idx,price:pay});g.spent[who]+=pay;autoPlace(g,who);
@@ -1443,13 +1464,16 @@ function nominate(S,j){const g=S.game;if(j<g.idx||j>=Math.min(g.items.length,g.i
   if(j!==g.idx){const t=g.items[g.idx];g.items[g.idx]=g.items[j];g.items[j]=t}
   g.stage=null;g.nominated=true;startCard(S);return true}
 function autoNominate(S){const g=S.game,M=market(g);const best=M.slice().sort((a,b)=>starScore(b.p)-starScore(a.p))[0];return nominate(S,best?best.j:g.idx)}
+// who wins if a re-bid is tied again: more empty spots (the team that needs players), then earlier in this card's order.
+// It is shown on the tie screen before anyone re-bids, so the other player knows they have to raise.
+const tieWinner=(g,L)=>L.slice().sort((a,b)=>openN(g,b)-openN(g,a)||g.order.indexOf(a)-g.order.indexOf(b))[0];
 function resolveSealed(S){const g=S.game,el=g.tie?g.tie.sides:bidders(g),bids={};
   el.forEach(s=>{const v=g.sb[s];bids[s]=v==null?(g.tie?g.tie.amt:0):v});
   const mx=Math.max(0,...Object.values(bids)),top=el.filter(s=>bids[s]===mx&&mx>0);
   const rev={bids:{...(g.tie?g.tie.first:{}),...bids},max:mx,tie:!!g.tie};
   if(!top.length){g.reveal={...rev,idx:g.idx,win:null};g.sb=null;skipCard(S);return}
-  if(top.length>1&&!g.tie){g.tie={sides:top,amt:mx,first:bids};g.sb={};g.deadline=now()+T_SEAL_TIE;g.reveal={...rev,idx:g.idx,win:null,retie:1};return}
-  let w=top[0];if(top.length>1){w=top.slice().sort((a,b)=>openN(g,b)-openN(g,a)||g.order.indexOf(a)-g.order.indexOf(b))[0];rev.tb=1}
+  if(top.length>1&&!g.tie){g.tie={sides:top,amt:mx,first:bids,tb:tieWinner(g,top)};g.sb={};g.deadline=now()+T_SEAL_TIE;g.reveal={...rev,idx:g.idx,win:null,retie:1};return}
+  let w=top[0];if(top.length>1){w=tieWinner(g,top);rev.tb=1}
   g.reveal={...rev,idx:g.idx,win:w};g.sb=null;g.tie=null;g.bid={who:w,amt:mx};sell(S,w,mx)}
 function resolveGrab(S){const g=S.game,L=g.grab.who;const w=L.length===1?L[0]:L[Math.floor(rng(hash(g.gid+':'+g.idx))()*L.length)];
   g.reveal={idx:g.idx,grab:L.slice(),win:w,price:g.price};g.grab=null;g.bid={who:w,amt:g.price};sell(S,w,g.price)}
@@ -1600,8 +1624,8 @@ function cardFlash(g){const e=g&&g.ev;if(!e||now()-e.at>2200)return '';const K=C
  Timing: every decision waits a "thinking" delay that grows with the stakes, and never runs into the deadline. */
 const BOT_LV={
   easy:{nm:'新手',d:'常亂出價，適合熟悉規則',noise:0.3,aware:0,shade:[0.45,0.95],react:[1000,2000],think:[1600,3600],jump:0.3},
-  normal:{nm:'普通',d:'看陣容缺什麼出價，懂傳奇組合',noise:0.15,aware:1,react:[600,1300],think:[1100,2900],jump:0.2},
-  hard:{nm:'高手',d:'再加上做任務、精算暗標，反應更快',noise:0.06,aware:2,react:[330,800],think:[900,2400],jump:0.12}};
+  normal:{nm:'普通',d:'看陣容缺什麼出價，懂傳奇組合',noise:0.2,aware:1,react:[600,1300],think:[1100,2900],jump:0.2},
+  hard:{nm:'高手',d:'再加上做任務、精算暗標，反應更快',noise:0.1,aware:2,react:[330,800],think:[900,2400],jump:0.12}};
 // c bends dollars per rating point: above 1 pays a premium for stars (auctions do), below 1 spreads money
 const BOT_STYLE={bal:{nm:'🤖 穩健派',c:1.2},star:{nm:'🤖 巨星控',c:1.6},depth:{nm:'🤖 精算師',c:0.85}};
 const SAVE_PT=0.3,SAVE_CAP=2.5;   // savAdj in baseRate: 0.3 rating per leftover $, capped at 2.5
@@ -1693,10 +1717,12 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
       return rich&&mine>=opp?mine*1.2:opp-0.7*mine};
     const best=Mk.slice().sort((a,b)=>sc(b)-sc(a))[0];return{a:'nominate',who:s,j:best.j,idx:g.idx}}
   if(g.sb){const lo=g.tie?g.tie.amt:0,mx=Math.max(lo,botMax(g,s));let amt;
-    if(g.tie)amt=mx>lo?Math.min(mx,lo+1+(R()<0.4?1:0)):lo;
+    if(g.tie)amt=mx<=lo?lo:g.tie.tb===s?(R()<0.65?lo:Math.min(mx,lo+1)):Math.min(mx,lo+1+(R()<0.35?1:0));   // a second tie goes to tie.tb
     else if(mx<=0)amt=0;
     else if(lv.shade)amt=Math.round(mx*rr(...lv.shade));
-    else{const want=Math.round(botRivalMax(g,s)*(lv.aware>1?rr(0.95,1.05):rr(0.85,1.12)));amt=mx>want?Math.min(mx,want+1):Math.round(mx*rr(0.8,0.95))}
+    else{const est=botRivalMax(g,s)*(lv.aware>1?rr(0.92,1.08):rr(0.8,1.15)),target=mx>est?Math.min(mx,Math.round(est)+1):Math.round(mx*rr(0.75,0.95));
+      // a mixed strategy: a fixed rule is quickly learned, so the bid moves around its target (sometimes bolder, sometimes cautious)
+      const u=R();amt=u<0.2?Math.round(rr(target,mx)):u<0.35?Math.round(rr(Math.max(1,mx*0.5),target)):target+(R()<0.5?0:R()<0.5?1:-1)}
     return{a:'sbid',who:s,amt:clamp(amt,lo,Math.max(lo,Math.min(mx,maxBid(g,s)))),idx:g.idx}}
   if(g.price!=null)return botMax(g,s)>=g.price&&(lv.aware||R()>0.15||realLeft(g)<=botMarket(g).N+1)?{a:'grab',who:s,idx:g.idx}:{a:'spass',who:s,idx:g.idx};
   const mx=botMax(g,s),b=g.bid.amt;if(mx<=b)return{a:'pass',who:s,idx:g.idx};
@@ -1854,7 +1880,9 @@ function mktStrip(g){if(!g.nom||g.stage)return '';const M=market(g).slice(1);if(
   return `<div class="mstrip2"><span class="small mut">桌上還有</span>${M.map(x=>`<span class="mchip2">${esc(String(x.p.n).split(' ').slice(-1)[0])}</span>`).join('')}</div>`}
 // sealed: status of every bidder, never the amounts
 function sealedBox(g){const el=g.tie?g.tie.sides:bidders(g);
+  const tb=g.tie&&g.tie.tb,why=tb&&(openN(g,tb)>Math.min(...el.filter(x=>x!==tb).map(x=>openN(g,x)))?'空位比較多':'這張出價順序在前');
   return `<div class="cur sealed"><div class="sh">${g.tie?`⚖️ 平手加賽：${el.map(s=>`<b style="color:${col(s)}">${esc(nm(S,s))}</b>`).join('、')} 再出一次（至少 $${g.tie.amt}）`:'🤫 暗標：大家同時出價，揭曉後最高價得標'}</div>
+    ${tb?`<div class="tbn">如果又一樣：<b style="color:${col(tb)}">${esc(nm(S,tb))}</b> 得標（${why}）。其他人要加價才贏得到。</div>`:''}
     <div class="sst">${el.map(s=>`<span class="${g.sb[s]!=null?'done':''}" style="--c:${col(s)}">${esc(nm(S,s))} ${g.sb[s]!=null?'✓ 已出價':'思考中…'}</span>`).join('')}</div>
     ${clock(g.deadline,g.tie?T_SEAL_TIE:T_SEAL,'時間到沒出價就算 $'+(g.tie?g.tie.amt:0)+'：',ALL.includes(myRole())&&el.includes(myRole())&&g.sb[myRole()]==null)}</div>`}
 function snatchBox(g){const t=now(),wait=g.openAt>t;
@@ -1910,6 +1938,12 @@ function leftPanel(g,r){const who=g.solo.who,mine=r==='all'||r===who,L=leftovers
     <div class="nomft">${mine&&L.length?`<button class="big" data-act="lpick" data-v="${sel==null?'':sel}" ${sel==null?'disabled':''}>${sel==null?'先點一位球員':`✍️ 簽下 ${esc(String(g.items[sel].n))}（$1）`}</button>`:''}
     ${mine?`<button class="linkb" data-act="lnone">${ui.lnone?'再按一次確認：剩下的位置用自由球員補':`剩下的都不要，${need} 個位置用自由球員補`}</button>`:''}
     ${clock(g.leftEnd,T_LEFT,mine?'時間到自動簽最適合你的：':'挑選倒數：',mine&&r!=='all')}</div>`}
+
+// the beat after a card: who won, for how much, where he goes, and a bar running down to the next card
+function soldBanner(g,H){const l=H.l,p=g.items[H.k],d=Math.max(300,H.until-H.at),last=String(p&&p.n||'').split(' ').slice(-1)[0];
+  if(!l.who)return `<div class="soldb pass" style="--d:${d}ms"><div class="sd1">流標</div><div class="sd2">沒有人要 ${esc(last)}</div><div class="sdbar"><i></i></div></div>`;
+  return `<div class="soldb" style="--c:${col(l.who)};--d:${d}ms"><div class="sd1">成交</div>
+    <div class="sd2"><b>${esc(nm(S,l.who))}</b> 標下 ${esc(last)}</div><div class="sd3"><b class="sdp">$${l.amt}</b>${l.full?`<s>$${l.full}</s><small>打折券</small>`:''}${l.slot?`<span>${esc(l.slot)}</span>`:''}</div><div class="sdbar"><i></i></div></div>`}
 
 /* ---------- matchup model ----------
  Base: OBPM+DBPM (Box Plus/Minus, Basketball-Reference), shrunk toward replacement level for small samples.
@@ -2174,9 +2208,9 @@ function fx(prev){
     if(me!=='all'&&g.turn===me&&prev.turn!==me)sfx('turn');
     if(g.stage==='nom'&&prev.stage!=='nom'&&mine(g.nomBy)&&me!=='all')sfx('turn');
     if(g.ev&&g.ev.n!==prev.ev&&prev.gid===g.gid){sfx(g.ev.id==='coupon'?'coupon':'card');vibe(20)}}
-  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
+  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];if(S.phase!=='auction'||window.BB_FAST)toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
     if(l.who){sfx('sold');if(l.full)sfx('coupon',0.25);if(mine(l.who)&&me!=='all')sfx('win',0.14)}else sfx('pass');
-    if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,2600);ui.hold={gid:g.gid,k:prev.idx,l,until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
+    if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,3600);ui.hold={gid:g.gid,k:prev.idx,l,at:Date.now(),until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
   else if(g.bid.amt>prev.bid)vibe(12);
 }
 setInterval(()=>{snapPrev=snapOf();tickAuth();tickBots()},250);
@@ -2402,8 +2436,8 @@ function vAuction(){
   const g=S.game,r=myRole();const H=ui.hold&&ui.hold.gid===g.gid&&Date.now()<ui.hold.until?ui.hold:null;const pl=H?g.items[H.k]:cur(g);if(!pl)return '';
   if(H){const l=H.l,stamp=l.who?`<div class="stamp" style="--c:${col(l.who)}"><b>SOLD</b><span>${esc(nm(S,l.who))}・$${l.amt}</span></div>`:`<div class="stamp pass"><b>流標</b><span>沒有人要</span></div>`;
     return `<div class="top"><div class="prog">第<b>${H.k+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<div class="small mut">下一張準備中…</div></div><div class="bar"><i style="width:${Math.round((H.k+1)/g.items.length*100)}%"></i></div>
-      <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)||'<div class="cur"><div class="line"><div class="mut">下一張準備中…</div></div></div>'}
-      ${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`}
+      <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)}${soldBanner(g,H)}
+      ${g.sides.map(s=>{const h=bidRow(g,s,r,true);return s===l.who?h.replace('<div class="brow ','<div class="brow won '):h}).join('')}`}
   const pct=Math.round(g.idx/g.items.length*100);
   if(g.stage==='left')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<span class="fpill">🧺 撿剩下的</span></div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${leftPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`;

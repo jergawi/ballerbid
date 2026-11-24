@@ -28,8 +28,8 @@
  Timing: every decision waits a "thinking" delay that grows with the stakes, and never runs into the deadline. */
 const BOT_LV={
   easy:{nm:'新手',d:'常亂出價，適合熟悉規則',noise:0.3,aware:0,shade:[0.45,0.95],react:[1000,2000],think:[1600,3600],jump:0.3},
-  normal:{nm:'普通',d:'看陣容缺什麼出價，懂傳奇組合',noise:0.15,aware:1,react:[600,1300],think:[1100,2900],jump:0.2},
-  hard:{nm:'高手',d:'再加上做任務、精算暗標，反應更快',noise:0.06,aware:2,react:[330,800],think:[900,2400],jump:0.12}};
+  normal:{nm:'普通',d:'看陣容缺什麼出價，懂傳奇組合',noise:0.2,aware:1,react:[600,1300],think:[1100,2900],jump:0.2},
+  hard:{nm:'高手',d:'再加上做任務、精算暗標，反應更快',noise:0.1,aware:2,react:[330,800],think:[900,2400],jump:0.12}};
 // c bends dollars per rating point: above 1 pays a premium for stars (auctions do), below 1 spreads money
 const BOT_STYLE={bal:{nm:'🤖 穩健派',c:1.2},star:{nm:'🤖 巨星控',c:1.6},depth:{nm:'🤖 精算師',c:0.85}};
 const SAVE_PT=0.3,SAVE_CAP=2.5;   // savAdj in baseRate: 0.3 rating per leftover $, capped at 2.5
@@ -121,10 +121,12 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
       return rich&&mine>=opp?mine*1.2:opp-0.7*mine};
     const best=Mk.slice().sort((a,b)=>sc(b)-sc(a))[0];return{a:'nominate',who:s,j:best.j,idx:g.idx}}
   if(g.sb){const lo=g.tie?g.tie.amt:0,mx=Math.max(lo,botMax(g,s));let amt;
-    if(g.tie)amt=mx>lo?Math.min(mx,lo+1+(R()<0.4?1:0)):lo;
+    if(g.tie)amt=mx<=lo?lo:g.tie.tb===s?(R()<0.65?lo:Math.min(mx,lo+1)):Math.min(mx,lo+1+(R()<0.35?1:0));   // a second tie goes to tie.tb
     else if(mx<=0)amt=0;
     else if(lv.shade)amt=Math.round(mx*rr(...lv.shade));
-    else{const want=Math.round(botRivalMax(g,s)*(lv.aware>1?rr(0.95,1.05):rr(0.85,1.12)));amt=mx>want?Math.min(mx,want+1):Math.round(mx*rr(0.8,0.95))}
+    else{const est=botRivalMax(g,s)*(lv.aware>1?rr(0.92,1.08):rr(0.8,1.15)),target=mx>est?Math.min(mx,Math.round(est)+1):Math.round(mx*rr(0.75,0.95));
+      // a mixed strategy: a fixed rule is quickly learned, so the bid moves around its target (sometimes bolder, sometimes cautious)
+      const u=R();amt=u<0.2?Math.round(rr(target,mx)):u<0.35?Math.round(rr(Math.max(1,mx*0.5),target)):target+(R()<0.5?0:R()<0.5?1:-1)}
     return{a:'sbid',who:s,amt:clamp(amt,lo,Math.max(lo,Math.min(mx,maxBid(g,s)))),idx:g.idx}}
   if(g.price!=null)return botMax(g,s)>=g.price&&(lv.aware||R()>0.15||realLeft(g)<=botMarket(g).N+1)?{a:'grab',who:s,idx:g.idx}:{a:'spass',who:s,idx:g.idx};
   const mx=botMax(g,s),b=g.bid.amt;if(mx<=b)return{a:'pass',who:s,idx:g.idx};

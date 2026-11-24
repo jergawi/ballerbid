@@ -47,13 +47,16 @@ function nominate(S,j){const g=S.game;if(j<g.idx||j>=Math.min(g.items.length,g.i
   if(j!==g.idx){const t=g.items[g.idx];g.items[g.idx]=g.items[j];g.items[j]=t}
   g.stage=null;g.nominated=true;startCard(S);return true}
 function autoNominate(S){const g=S.game,M=market(g);const best=M.slice().sort((a,b)=>starScore(b.p)-starScore(a.p))[0];return nominate(S,best?best.j:g.idx)}
+// who wins if a re-bid is tied again: more empty spots (the team that needs players), then earlier in this card's order.
+// It is shown on the tie screen before anyone re-bids, so the other player knows they have to raise.
+const tieWinner=(g,L)=>L.slice().sort((a,b)=>openN(g,b)-openN(g,a)||g.order.indexOf(a)-g.order.indexOf(b))[0];
 function resolveSealed(S){const g=S.game,el=g.tie?g.tie.sides:bidders(g),bids={};
   el.forEach(s=>{const v=g.sb[s];bids[s]=v==null?(g.tie?g.tie.amt:0):v});
   const mx=Math.max(0,...Object.values(bids)),top=el.filter(s=>bids[s]===mx&&mx>0);
   const rev={bids:{...(g.tie?g.tie.first:{}),...bids},max:mx,tie:!!g.tie};
   if(!top.length){g.reveal={...rev,idx:g.idx,win:null};g.sb=null;skipCard(S);return}
-  if(top.length>1&&!g.tie){g.tie={sides:top,amt:mx,first:bids};g.sb={};g.deadline=now()+T_SEAL_TIE;g.reveal={...rev,idx:g.idx,win:null,retie:1};return}
-  let w=top[0];if(top.length>1){w=top.slice().sort((a,b)=>openN(g,b)-openN(g,a)||g.order.indexOf(a)-g.order.indexOf(b))[0];rev.tb=1}
+  if(top.length>1&&!g.tie){g.tie={sides:top,amt:mx,first:bids,tb:tieWinner(g,top)};g.sb={};g.deadline=now()+T_SEAL_TIE;g.reveal={...rev,idx:g.idx,win:null,retie:1};return}
+  let w=top[0];if(top.length>1){w=tieWinner(g,top);rev.tb=1}
   g.reveal={...rev,idx:g.idx,win:w};g.sb=null;g.tie=null;g.bid={who:w,amt:mx};sell(S,w,mx)}
 function resolveGrab(S){const g=S.game,L=g.grab.who;const w=L.length===1?L[0]:L[Math.floor(rng(hash(g.gid+':'+g.idx))()*L.length)];
   g.reveal={idx:g.idx,grab:L.slice(),win:w,price:g.price};g.grab=null;g.bid={who:w,amt:g.price};sell(S,w,g.price)}

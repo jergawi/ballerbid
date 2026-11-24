@@ -565,3 +565,23 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .phb .yr{font-family:var(--num);font-size:15px;font-weight:800;color:#5a6275;background:#f1f3f8;border:1.5px solid var(--line);padding:1px 9px;border-radius:999px}
 .phb.sm{justify-content:flex-start;margin:4px 0 0}.phb.sm .ph{font-size:11.5px;padding:2px 8px}.phb.sm .yr{font-size:12.5px;padding:0 7px}
 .updb{display:block;width:100%;margin:0 0 10px;padding:11px 14px;border:0;border-radius:14px;background:#1c2333;color:#fff;font:inherit;font-weight:800;font-size:14px;cursor:pointer}
+/* the beat after each card */
+.soldb{position:relative;margin-top:12px;border-radius:18px;padding:14px 16px 16px;text-align:center;color:#fff;overflow:hidden;
+  background:linear-gradient(135deg,var(--c,#8d95a8),color-mix(in srgb,var(--c,#8d95a8) 70%,#000));box-shadow:0 14px 28px -14px color-mix(in srgb,var(--c,#8d95a8) 80%,#000);
+  animation:soldIn .45s var(--pop) both}
+.soldb.pass{--c:#8d95a8}
+.soldb .sd1{font-family:var(--disp);font-size:15px;font-weight:800;letter-spacing:.3em;opacity:.85}
+.soldb .sd2{font-size:21px;font-weight:900;margin-top:2px;animation:fadein .3s .15s both}
+.soldb .sd3{display:flex;justify-content:center;align-items:baseline;gap:10px;margin-top:4px;animation:fadein .3s .3s both}
+.soldb .sdp{font-family:var(--num);font-size:40px;line-height:1}
+.soldb .sd3 s{opacity:.7;font-size:16px}.soldb .sd3 small{font-size:11px;font-weight:800;background:rgba(255,255,255,.2);padding:2px 6px;border-radius:6px}
+.soldb .sd3 span{font-size:13px;font-weight:800;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:999px}
+.soldb .sdbar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.18)}
+.soldb .sdbar i{display:block;height:100%;background:rgba(255,255,255,.85);transform-origin:left;animation:sdbar var(--d) linear both}
+@keyframes sdbar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@keyframes soldIn{0%{opacity:0;transform:translateY(14px) scale(.96)}100%{opacity:1;transform:none}}
+.reveal+.soldb{animation-delay:.9s}
+.brow.won{box-shadow:0 0 0 3px color-mix(in srgb,var(--c,var(--acc)) 55%,transparent),var(--sh);animation:wonP 1s ease-in-out 2}
+@keyframes wonP{50%{transform:scale(1.015)}}
+.tbn{font-size:13px;font-weight:700;color:#5a6275;background:#f4f6fa;border-radius:10px;padding:6px 10px;margin:6px auto 2px;max-width:420px}
+@media (prefers-reduced-motion:reduce){.soldb,.soldb .sd2,.soldb .sd3,.brow.won{animation:none}}

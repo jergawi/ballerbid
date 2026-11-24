@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24t';
+const APPV='2026.11.24u';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -231,7 +231,8 @@ function nextCard(S){const g=S.game;g.gapEnd=now()+gapMs(g);g.idx++;g.bid={who:n
   startCard(S)}
 /* a short authoritative pause after each card so everyone sees the result (SOLD stamp, sealed-bid reveal) before the
    next card's clock starts; actions inside the pause are ignored */
-const gapMs=g=>window.BB_FAST?0:g.reveal&&g.reveal.idx===g.idx&&g.reveal.win?(g.reveal.grab?1500:2400):1000;
+const gapMs=g=>{if(window.BB_FAST)return 0;const v=g.reveal&&g.reveal.idx===g.idx?g.reveal:null,sold=g.log.length&&g.log[g.log.length-1].who;
+  return v&&v.win&&!v.grab?3400:sold?2300:1300};   // sealed reveal (bars, then the winner) / any sale / a pass
 const t0=g=>Math.max(now(),g.gapEnd||0),inGap=g=>now()<(g.gapEnd||0)-200;
 // a won card goes straight onto the roster (see autoPlace); every card ends here or in skipCard
 function sell(S,who,amt){const g=S.game;g.turn=null;const pay=couponPay(g,who,amt);g.rosters[who].push({slot:null,k:g.idx,price:pay});g.spent[who]+=pay;autoPlace(g,who);
@@ -585,9 +586,9 @@ function fx(prev){
     if(me!=='all'&&g.turn===me&&prev.turn!==me)sfx('turn');
     if(g.stage==='nom'&&prev.stage!=='nom'&&mine(g.nomBy)&&me!=='all')sfx('turn');
     if(g.ev&&g.ev.n!==prev.ev&&prev.gid===g.gid){sfx(g.ev.id==='coupon'?'coupon':'card');vibe(20)}}
-  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
+  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];if(S.phase!=='auction'||window.BB_FAST)toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
     if(l.who){sfx('sold');if(l.full)sfx('coupon',0.25);if(mine(l.who)&&me!=='all')sfx('win',0.14)}else sfx('pass');
-    if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,2600);ui.hold={gid:g.gid,k:prev.idx,l,until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
+    if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,3600);ui.hold={gid:g.gid,k:prev.idx,l,at:Date.now(),until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
   else if(g.bid.amt>prev.bid)vibe(12);
 }
 setInterval(()=>{snapPrev=snapOf();tickAuth();tickBots()},250);
@@ -813,8 +814,8 @@ function vAuction(){
   const g=S.game,r=myRole();const H=ui.hold&&ui.hold.gid===g.gid&&Date.now()<ui.hold.until?ui.hold:null;const pl=H?g.items[H.k]:cur(g);if(!pl)return '';
   if(H){const l=H.l,stamp=l.who?`<div class="stamp" style="--c:${col(l.who)}"><b>SOLD</b><span>${esc(nm(S,l.who))}・$${l.amt}</span></div>`:`<div class="stamp pass"><b>流標</b><span>沒有人要</span></div>`;
     return `<div class="top"><div class="prog">第<b>${H.k+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<div class="small mut">下一張準備中…</div></div><div class="bar"><i style="width:${Math.round((H.k+1)/g.items.length*100)}%"></i></div>
-      <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)||'<div class="cur"><div class="line"><div class="mut">下一張準備中…</div></div></div>'}
-      ${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`}
+      <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)}${soldBanner(g,H)}
+      ${g.sides.map(s=>{const h=bidRow(g,s,r,true);return s===l.who?h.replace('<div class="brow ','<div class="brow won '):h}).join('')}`}
   const pct=Math.round(g.idx/g.items.length*100);
   if(g.stage==='left')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<span class="fpill">🧺 撿剩下的</span></div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${leftPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`;
