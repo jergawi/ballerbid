@@ -12,7 +12,7 @@ function miniTags(p){const b=(p&&!p.fa&&bioOf(p))||{},t=[];if(b.mvp)t.push(`👑
   if(!t.length&&b.roy)t.push('🌱新人王');const sg=typeof sigOf==='function'&&sigOf(p);if(sg)t.push(`✨${sg.lab}`);return t.slice(0,3)}
 function miniCard(g,x,opts){const p=x.p,nk=nickOf(p);
   return `<${opts.btn?'button':'div'} class="mcard2 ${opts.sel?'sel':''} ${p.extra?'xtra':''}" ${opts.btn?`data-act="${opts.act||'nompick'}" data-v="${x.j}"`:''} style="--i:${opts.i||0}">
-    <div class="mn">${esc(p.n)}</div>${nk?`<div class="mk">“${esc(nk)}”</div>`:''}<div class="mp">${canPlay(p).map(x=>`<i>${x}</i>`).join('')}</div>
+    <div class="mn">${esc(p.n)}</div>${nk?`<div class="mk">“${esc(nk)}”</div>`:''}${phaseBadge(p,g,1)}<div class="mp">${canPlay(p).map(x=>`<i>${x}</i>`).join('')}</div>
     <div class="mt">${miniTags(p).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${opts.sel?'<span class="mck2">✓</span>':''}</${opts.btn?'button':'div'}>`}
 function nomPanel(g,r){const mine=r==='all'||r===g.nomBy,M=market(g),sel=ui.nomSel&&ui.nomSel.gid===g.gid&&ui.nomSel.idx===g.idx?ui.nomSel.j:null;
   return `<div class="nomhd"><div class="nt"><b style="color:${col(g.nomBy)}">${esc(nm(S,g.nomBy))}</b> ${mine?'，選一位拿出來拍':'正在挑要拍的球員…'}</div>

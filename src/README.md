@@ -9,6 +9,7 @@
 | `place.js` | Automatic roster placement after each sale (also scores rosters for the AI) |
 | `cards.js` | Ability cards (能力卡): pick screen, use rules, coupon pricing, home court, card tray and flash |
 | `bot.js` | AI opponents for 挑戰電腦: card valuation, bidding in every format, nominations, timing |
+| `phase.js` | Career phase badges (新秀年 / 生涯早期 / 巔峰期 / 生涯晚期) and season labels |
 | `bench.js` | 10-man bench roles (替補後衛 / 替補鋒線 / 第六人) and substitutions |
 | `mis.js` | Mission cards |
 | `season.js` | Season mode |

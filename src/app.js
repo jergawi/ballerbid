@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24q';
+const APPV='2026.11.24r';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -197,7 +197,7 @@ function startGame(S){
   const t=now();
   S.game={gid:Math.random().toString(36).slice(2,9),theme:{id:th.id,name:th.name,tag:th.tag,cat:th.cat||'自訂',random:c.theme==='random'||!!th.random},
     pool:th.items,items:drawItems(th.items,draw,n*size/5),extra:0,idx:0,sides,size,rosters:{},spent:{},
-    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,hints:!!c.hints,ready:{},lineupEnd:0};
+    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,hints:!!c.hints,ready:{},lineupEnd:0};
   sides.forEach(s=>{S.game.rosters[s]=[];S.game.spent[s]=0});S.game.base=S.game.items.length;
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false,fmt0:Math.floor(Math.random()*FMT_ROT.length)};
   const se=S.season;S.game.fmt=fmtFor(S);S.game.nom=!!c.nom;if(se){if(baseId)se.used.push(baseId);S.game.round=se.rounds.length+1;S.game.rounds=se.n}
@@ -272,7 +272,7 @@ function apply(S,a,actor){
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
-      if(n.mis!=null)c.mis=!!n.mis;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
+      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
       if(n.players===2||n.players===3){c.players=n.players;if(n.players===2&&S.seats.C&&NET.mode!=='local')S.seats.C=null}
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
@@ -647,6 +647,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>預算</b>：每個空位至少留 $1。沒花完的錢每 $1 加 0.3 實力，最多加 2.5。</li>
   <li><b>排陣</b>：90 秒（10 人 120 秒），拖曳或點兩位球員互換。</li>
   <li><b>對戰</b>：每兩隊打七戰四勝，系列賽贏最多的奪冠。</li>
+  <li><b>卡片版本</b>：每張卡是球員某一段時期的版本，比賽用的是那段時期的數據；卡面的生涯數據和榮譽是整個生涯。卡上的標籤告訴你是哪一段：🐣 新秀年、🌱 生涯早期、🔥 巔峰期（他最強的五季）、🍂 生涯晚期，年份（例如 '92）可在進階設定關掉。</li>
   <li><b>挑戰電腦</b>：一個人跟 1～2 位 AI 總管對戰。電腦依自己陣容缺什麼、剩多少錢、場上還有哪些球員來估價，只能用跟你一樣的按鈕，看不到你的任務卡和暗標金額。新手常亂出價；普通會看陣容缺什麼；高手還會做任務、精算暗標。</li>
   <li><b>拍賣方式</b>（大廳選）：🔨 一般喊價；🤫 暗標（同時偷偷出價，最高價得標，平手加賽一次，再平手空位多的一方得標）；⚡ 搶標（每張有標價，倒數完先按先得，0.6 秒內同時按下就抽籤）。季賽可選「每局輪換」。</li>
   <li><b>輪流提名</b>（選用）：桌上翻開 4 張，輪到的人挑一張拿出來拍，提名的人先出價。</li>
@@ -742,8 +743,9 @@ function vLobby(){
     ${L?`<section class="card"><h2>翻牌數量</h2><div class="row"><div class="stepper"><button data-act="cfg" data-k="draw" data-v="${c.draw-1}" ${dis}>−</button><div class="v">${c.draw}</div><button data-act="cfg" data-k="draw" data-v="${c.draw+1}" ${dis}>+</button></div><div class="small mut grow">張（主題共 ${L} 位）<br>每個位置保證至少 ${c.players*(c.size||5)/5} 位能打的人</div></div></section>`:''}
     <section class="card"><h2>進階</h2><div class="seg">
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
-      <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button></div>
-      <div class="small mut" style="margin-top:6px">這兩個都會透露主題的球隊和年代，預設關閉。</div></section>
+      <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
+      <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button></div>
+      <div class="small mut" style="margin-top:6px">前兩個會透露主題的球隊和年代，預設關閉。年份只透露年代，預設開啟；想更神秘可以關掉。每張卡都會標 🔥巔峰期／🌱生涯早期／🍂生涯晚期。</div></section>
     ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
     ${isP?(waitingFor().length?`<button class="big" disabled>等 ${esc(waitingFor().join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">${c.season?`開始季賽（${c.season} 局）→`:'開始競標 →'}</button>`):`<div class="note">觀眾無法變更設定。</div>`}`;
   const sc=Object.values(S.scores||{}).sort((a,b)=>b.w-a.w);
@@ -803,14 +805,14 @@ function vAuction(){
   const g=S.game,r=myRole();const H=ui.hold&&ui.hold.gid===g.gid&&Date.now()<ui.hold.until?ui.hold:null;const pl=H?g.items[H.k]:cur(g);if(!pl)return '';
   if(H){const l=H.l,stamp=l.who?`<div class="stamp" style="--c:${col(l.who)}"><b>SOLD</b><span>${esc(nm(S,l.who))}・$${l.amt}</span></div>`:`<div class="stamp pass"><b>流標</b><span>沒有人要</span></div>`;
     return `<div class="top"><div class="prog">第<b>${H.k+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<div class="small mut">下一張準備中…</div></div><div class="bar"><i style="width:${Math.round((H.k+1)/g.items.length*100)}%"></i></div>
-      <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)||'<div class="cur"><div class="line"><div class="mut">下一張準備中…</div></div></div>'}
+      <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)||'<div class="cur"><div class="line"><div class="mut">下一張準備中…</div></div></div>'}
       ${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`}
   const pct=Math.round(g.idx/g.items.length*100);
   if(g.stage==='left')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<span class="fpill">🧺 撿剩下的</span></div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${leftPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`;
   if(g.stage==='nom')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}${fmtPill(g)}</div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${nomPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}${r==='all'||ALL.includes(r)?`<button class="quit" data-act="quit">${ui.quit?'再按一次確認放棄本局':'放棄本局'}</button>`:''}`;
-  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${g.price!=null?`<div class="ptag">⚡ $${g.price}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
+  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${g.price!=null?`<div class="ptag">⚡ $${g.price}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
       ${g.showStats?`<div class="psub">${esc(sub(pl))}</div><div class="pstats">${[['pts','PTS'],['trb','REB'],['ast','AST'],['stl','STL'],['blk','BLK']].map(([k,l])=>`<div><b>${fmt(pl[k])}</b><i>${l}</i></div>`).join('')}</div>`:''}</div>`;
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
@@ -1371,7 +1373,7 @@ document.addEventListener('click',e=>{
     case 'tclr':return dispatch({a:'cfg',cfg:{teams:[]}});
     case 'pdel':return dispatch({a:'cfg',cfg:{picks:(S.cfg.picks||[]).filter(x=>x!==d.v)}});
     case 'cat':{const c=new Set(S.cfg.cats);c.has(d.v)?c.delete(d.v):c.add(d.v);return dispatch({a:'cfg',cfg:{cats:[...c]}})}
-    case 'cfg':{const val=['showStats','hints','mis','bal','cards'].includes(d.k)?d.v==='1':['pmode','fmt'].includes(d.k)?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
+    case 'cfg':{const val=['showStats','hints','mis','bal','cards','showYr'].includes(d.k)?d.v==='1':['pmode','fmt'].includes(d.k)?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
     case 'csel':{const g=S.game,who=d.who||(NET.mode==='local'?g.sides.find(s=>!g.cards[s].pick):myRole());let L=(ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===who?ui.csel.ids:g.cards[who]&&g.cards[who].pick)||[];L=L.slice();
       const i=L.indexOf(d.v);if(i>=0)L.splice(i,1);else{L.push(d.v);if(L.length>CARD_PICK)L.shift()}ui.csel={gid:g.gid,who,ids:L};return render()}
     case 'cpick':{const g=S.game;const ids=ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===d.who?ui.csel.ids:g.cards[d.who].pick;ui.csel=null;return dispatch({a:'card',id:'pick',who:d.who,ids})}

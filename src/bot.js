@@ -45,12 +45,12 @@ function aiAssign(S){if(!S.bots)return;const sides=Object.keys(S.bots),taken=sid
 function gauss(R){const u=Math.max(1e-9,R()),v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 /* What a bot may know about a card: only what the card face shows. The match sim uses the numbers of the card's own
    season(s), which stay hidden unless 顯示數據 is on; the face shows the player's career numbers and honours. So bots
-   value that reputation, exactly like a person reading the card (a 1992 Bird looks like Larry Bird to both), and
-   switch to the season numbers only when everyone can see them. Tapping 看年代和球隊 can still reward a fan who knows
+   value that reputation adjusted by the card's phase badge (🔥 巔峰期 / 🍂 生涯晚期 …, see phase.js), exactly like a
+   person reading the card, and switch to the season numbers only when everyone can see them. Tapping 看年代和球隊 can still reward a fan who knows
    which season a card is. */
 const PUBV=new WeakMap();
 function pubVal(p){if(!p||p.fa)return -1;if(S&&S.game&&S.game.showStats)return pval(p);if(PUBV.has(p))return PUBV.get(p);
-  const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:c.g}):pval(p);PUBV.set(p,v);return v}
+  const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:c.g})+phaseGap(phaseOf(p)):pval(p);PUBV.set(p,v);return v}
 const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
 const BC={k:''};

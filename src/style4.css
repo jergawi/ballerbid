@@ -559,3 +559,8 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 @media (prefers-reduced-motion:reduce){.acard,.aflash .acard.big1,.acard.sel::after,.achip.live,.achip.armed{animation:none}}
 .asheet .abg{position:absolute;inset:0}.asheet .ain{position:relative}
 .seg.bstyle{margin:2px 0 8px 18px;flex-wrap:wrap}.seg.bstyle .chip{font-size:13px;padding:6px 10px}
+/* career phase badge */
+.phb{display:flex;justify-content:center;gap:6px;margin:6px 0 2px;flex-wrap:wrap}
+.phb .ph{font-size:13px;font-weight:900;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff);border:1.5px solid color-mix(in srgb,var(--c) 35%,#fff);padding:3px 10px;border-radius:999px}
+.phb .yr{font-family:var(--num);font-size:15px;font-weight:800;color:#5a6275;background:#f1f3f8;border:1.5px solid var(--line);padding:1px 9px;border-radius:999px}
+.phb.sm{justify-content:flex-start;margin:4px 0 0}.phb.sm .ph{font-size:11.5px;padding:2px 8px}.phb.sm .yr{font-size:12.5px;padding:0 7px}
