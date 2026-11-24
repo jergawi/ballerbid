@@ -10,11 +10,11 @@ const num=(v,d)=>typeof v==='number'&&isFinite(v)?v:d;
 const normName=s=>String(s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-const LS='ballerbid_local_v1';
+const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24k';
+const APPV='2026.11.24m';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -105,7 +105,6 @@ function newState(){return{v:0,t:0,phase:'lobby',auth:null,code:null,
   cfg:{players:2,budget:15,size:5,theme:'random',cats:[...CATS],era:null,teams:[],picks:[],pcat:'夢幻隊',draw:12,showStats:false,hints:false,mis:false,season:0,bal:true,fmt:'open',nom:false,custom:{name:'',text:''}},
   seats:{A:null,B:null,C:null},names:{A:'玩家 A',B:'玩家 B',C:'玩家 C'},game:null,acks:{},scores:{},sim:null,err:'',by:null,season:null,lastSeason:null}}
 const sidesOf=n=>ALL.slice(0,n);
-const SD=()=>S.game?S.game.sides:sidesOf(S.cfg.players);
 const openSlots=(g,s)=>{const u=g.rosters[s].map(r=>r.slot);return SLOTS(g).filter(x=>!u.includes(x))};
 const openN=(g,s)=>openSlots(g,s).length;
 const left=(g,s)=>(g.bud&&g.bud[s]!=null?g.bud[s]:g.budget)-g.spent[s];
@@ -119,9 +118,11 @@ const remain=g=>g.items.length-g.idx;
 const isOver=g=>g.sides.every(s=>openN(g,s)===0)||g.idx>=g.items.length;
 const cur=g=>g.items[g.idx];
 const eligible=g=>g.sides.filter(s=>openN(g,s)>0);
-const nm=(S,s)=>(NET.mode==='local'?S.names[s]:(S.seats[s]&&S.seats[s].name))||('玩家 '+s);
-function roleOf(S,cid){if(NET.mode==='local')return 'all';for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===cid)return k;return 'spec'}
-const scoreKey=(S,s)=>NET.mode==='local'?'L'+s+':'+S.names[s]:(S.seats[s]?S.seats[s].cid:s);
+const nm=(S,s)=>(offline()?S.names[s]:(S.seats[s]&&S.seats[s].name))||('玩家 '+s);
+// no network: pass-and-play ('local') or against the computer ('ai', the human is always seat A)
+function offline(){return NET.mode==='local'||NET.mode==='ai'}
+function roleOf(S,cid){if(NET.mode==='local')return 'all';if(NET.mode==='ai')return 'A';for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===cid)return k;return 'spec'}
+const scoreKey=(S,s)=>offline()?'L'+s+':'+S.names[s]:(S.seats[s]?S.seats[s].cid:s);
 const now=()=>Date.now()+(NET.skew||0);
 function themeOk(t,cfg){return t.items.length>=cfg.players*(cfg.size||5)}
 // several themes merged into one pool; a player who appears more than once keeps his best version
@@ -169,10 +170,10 @@ function drawItems(items,n,k){
   for(const p of pool){if(picked.length>=n)break;if(!used.has(p.n)){picked.push(p);used.add(p.n)}}
   return shuffle(picked);
 }
-function waitingFor(){if(!S.last||NET.mode==='local')return[];const on=onlineSet();on.add(CID);
+function waitingFor(){if(!S.last||offline())return[];const on=onlineSet();on.add(CID);
   return sidesOf(S.cfg.players).filter(k=>S.seats[k]&&on.has(S.seats[k].cid)&&!(S.back&&S.back[S.seats[k].cid])).map(k=>S.seats[k].name)}
 const isBack=()=>!S.last||(S.back&&S.back[CID])||ui.backGid===S.last.game.gid;
-const lastView=()=>!!(S&&(S.phase==='lobby'||S.phase==='season')&&S.last&&NET.mode&&NET.mode!=='local'&&!isBack());
+const lastView=()=>!!(S&&(S.phase==='lobby'||S.phase==='season')&&S.last&&NET.mode&&!offline()&&!isBack());
 function withView(fn){if(!lastView())return fn();const g=S.game,sm=S.sim,ph=S.phase;S.game=S.last.game;S.sim=S.last.sim;S.phase='results';try{return fn()}finally{S.game=g;S.sim=sm;S.phase=ph}}
 function startGame(S){
   const c=S.cfg;S.err='';const n=c.players,size=c.size===10?10:5,need=n*size;let th;
@@ -191,7 +192,7 @@ function startGame(S){
   if(c.budget<size){S.err=`每人要標 ${size} 位，預算至少要 $${size}`;return true}
   if(th.items.length<need){S.err=`卡池只有 ${th.items.length} 位，${n} 人玩${size===10?'夢幻隊模式':''}至少需要 ${need} 位，請多選幾個主題／年份`;return true}
   const sides=sidesOf(n);
-  if(NET.mode!=='local'&&!sides.every(s=>S.seats[s])){S.err=`還要等 ${n} 位玩家都入座`;return true}
+  if(!offline()&&!sides.every(s=>S.seats[s])){S.err=`還要等 ${n} 位玩家都入座`;return true}
   const w=waitingFor();if(w.length){S.err=`還有人在看結算：${w.join('、')}`;return true}
   const draw=c.theme==='random'||th.random?Math.min(th.items.length,need+2):clamp(c.draw|0,need,th.items.length);
   const t=now();
@@ -239,7 +240,7 @@ function sell(S,who,amt){const g=S.game;g.turn=null;g.rosters[who].push({slot:nu
 function skipCard(S){const g=S.game;g.log.push({n:cur(g).n,who:null});if(g.sides.some(s=>openN(g,s)>0))addExtra(g);nextCard(S)}
 /* timers run only on the device that owns the game state */
 function tickAuth(){
-  if(!S||!S.game||!(NET.mode==='local'||NET.mode==='host'))return;
+  if(!S||!S.game||!(offline()||NET.mode==='host'))return;
   const g=S.game,t=now();let changed=false;
   // seated players who dropped offline are auto-passed so the game keeps moving
   const off=new Set();if(NET.mode==='host'&&NET.joinedAt&&Date.now()-NET.joinedAt>15000){const on=onlineSet();g.sides.forEach(s=>{const c=S.seats[s]&&S.seats[s].cid;if(c&&c!==CID&&!on.has(c))off.add(s)})}
@@ -262,11 +263,12 @@ function apply(S,a,actor){
   const r=actor.role,g=S.game;if(!a||typeof a.a!=='string')return false;
   const who=r==='all'?a.who:r;const isP=r==='all'||ALL.includes(r);
   switch(a.a){
-    case 'seat':{if(NET.mode==='local'||S.phase!=='lobby'||S.season)return false;const seat=a.seat;if(![...ALL,'spec'].includes(seat))return false;
+    case 'seat':{if(offline()||S.phase!=='lobby'||S.season)return false;const seat=a.seat;if(![...ALL,'spec'].includes(seat))return false;
       if(seat!=='spec'&&S.seats[seat]&&S.seats[seat].cid!==actor.cid)return false;
       for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===actor.cid&&k!==seat)S.seats[k]=null;
       if(seat!=='spec')S.seats[seat]={cid:actor.cid,name:clean(a.name)||'無名氏'};return true}
-    case 'names':{if(NET.mode!=='local'||S.season)return false;ALL.forEach(s=>{if(a[s]!=null)S.names[s]=clean(a[s])||('玩家 '+s)});return true}
+    case 'ailv':{if(NET.mode!=='ai'||S.phase!=='lobby'||S.season||!own(BOT_LV,a.v))return false;S.botLv=a.v;return true}
+    case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
       if(n.mis!=null)c.mis=!!n.mis;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
@@ -286,7 +288,7 @@ function apply(S,a,actor){
       const L=poolLenFor(c),need=c.players*(c.size||5);if(L)c.draw=clamp(c.draw,Math.min(need,L),L);
       S.err='';S.by=actor.cid;return true}
     case 'start':{if(!isP||!(S.phase==='lobby'&&!S.season||S.phase==='season'&&S.season&&!S.season.done))return false;return startGame(S)}
-    case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||NET.mode==='local'||!ALL.includes(r)||!S.season.sides.includes(r))return false;
+    case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||offline()||!ALL.includes(r)||!S.season.sides.includes(r))return false;
       S.sready=S.sready||{};S.sready[r]=!!a.v;if(S.season.sides.every(x=>S.sready[x])&&!waitingFor().length)return startGame(S)||true;return true}
     case 'mpick':{if(S.phase!=='mission'||!g||!g.mis||!g.sides.includes(who))return false;const M=g.mis[who],i=a.i|0;if(i<0||i>=M.opts.length)return false;
       M.pick=i;M.auto=0;if(g.sides.every(s=>g.mis[s].pick!=null))beginAuction(S);return true}
@@ -310,7 +312,7 @@ function apply(S,a,actor){
       // the first player back keeps the finished game in S.last so the others can keep watching it
       if(S.phase==='results'){S.last={game:S.game,sim:S.sim};S.phase=S.season?'season':'lobby';S.game=null;S.sim=null;S.back={}}
       else if(!((S.phase==='lobby'||S.phase==='season')&&S.last))return false;
-      if(r==='all'){S.last=null;S.back={};return true}
+      if(r==='all'||offline()){S.last=null;S.back={};return true}
       S.back=S.back||{};S.back[actor.cid]=1;return true}
     case 'quit':{if(!isP||S.phase==='lobby'||S.phase==='season')return false;S.phase=S.season?'season':'lobby';S.game=null;S.sim=null;S.last=null;S.back={};return true}
     case 'resetScores':{if(!isP)return false;S.scores={};return true}
@@ -374,7 +376,7 @@ function baseRate(Rall,g,leftover){const R=starters(Rall),Bn=benchOf(Rall);
   const O=R.reduce((t,p)=>t+shr(p.obpm,p,REPL.obpm),0),D=R.reduce((t,p)=>t+shr(p.dbpm,p,REPL.dbpm),0);
   const bv=benchValue(Bn),benchAdj=bv.adj;
   const U=R.reduce((t,p)=>t+num(p.usg,REPL.usg),0),usgAdj=-0.05*Math.max(0,U-110);
-  const ch=chem(Rall,g),savAdj=Math.min(2.5,0.3*Math.max(0,leftover||0));
+  const ch=chem(Rall,g),savAdj=Math.min(SAVE_CAP,SAVE_PT*Math.max(0,leftover||0));
   const off=O+usgAdj+ch.tm/2+ch.lgv/2-0.6*ch.fd+savAdj/2+benchAdj/2,def=D+ch.tm/2+ch.lgv/2+ch.sw-0.4*ch.fd+savAdj/2+benchAdj/2;
   return{bv,O,D,U,usgAdj,tmAdj:ch.tm,lgAdj:ch.lgv,swAdj:ch.sw,fdAdj:-ch.fd,savAdj,benchAdj,off,def,net:off+def,ch};
 }
@@ -476,6 +478,7 @@ function mqttConnect(bi){return new Promise((res,rej)=>{let done=false;
 function commit(){
   if(!S)return;S.v=(S.v||0)+1;S.t=Date.now();S.app=APPV;
   if(NET.mode==='local')lsSet(LS,S);
+  if(NET.mode==='ai')lsSet(LS_AI,S);
   if(NET.mode==='host')publishState();
   render();
 }
@@ -541,7 +544,7 @@ async function joinRoom(code,bi){
   NET.busy=false;render();
 }
 let wl=null;async function wakeLock(){try{if(navigator.wakeLock&&document.visibilityState==='visible')wl=await navigator.wakeLock.request('screen')}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NET.mode&&NET.mode!=='local'){wakeLock();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NET.mode&&!offline()){wakeLock();
   // back from the lock screen / another app: reconnect right away if the socket went quiet, then say we are here
   if(NET.client){if(Date.now()-(NET.lastRx||0)>6000){NET.lastRx=Date.now();try{NET.client.reconnect()}catch(e){}}else if(NET.hb)NET.hb()}}});
 function setHash(){try{history.replaceState(null,'',location.pathname+location.search+'#room-'+NET.code+'-'+NET.bi)}catch(e){}}
@@ -551,6 +554,7 @@ function leaveNet(){NET.timers.forEach(clearInterval);NET.timers=[];if(NET.clien
 let lastN=0;
 async function sendAct(a){let n=Date.now();if(n<=lastN)n=lastN+1;lastN=n;NET.pending.push({a,n,sent:Date.now()});NET.pending=NET.pending.slice(-8);
   if(NET.client)NET.client.publish(topic('a'),await seal({cid:CID,n,a}),{qos:1});render()}
+function startAI(){NET.mode='ai';NET.skew=0;const sv=lsGet(LS_AI);S=sv&&sv.v&&sv.cfg&&sv.cfg.cats&&sv.bots?sv:aiState();render()}
 function startLocal(){NET.mode='local';NET.skew=0;const sv=lsGet(LS);S=sv&&sv.v&&sv.cfg&&sv.cfg.cats?sv:newState();render()}
 function dispatch(a){
   if(!S)return;
@@ -581,7 +585,7 @@ function fx(prev){
     if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,2600);ui.hold={gid:g.gid,k:prev.idx,l,until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
   else if(g.bid.amt>prev.bid)vibe(12);
 }
-setInterval(()=>{snapPrev=snapOf();tickAuth()},250);
+setInterval(()=>{snapPrev=snapOf();tickAuth();tickBots()},250);
 
 /* ---------- views ---------- */
 let ui={quit:false,sel:null,themeOpen:false,reveal:new Set(),amt:{},pb:null,pbDone:new Set(),pbSp:null};
@@ -615,13 +619,14 @@ function runCounters(){document.querySelectorAll('[data-count]').forEach(el=>{
 function vHome(){
   const hm=/^#room-([a-z0-9]{6})(?:-(\d))?$/.exec(location.hash||''),inv=hm&&hm[1],last=(lsGet('bb_room')||'').split('-')[0];
   return `<header class="hero"><div class="logo">🏀</div><h1>BALLER<br><b>BID!</b></h1><div class="sub">球星喊價</div>
-  <p>用有限預算標下 NBA 球星，最後用真實數據模擬對戰。2～3 人一起玩。</p></header>
+  <p>用有限預算標下 NBA 球星，最後用真實數據模擬對戰。2～3 人一起玩，也能一個人挑戰電腦。</p></header>
   ${inv?`<section class="card invite" style="border-color:var(--acc)"><div class="small mut">你被邀請加入房間</div><div class="code">${esc(inv.toUpperCase())}</div>
     <input data-in="myname" maxlength="14" placeholder="輸入你的名字" value="${esc(MYNAME)}" style="margin-top:12px;text-align:center">
     <button class="big" data-act="joinhash" ${NET.busy?'disabled':''}>${NET.busy?'<span class="spin"></span> 連線中…':'加入房間 →'}</button></section>`
-  :`<section class="card"><h2>你的名字（線上用）</h2><input data-in="myname" maxlength="14" placeholder="例如：Jerry" value="${esc(MYNAME)}"></section>`}
+  :`<section class="card"><h2>你的名字</h2><input data-in="myname" maxlength="14" placeholder="例如：Jerry" value="${esc(MYNAME)}"></section>`}
   ${NET.err?`<div class="err">${esc(NET.err)}</div>`:''}
   <button class="mode hot" data-act="create" ${NET.busy?'disabled':''}><span class="ic">🌐</span><span><b>線上對戰</b><span>產生邀請連結，朋友點開就能加入，不用登入</span></span></button>
+  <button class="mode" data-act="ai"><span class="ic">🤖</span><span><b>挑戰電腦</b><span>一個人玩：跟 1～2 位 AI 總管搶球星</span></span></button>
   <button class="mode" data-act="local"><span class="ic">📱</span><span><b>同一台手機玩</b><span>大家輪流用一支手機出價</span></span></button>
   ${inv?'':`<section class="card"><h2>用房號加入</h2>
     <div class="row"><input data-in="code" maxlength="6" placeholder="6 位房號" style="text-transform:uppercase;letter-spacing:.2em;font-weight:800" value="${esc(last||'')}">
@@ -637,6 +642,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>預算</b>：每個空位至少留 $1。沒花完的錢每 $1 加 0.3 實力，最多加 2.5。</li>
   <li><b>排陣</b>：90 秒（10 人 120 秒），拖曳或點兩位球員互換。</li>
   <li><b>對戰</b>：每兩隊打七戰四勝，系列賽贏最多的奪冠。</li>
+  <li><b>挑戰電腦</b>：一個人跟 1～2 位 AI 總管對戰。電腦依自己陣容缺什麼、剩多少錢、場上還有哪些球員來估價，只能用跟你一樣的按鈕，看不到你的任務卡和暗標金額。新手常亂出價；普通會看陣容缺什麼；高手還會做任務、精算暗標。</li>
   <li><b>拍賣方式</b>（大廳選）：🔨 一般喊價；🤫 暗標（同時偷偷出價，最高價得標，平手加賽一次，再平手空位多的一方得標）；⚡ 搶標（每張有標價，倒數完先按先得，0.6 秒內同時按下就抽籤）。季賽可選「每局輪換」。</li>
   <li><b>輪流提名</b>（選用）：桌上翻開 4 張，輪到的人挑一張拿出來拍，提名的人先出價。</li>
   <li><b>替補</b>（10 人）：5 個替補自己分配「替補後衛／替補鋒線／第六人」，至少各 1 位、第六人只能 1 位。換人時由對應角色上場，第六人上場最多；放錯角色會扣分，沒有能補的角色也會扣分。</li>
@@ -652,6 +658,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>夢幻隊模式（10 人）</b>：替補約是先發 1/4 的影響力。火爆浪子可能吃兩次 T 被驅逐，犯規麻煩的人可能犯滿，都由最強的替補頂上。</li>
   <li><b>數據</b>：Basketball-Reference。1974 年前部分數據是推估，卡片上標「估」。</li></ul></details></section>`}
 function vRoomBar(){
+  if(NET.mode==='ai')return `<div class="roombar"><span>🤖 挑戰電腦・${esc(botLv().nm)}</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
   if(NET.mode==='local')return `<div class="roombar"><span>📱 同一台手機</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
   const r=myRole(),label=ALL.includes(r)?nm(S,r):'觀眾';
   return `<div class="roombar"><span class="mut">房號</span><span class="code">${esc((NET.code||'').toUpperCase())}</span><span class="grow small">你是 <b>${esc(label)}</b>${pend()}</span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>${ui.verWarn?'<div class="err">⚠️ 你和房間裡其他人的遊戲版本不同，可能會出錯。請大家都重新整理網頁後再開房。</div>':''}
@@ -664,8 +671,9 @@ function seatRow(k){
   const watching=s&&S.last&&!(S.back&&S.back[s.cid])&&!me;
   return `<div class="seat ${k} ${me?'me':''}"><span class="lab">玩家 ${k}</span><span class="who">${s?`<span class="dot ${watching&&on?'pulse':''}" style="background:${!on?'#bbb':watching?'var(--acc)':'var(--ok)'}"></span> ${esc(s.name)}${me?'（你）':''}${watching&&on?' <span class="small" style="color:#d9730d">結算畫面中</span>':!on?' <span class="small mut">離線</span>':''}`:'<span class="mut">空位</span>'}</span>${btn}</div>`}
 function vLobby(){
-  const c=S.cfg,r=myRole(),isP=r==='all'||ALL.includes(r),sides=sidesOf(c.players);let top='';
-  if(NET.mode==='local')top=`<section class="card"><h2>玩家</h2>${sides.map(s=>`<div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col(s)}"></span><input data-in="name" data-i="${s}" maxlength="12" value="${esc(S.names[s])}"></div>`).join('')}</section>`;
+  const c=S.cfg,r=myRole(),isP=r==='all'||ALL.includes(r),sides=sidesOf(c.players),dis0=S.season?'disabled':'';let top='';
+  if(NET.mode==='ai')top=aiLobby(sides,dis0);
+  else if(NET.mode==='local')top=`<section class="card"><h2>玩家</h2>${sides.map(s=>`<div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col(s)}"></span><input data-in="name" data-i="${s}" maxlength="12" value="${esc(S.names[s])}"></div>`).join('')}</section>`;
   else top=`<section class="card invite"><div class="small mut">房號</div><div class="code">${esc(NET.code.toUpperCase())}</div>
       <button class="big" data-act="share">📨 傳送邀請連結</button><div class="small mut" style="margin-top:8px;word-break:break-all">${esc(inviteLink())}</div>
       <div class="small mut" style="margin-top:6px">🔒 對戰內容有加密，只有拿到房號的人看得到。</div></section>
@@ -718,7 +726,7 @@ function vLobby(){
       <button class="crow ${c.bal!==false?'on':''}" style="margin-top:10px" data-act="cfg" data-k="bal" data-v="${c.bal!==false?0:1}" ${dis}><span class="ck">${c.bal!==false?'✓':''}</span><span class="grow"><b>平衡機制</b><small>上局冠軍下一局預算 −10%，積分墊底 +10%</small></span></button>
       <div class="small mut" style="margin-top:8px">積分：冠軍 3 分${c.players===3?'、第二名 1 分':'、輸家打滿七場拿 1 分'}${c.mis?'、完成任務 +1（★★★ +2）':''}。每局換新主題${c.theme==='random'||c.pmode==='one'?'，同一季不重複':''}。</div>`:''}
       ${c.mis&&!c.season?'<div class="small mut" style="margin-top:8px">任務保密，只有自己看得到，結算時才揭曉。</div>':''}${fmtLobby(c,dis)}</section>`;
-  const cfg=play+`<section class="card"><h2>人數</h2><div class="seg">${[2,3].map(n=>`<button class="chip ${c.players===n?'on':''}" data-act="cfg" data-k="players" data-v="${n}" ${dis}>${n} 人</button>`).join('')}</div></section>
+  const cfg=play+`<section class="card"><h2>${NET.mode==='ai'?'對手':'人數'}</h2><div class="seg">${[2,3].map(n=>`<button class="chip ${c.players===n?'on':''}" data-act="cfg" data-k="players" data-v="${n}" ${dis}>${NET.mode==='ai'?`${n-1} 位電腦`:`${n} 人`}</button>`).join('')}</div></section>
     <section class="card"><h2>陣容</h2><div class="seg">${[[5,'正規 5 人'],[10,'夢幻隊模式 10 人']].map(([n,l])=>`<button class="chip ${(c.size||5)===n?'on':''}" data-act="cfg" data-k="size" data-v="${n}" ${dis}>${l}</button>`).join('')}</div>
       <div class="small mut" style="margin-top:6px">${(c.size||5)===10?`5 先發＋5 替補，每人要標 10 位，卡池至少要 ${c.players*10} 人。建議預算 $${c.players===3?30:25} 以上。`:'5 位先發，標滿就開打。'}</div></section>
     <section class="card"><h2>每人預算</h2><div class="row wrapx">${[10,15,20,25].map(b=>`<button class="chip ${c.budget===b?'on':''}" data-act="cfg" data-k="budget" data-v="${b}" ${dis}>$${b}</button>`).join('')}
@@ -769,7 +777,7 @@ function bidRow(g,s,r,held){
   const full=openN(g,s)===0,lead=g.bid.who===s,mx=maxBid(g,s),mine=r==='all'||r===s,passed=g.pass[s],turn=g.turn===s;
   const out=full||passed||(!lead&&mx<=g.bid.amt);
   const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?(q&&q.role?BROLE[q.role].sh:'替'):x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
-  const offl=NET.mode!=='local'&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
+  const offl=!offline()&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
   const state=held?'':fmtBusy(g)&&!g.solo?(offl?'📴 離線中・':'')+(full?'陣容已滿':fmtState(g,s)):(offl?'📴 離線中（自動跳過）・':'')+(g.solo&&g.solo.who===s&&!full?(turn?(mine?'對手都滿了：每位 $1，拿或跳過':'挑選中…'):''):full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
   const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt,solo=g.solo&&g.solo.who===s&&!full;
   const fb=fmtBusy(g)&&!g.solo;
@@ -1200,8 +1208,6 @@ function drawBall(ctx,x,y,h){ctx.beginPath();ctx.arc(x,y+h*0.25+2,3.2,0,7);ctx.f
   ctx.beginPath();ctx.arc(x,y-h,3.6+h*0.08,0,7);ctx.fillStyle='#f07a1e';ctx.fill();ctx.strokeStyle='#7a3a0c';ctx.lineWidth=.8;ctx.stroke()}
 function pop(ctx,x,y,txt,u,size){const sc=u<.25?u/.25*1.2:1.2-(u-.25)*.27;ctx.save();ctx.globalAlpha=u>.8?(1-u)/.2:1;ctx.translate(x,y-u*8);ctx.scale(sc,sc);
   ctx.font=`900 ${size||16}px system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.strokeText(txt,0,0);ctx.fillStyle='#1c2333';ctx.fillText(txt,0,0);ctx.restore()}
-function pbScore(st){const {G,P,pe,done}=st,qa=G.q[0],qb=G.q[1];if(done)return[G.sa,G.sb];const full=Math.floor(pe);let a=0,b=0;
-  for(let i=0;i<P;i++){if(i<full){a+=qa[i];b+=qb[i]}else if(i===full){const f=pe-full;a+=Math.floor(qa[i]*f);b+=Math.floor(qb[i]*f)}}return[a,b]}
 requestAnimationFrame(courtFrame);
 function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayback()}
   const {L,G,e,P,pe,done}=st,z=G.z,two=g.sides.length===2,ns=S.sim.series.length;
@@ -1321,10 +1327,12 @@ document.addEventListener('click',e=>{
   if(a!=='quit')ui.quit=false;if(a!=='endSeason')ui.endSe=false;
   switch(a){
     case 'local':return startLocal();
+    case 'ai':return startAI();
+    case 'ailv':return dispatch({a:'ailv',v:d.v});
     case 'create':return createRoom();
     case 'join':return joinRoom(document.querySelector('[data-in="code"]').value);
     case 'joinhash':{const m=/^#room-([a-z0-9]{6})(?:-(\d))?$/.exec(location.hash);if(m)joinRoom(m[1],m[2]!=null?+m[2]:undefined);return}
-    case 'exit':if(NET.mode!=='local')leaveNet();else NET.mode=null;S=null;return render();
+    case 'exit':if(!offline())leaveNet();else NET.mode=null;S=null;return render();
     case 'share':{const url=inviteLink(),txt='來玩 BALLER BID 球星喊價！點連結直接加入：';
       if(navigator.share){navigator.share({title:'BALLER BID 球星喊價',text:txt,url}).catch(()=>{})}else copyText(txt+url,'邀請連結已複製 ✅');return}
     case 'copy':return withView(()=>copyText(summaryText(),'已複製 ✅'));

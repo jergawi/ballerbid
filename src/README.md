@@ -6,7 +6,8 @@
 |---|---|
 | `app.js` | Core: state, networking (MQTT, host is the authority), auction engine, game sim, main views |
 | `formats.js` | Auction formats (一般喊價 / 暗標 / 搶標) and 輪流提名. Every card still ends in `sell()` or `skipCard()` |
-| `place.js` | Automatic roster placement after each sale |
+| `place.js` | Automatic roster placement after each sale (also scores rosters for the AI) |
+| `bot.js` | AI opponents for 挑戰電腦: card valuation, bidding in every format, nominations, timing |
 | `bench.js` | 10-man bench roles (替補後衛 / 替補鋒線 / 第六人) and substitutions |
 | `mis.js` | Mission cards |
 | `season.js` | Season mode |

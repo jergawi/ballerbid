@@ -69,7 +69,7 @@ function vSeason(){
       <section class="card rs" style="--d:1s"><details><summary>📜 每局紀錄</summary>${seasonHistory()}</details></section>
       <div class="rs" style="--d:1.1s"><button class="ghost" data-act="copyseason">📋 複製季賽結果</button>
       ${isP?`<button class="big" data-act="closeSeason" ${wait.length?'disabled':''}>${wait.length?`等 ${esc(wait.join('、'))} 看完結算…`:'回到大廳 →'}</button>`:''}</div>`}
-  const k=se.rounds.length,bb=seasonBudgets(S),c=S.cfg,online=NET.mode!=='local',P=online?seasonPresence(se):null;
+  const k=se.rounds.length,bb=seasonBudgets(S),c=S.cfg,online=!offline(),P=online?seasonPresence(se):null;
   const nextBud=se.sides.map(s=>{const a=bb.adj[s];return `<div class="nb"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><span class="grow"></span><b class="num">$${bb.b[s]}</b>${a?`<small class="${a<0?'dn':'up'}">${a<0?`上局冠軍 −$${-a}`:`墊底補償 +$${a}`}</small>`:''}</div>`}).join('');
   return `<div class="shero rs" style="--d:.02s"><div class="st1">🏁 季賽積分榜</div><div class="small mut">${k?`第 ${k} / ${se.n} 局結束`:`共 ${se.n} 局・還沒開打`}</div>${seasonDots(se)}</div>
     ${k?`<section class="card">${seasonRows(S,T,false)}</section>`:''}
@@ -100,6 +100,6 @@ function seasonPresence(se){const on=onlineSet(),ready=S.sready||{},off=[];
     return `<div class="prow"><span class="dot ${watching&&live?'pulse':''}" style="background:${c}"></span><b style="color:${col(k)}">${esc(nm(S,k))}</b>${me?'<small class="mut">（你）</small>':''}<span class="grow"></span><span class="small" style="color:${c};font-weight:800">${t}</span></div>`}).join('');
   return{rows,ready,off}}
 // shown on the results screen of a season round while others have moved on
-function seasonWaitNote(){if(NET.mode==='local'||!S.season||!S.last||S.season.done)return '';const se=S.season,r=myRole(),ready=S.sready||{};
+function seasonWaitNote(){if(offline()||!S.season||!S.last||S.season.done)return '';const se=S.season,r=myRole(),ready=S.sready||{};
   const L=se.sides.filter(k=>k!==r&&S.seats[k]&&S.back&&S.back[S.seats[k].cid]).map(k=>`<b style="color:${col(k)}">${esc(nm(S,k))}</b>${ready[k]?' 已準備好 ✓':' 在積分榜等你'}`);
   return L.length?`<div class="note" style="margin-top:8px">⏳ ${L.join('・')}</div>`:''}

@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-swXqgZ1R3h5/8DxWf2PsPGrNnbZSQAVyFfVlabYh0Gg=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-QqmISLUnGqKv59CB6v7nDXezC+6gfaxZhsYW3R9NhVA=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -193,7 +193,7 @@ table.box{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
 .cd{height:5px;border-radius:4px;background:var(--soft);overflow:hidden;margin-top:6px;width:100%}
 .cd i{display:block;height:100%;background:var(--acc);transition:width .2s linear}
 .cur{flex-direction:column;gap:2px}
-.cur .line{display:flex;align-items:center;gap:12px}
+.cur .line{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .champ{margin-top:12px;text-align:center;padding:16px;border-radius:18px;background:linear-gradient(135deg,#fff7e8,#fff);border:1.5px solid #ffd7a8;box-shadow:var(--sh)}
 .champ .t{font-size:13px;letter-spacing:.2em;color:var(--acc);font-weight:900}
 .champ .w{font-size:26px;font-weight:900;margin-top:2px}
@@ -521,6 +521,10 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .bsum{margin-left:8px;font-weight:700;color:#aab4cc;font-size:11.5px;letter-spacing:0}
 .bwarn{background:#fff0f0;border:1px solid #f3b5b5;color:#b3261e;border-radius:10px;padding:6px 10px;font-size:12.5px;font-weight:700;margin:6px 0}
 .sfxb{font-size:18px!important;padding:0 6px!important;background:none;border:0}
+/* AI lobby */
+.botrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-top:1px solid var(--line)}
+.botrow b{font-size:15px}.botrow small{color:var(--mut);margin-left:auto;font-size:12px}
+.fgrid.lv{grid-template-columns:repeat(3,1fr)}
 
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
@@ -546,11 +550,11 @@ const num=(v,d)=>typeof v==='number'&&isFinite(v)?v:d;
 const normName=s=>String(s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-const LS='ballerbid_local_v1';
+const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24k';
+const APPV='2026.11.24m';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -641,7 +645,6 @@ function newState(){return{v:0,t:0,phase:'lobby',auth:null,code:null,
   cfg:{players:2,budget:15,size:5,theme:'random',cats:[...CATS],era:null,teams:[],picks:[],pcat:'夢幻隊',draw:12,showStats:false,hints:false,mis:false,season:0,bal:true,fmt:'open',nom:false,custom:{name:'',text:''}},
   seats:{A:null,B:null,C:null},names:{A:'玩家 A',B:'玩家 B',C:'玩家 C'},game:null,acks:{},scores:{},sim:null,err:'',by:null,season:null,lastSeason:null}}
 const sidesOf=n=>ALL.slice(0,n);
-const SD=()=>S.game?S.game.sides:sidesOf(S.cfg.players);
 const openSlots=(g,s)=>{const u=g.rosters[s].map(r=>r.slot);return SLOTS(g).filter(x=>!u.includes(x))};
 const openN=(g,s)=>openSlots(g,s).length;
 const left=(g,s)=>(g.bud&&g.bud[s]!=null?g.bud[s]:g.budget)-g.spent[s];
@@ -655,9 +658,11 @@ const remain=g=>g.items.length-g.idx;
 const isOver=g=>g.sides.every(s=>openN(g,s)===0)||g.idx>=g.items.length;
 const cur=g=>g.items[g.idx];
 const eligible=g=>g.sides.filter(s=>openN(g,s)>0);
-const nm=(S,s)=>(NET.mode==='local'?S.names[s]:(S.seats[s]&&S.seats[s].name))||('玩家 '+s);
-function roleOf(S,cid){if(NET.mode==='local')return 'all';for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===cid)return k;return 'spec'}
-const scoreKey=(S,s)=>NET.mode==='local'?'L'+s+':'+S.names[s]:(S.seats[s]?S.seats[s].cid:s);
+const nm=(S,s)=>(offline()?S.names[s]:(S.seats[s]&&S.seats[s].name))||('玩家 '+s);
+// no network: pass-and-play ('local') or against the computer ('ai', the human is always seat A)
+function offline(){return NET.mode==='local'||NET.mode==='ai'}
+function roleOf(S,cid){if(NET.mode==='local')return 'all';if(NET.mode==='ai')return 'A';for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===cid)return k;return 'spec'}
+const scoreKey=(S,s)=>offline()?'L'+s+':'+S.names[s]:(S.seats[s]?S.seats[s].cid:s);
 const now=()=>Date.now()+(NET.skew||0);
 function themeOk(t,cfg){return t.items.length>=cfg.players*(cfg.size||5)}
 // several themes merged into one pool; a player who appears more than once keeps his best version
@@ -705,10 +710,10 @@ function drawItems(items,n,k){
   for(const p of pool){if(picked.length>=n)break;if(!used.has(p.n)){picked.push(p);used.add(p.n)}}
   return shuffle(picked);
 }
-function waitingFor(){if(!S.last||NET.mode==='local')return[];const on=onlineSet();on.add(CID);
+function waitingFor(){if(!S.last||offline())return[];const on=onlineSet();on.add(CID);
   return sidesOf(S.cfg.players).filter(k=>S.seats[k]&&on.has(S.seats[k].cid)&&!(S.back&&S.back[S.seats[k].cid])).map(k=>S.seats[k].name)}
 const isBack=()=>!S.last||(S.back&&S.back[CID])||ui.backGid===S.last.game.gid;
-const lastView=()=>!!(S&&(S.phase==='lobby'||S.phase==='season')&&S.last&&NET.mode&&NET.mode!=='local'&&!isBack());
+const lastView=()=>!!(S&&(S.phase==='lobby'||S.phase==='season')&&S.last&&NET.mode&&!offline()&&!isBack());
 function withView(fn){if(!lastView())return fn();const g=S.game,sm=S.sim,ph=S.phase;S.game=S.last.game;S.sim=S.last.sim;S.phase='results';try{return fn()}finally{S.game=g;S.sim=sm;S.phase=ph}}
 function startGame(S){
   const c=S.cfg;S.err='';const n=c.players,size=c.size===10?10:5,need=n*size;let th;
@@ -727,7 +732,7 @@ function startGame(S){
   if(c.budget<size){S.err=`每人要標 ${size} 位，預算至少要 $${size}`;return true}
   if(th.items.length<need){S.err=`卡池只有 ${th.items.length} 位，${n} 人玩${size===10?'夢幻隊模式':''}至少需要 ${need} 位，請多選幾個主題／年份`;return true}
   const sides=sidesOf(n);
-  if(NET.mode!=='local'&&!sides.every(s=>S.seats[s])){S.err=`還要等 ${n} 位玩家都入座`;return true}
+  if(!offline()&&!sides.every(s=>S.seats[s])){S.err=`還要等 ${n} 位玩家都入座`;return true}
   const w=waitingFor();if(w.length){S.err=`還有人在看結算：${w.join('、')}`;return true}
   const draw=c.theme==='random'||th.random?Math.min(th.items.length,need+2):clamp(c.draw|0,need,th.items.length);
   const t=now();
@@ -775,7 +780,7 @@ function sell(S,who,amt){const g=S.game;g.turn=null;g.rosters[who].push({slot:nu
 function skipCard(S){const g=S.game;g.log.push({n:cur(g).n,who:null});if(g.sides.some(s=>openN(g,s)>0))addExtra(g);nextCard(S)}
 /* timers run only on the device that owns the game state */
 function tickAuth(){
-  if(!S||!S.game||!(NET.mode==='local'||NET.mode==='host'))return;
+  if(!S||!S.game||!(offline()||NET.mode==='host'))return;
   const g=S.game,t=now();let changed=false;
   // seated players who dropped offline are auto-passed so the game keeps moving
   const off=new Set();if(NET.mode==='host'&&NET.joinedAt&&Date.now()-NET.joinedAt>15000){const on=onlineSet();g.sides.forEach(s=>{const c=S.seats[s]&&S.seats[s].cid;if(c&&c!==CID&&!on.has(c))off.add(s)})}
@@ -798,11 +803,12 @@ function apply(S,a,actor){
   const r=actor.role,g=S.game;if(!a||typeof a.a!=='string')return false;
   const who=r==='all'?a.who:r;const isP=r==='all'||ALL.includes(r);
   switch(a.a){
-    case 'seat':{if(NET.mode==='local'||S.phase!=='lobby'||S.season)return false;const seat=a.seat;if(![...ALL,'spec'].includes(seat))return false;
+    case 'seat':{if(offline()||S.phase!=='lobby'||S.season)return false;const seat=a.seat;if(![...ALL,'spec'].includes(seat))return false;
       if(seat!=='spec'&&S.seats[seat]&&S.seats[seat].cid!==actor.cid)return false;
       for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===actor.cid&&k!==seat)S.seats[k]=null;
       if(seat!=='spec')S.seats[seat]={cid:actor.cid,name:clean(a.name)||'無名氏'};return true}
-    case 'names':{if(NET.mode!=='local'||S.season)return false;ALL.forEach(s=>{if(a[s]!=null)S.names[s]=clean(a[s])||('玩家 '+s)});return true}
+    case 'ailv':{if(NET.mode!=='ai'||S.phase!=='lobby'||S.season||!own(BOT_LV,a.v))return false;S.botLv=a.v;return true}
+    case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
       if(n.mis!=null)c.mis=!!n.mis;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
@@ -822,7 +828,7 @@ function apply(S,a,actor){
       const L=poolLenFor(c),need=c.players*(c.size||5);if(L)c.draw=clamp(c.draw,Math.min(need,L),L);
       S.err='';S.by=actor.cid;return true}
     case 'start':{if(!isP||!(S.phase==='lobby'&&!S.season||S.phase==='season'&&S.season&&!S.season.done))return false;return startGame(S)}
-    case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||NET.mode==='local'||!ALL.includes(r)||!S.season.sides.includes(r))return false;
+    case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||offline()||!ALL.includes(r)||!S.season.sides.includes(r))return false;
       S.sready=S.sready||{};S.sready[r]=!!a.v;if(S.season.sides.every(x=>S.sready[x])&&!waitingFor().length)return startGame(S)||true;return true}
     case 'mpick':{if(S.phase!=='mission'||!g||!g.mis||!g.sides.includes(who))return false;const M=g.mis[who],i=a.i|0;if(i<0||i>=M.opts.length)return false;
       M.pick=i;M.auto=0;if(g.sides.every(s=>g.mis[s].pick!=null))beginAuction(S);return true}
@@ -846,7 +852,7 @@ function apply(S,a,actor){
       // the first player back keeps the finished game in S.last so the others can keep watching it
       if(S.phase==='results'){S.last={game:S.game,sim:S.sim};S.phase=S.season?'season':'lobby';S.game=null;S.sim=null;S.back={}}
       else if(!((S.phase==='lobby'||S.phase==='season')&&S.last))return false;
-      if(r==='all'){S.last=null;S.back={};return true}
+      if(r==='all'||offline()){S.last=null;S.back={};return true}
       S.back=S.back||{};S.back[actor.cid]=1;return true}
     case 'quit':{if(!isP||S.phase==='lobby'||S.phase==='season')return false;S.phase=S.season?'season':'lobby';S.game=null;S.sim=null;S.last=null;S.back={};return true}
     case 'resetScores':{if(!isP)return false;S.scores={};return true}
@@ -1143,7 +1149,7 @@ function vSeason(){
       <section class="card rs" style="--d:1s"><details><summary>📜 每局紀錄</summary>${seasonHistory()}</details></section>
       <div class="rs" style="--d:1.1s"><button class="ghost" data-act="copyseason">📋 複製季賽結果</button>
       ${isP?`<button class="big" data-act="closeSeason" ${wait.length?'disabled':''}>${wait.length?`等 ${esc(wait.join('、'))} 看完結算…`:'回到大廳 →'}</button>`:''}</div>`}
-  const k=se.rounds.length,bb=seasonBudgets(S),c=S.cfg,online=NET.mode!=='local',P=online?seasonPresence(se):null;
+  const k=se.rounds.length,bb=seasonBudgets(S),c=S.cfg,online=!offline(),P=online?seasonPresence(se):null;
   const nextBud=se.sides.map(s=>{const a=bb.adj[s];return `<div class="nb"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><span class="grow"></span><b class="num">$${bb.b[s]}</b>${a?`<small class="${a<0?'dn':'up'}">${a<0?`上局冠軍 −$${-a}`:`墊底補償 +$${a}`}</small>`:''}</div>`}).join('');
   return `<div class="shero rs" style="--d:.02s"><div class="st1">🏁 季賽積分榜</div><div class="small mut">${k?`第 ${k} / ${se.n} 局結束`:`共 ${se.n} 局・還沒開打`}</div>${seasonDots(se)}</div>
     ${k?`<section class="card">${seasonRows(S,T,false)}</section>`:''}
@@ -1174,7 +1180,7 @@ function seasonPresence(se){const on=onlineSet(),ready=S.sready||{},off=[];
     return `<div class="prow"><span class="dot ${watching&&live?'pulse':''}" style="background:${c}"></span><b style="color:${col(k)}">${esc(nm(S,k))}</b>${me?'<small class="mut">（你）</small>':''}<span class="grow"></span><span class="small" style="color:${c};font-weight:800">${t}</span></div>`}).join('');
   return{rows,ready,off}}
 // shown on the results screen of a season round while others have moved on
-function seasonWaitNote(){if(NET.mode==='local'||!S.season||!S.last||S.season.done)return '';const se=S.season,r=myRole(),ready=S.sready||{};
+function seasonWaitNote(){if(offline()||!S.season||!S.last||S.season.done)return '';const se=S.season,r=myRole(),ready=S.sready||{};
   const L=se.sides.filter(k=>k!==r&&S.seats[k]&&S.back&&S.back[S.seats[k].cid]).map(k=>`<b style="color:${col(k)}">${esc(nm(S,k))}</b>${ready[k]?' 已準備好 ✓':' 在積分榜等你'}`);
   return L.length?`<div class="note" style="margin-top:8px">⏳ ${L.join('・')}</div>`:''}
 
@@ -1268,28 +1274,38 @@ const roleLab=(r,short)=>BROLE[r]?(short?BROLE[r].sh:BROLE[r].nm):'替補';
  roster is re-arranged: the best starting five by value and position fit, the rest on the bench with roles. Starter
  spots stay open when no owned player fits them well, so "open spots" keep meaning "what this team still needs".
  Players fine-tune everything in the lineup screen (drag to swap, tap a bench role), so this choice never locks
- anyone in. Slot missions (e.g. a classic center at C) get a nudge so the arrangement already shows them done. */
+ anyone in. Slot missions (e.g. a classic center at C) get a nudge so the arrangement already shows them done.
+ The same search scores hypothetical rosters for the AI opponents (bot.js), so they judge needs exactly this way. */
 const PLACE_PEN=[0,0.6,2.2,4.5],   // value lost playing a position: natural / can play / stretch / wrong
-      PLACE_EMPTY=1,               // an open starter spot is worth about an average future buy
       PLACE_BENCH=0.3,             // bench players count for less than starters
       PLACE_STAY=0.05,             // tie-break: leave players where they are
       PLACE_MIS=1.5,               // nudge for the player a slot mission needs
       PLACE_NAT=0.1;               // tie-break: closer to his listed position (Jordan SG, not PG)
 // distance from his listed position; moving down (a SG at PG) costs a little more than moving up (to SF)
 const natGap=d=>PLACE_NAT*(d<0?1.3:1)*Math.abs(d);
-function autoPlace(g,s){const E=g.rosters[s];if(!E.length)return;
-  const cap=SLOTS(g).length-POS.length,P=E.map(r=>g.items[r.k]),v=P.map(p=>p.fa?-1:pval(p));
-  const M=g.mis&&g.mis[s],mm=M&&M.pick!=null?misOf(M.opts[M.pick].id):null,slotMis=mm&&mm.k==='slot'?mm:null;
-  const sc=POS.map((sl,j)=>E.map((r,i)=>v[i]-PLACE_PEN[Math.min(3,posInfo(P[i],sl).tier)]-natGap(j+1-peOf(P[i]))+(r.slot===sl?PLACE_STAY:0)+(slotMis&&slotMis.slot===sl&&slotMis.f(P[i])?PLACE_MIS:0)));
-  const benchSc=E.map((r,i)=>PLACE_BENCH*v[i]+(isBench(r.slot)?PLACE_STAY:0));
+const slotMisOf=(g,s)=>{const M=g.mis&&g.mis[s],m=M&&M.pick!=null?misOf(M.opts[M.pick].id):null;return m&&m.k==='slot'?m:null};
+/* best arrangement of a list of players. L: [{p, v (value), slot (current, for the stay tie-break), flex (fits anywhere)}]
+   empty: what an open starter spot is worth (a future buy from this deck). Returns {score, A}: A[j] is the index in L
+   starting at POS[j] (-1 = open); everyone else is on the bench */
+function placeSearch(g,L,slotMis,empty){const cap=SLOTS(g).length-POS.length;
+  const fit=(x,sl,j)=>x.flex?0:PLACE_PEN[Math.min(3,posInfo(x.p,sl).tier)]+natGap(j+1-peOf(x.p));
+  const sc=POS.map((sl,j)=>L.map(x=>x.v-fit(x,sl,j)+(x.slot===sl?PLACE_STAY:0)+(slotMis&&!x.flex&&slotMis.slot===sl&&slotMis.f(x.p)?PLACE_MIS:0)));
+  const benchSc=L.map(x=>PLACE_BENCH*x.v+(x.slot&&isBench(x.slot)?PLACE_STAY:0));
   // exhaustive search: each starter spot takes an unused player or stays open (at most 11^5 leaves for 10-man)
-  let best=-Infinity,bestA=null;const A=[],used=E.map(()=>false);
+  let best=-Infinity,bestA=null;const A=[],used=L.map(()=>false);
   (function go(j,tot,n){
-    if(j===POS.length){if(E.length-n>cap)return;let t=tot;E.forEach((_,i)=>{if(!used[i])t+=benchSc[i]});if(t>best){best=t;bestA=A.slice()}return}
-    for(let i=0;i<E.length;i++)if(!used[i]){used[i]=true;A[j]=i;go(j+1,tot+sc[j][i],n+1);used[i]=false}
-    if(E.length-n<=cap+POS.length-j-1){A[j]=-1;go(j+1,tot+PLACE_EMPTY,n)}})(0,0,0);
-  const onB=E.filter((_,i)=>!bestA.includes(i)).sort((a,b)=>pval(g.items[b.k])-pval(g.items[a.k]));
-  bestA.forEach((i,j)=>{if(i>=0){E[i].slot=POS[j];delete E[i].role}});
+    if(j===POS.length){if(L.length-n>cap)return;let t=tot;L.forEach((_,i)=>{if(!used[i])t+=benchSc[i]});if(t>best){best=t;bestA=A.slice()}return}
+    for(let i=0;i<L.length;i++)if(!used[i]){used[i]=true;A[j]=i;go(j+1,tot+sc[j][i],n+1);used[i]=false}
+    if(L.length-n<=cap+POS.length-j-1){A[j]=-1;go(j+1,tot+empty,n)}})(0,0,0);
+  return{score:best,A:bestA}}
+const placeVal=p=>p.fa?-1:pval(p);
+// an open spot is worth a modest card still to come (lower quartile of the rest of the deck), so a decent buy starts
+// rather than sitting on the bench waiting for stars that may go elsewhere
+function placeEmpty(g){const v=g.items.slice((g.idx|0)+1).filter(p=>!p.fa).map(pval).sort((a,b)=>a-b);return v.length?v[v.length>>2]:-1}
+function autoPlace(g,s){const E=g.rosters[s];if(!E.length)return;
+  const {A}=placeSearch(g,E.map(r=>({p:g.items[r.k],v:placeVal(g.items[r.k]),slot:r.slot})),slotMisOf(g,s),placeEmpty(g));
+  const onB=E.filter((_,i)=>!A.includes(i)).sort((a,b)=>pval(g.items[b.k])-pval(g.items[a.k]));
+  A.forEach((i,j)=>{if(i>=0){E[i].slot=POS[j];delete E[i].role}});
   onB.forEach((r,j)=>{r.slot=BENCH[j];r.role=natRole(g.items[r.k])});
   benchFix(g,s)}
 // short "where did he go" note for the sale toast
@@ -1365,6 +1381,149 @@ function fmtTick(S,off){const g=S.game,t=now();if(S.phase!=='auction'||inGap(g))
     if(!g.grab){let ch=false;bidders(g).forEach(s=>{if(off.has(s)&&!g.pass[s]){g.pass[s]=true;ch=true}});
       if(t>g.deadline||bidders(g).every(s=>g.pass[s]||maxBid(g,s)<g.price)){skipCard(S);return true}return ch}}
   return false}
+
+/* ---------- AI opponents (對戰電腦) ----------
+ One human (seat A) against one or two computer GMs on the same phone. Bots act only through the normal actions
+ (bid, pass, sbid, grab, spass, nominate, mpick, ready), so they can never do anything a human could not.
+
+ How a bot values a card
+   1. Team need: the auto-placement search (place.js) scores the bot's roster with the card added and with a
+      replacement-level player added instead. The difference is the card's worth to THIS roster in rating points
+      (the units the match sim uses): a second center with C taken is worth little, a missing guard a lot.
+   2. Extras: completing a legend group and feuds (普通/高手); mission cards (高手: a card that would break a "none"
+      mission counts against, money missions cap spending).
+   3. Points to dollars, the way auction-value sheets do it: all money still spendable above $1 per open spot,
+      divided by the total surplus of the players left who will actually be bought (bench spots count less).
+      Each style bends this curve: 巨星控 pays up for stars, 精算師 spreads money, 穩健派 sits in between.
+   4. A fixed per-card noise (difficulty) so bots disagree with each other and are not perfectly predictable.
+   高手 also keeps money missions (精打細算 keeps its reserve, 雨露均霑 never pays over its cap).
+
+ How it acts
+   open    raises by $1 (sometimes a jump bid), opens around a third to half of its max, never above what any rival
+           could still pay, passes at its max.
+   sealed  bids just above what it expects the strongest rival to pay (rival rosters and budgets are public),
+           never above its own max; 新手 shades at random.
+   snatch  grabs when the price is under its max, after a human-like reaction time (no instant snipes).
+   nominate puts up the card rivals want most and it wants least (drains their money); when it is the richest
+           team it nominates its own target instead.
+   last team ($1 rule) takes a card if it is among its best options left, otherwise uses a skip.
+ Timing: every decision waits a "thinking" delay that grows with the stakes, and never runs into the deadline. */
+const BOT_LV={
+  easy:{nm:'新手',d:'常亂出價，適合熟悉規則',noise:0.3,aware:0,shade:[0.45,0.95],react:[1000,2000],think:[1600,3600],jump:0.3},
+  normal:{nm:'普通',d:'看陣容缺什麼出價，懂傳奇組合',noise:0.15,aware:1,react:[600,1300],think:[1100,2900],jump:0.2},
+  hard:{nm:'高手',d:'再加上做任務、精算暗標，反應更快',noise:0.06,aware:2,react:[330,800],think:[900,2400],jump:0.12}};
+const BOT_STYLE={bal:{nm:'🤖 穩健派',c:1},star:{nm:'🤖 巨星控',c:1.3},depth:{nm:'🤖 精算師',c:0.8}};
+const SAVE_PT=0.3,SAVE_CAP=2.5;   // savAdj in baseRate: 0.3 rating per leftover $, capped at 2.5
+const isBot=s=>NET.mode==='ai'&&!!(S&&S.bots&&S.bots[s]);
+const botLv=s=>BOT_LV[S&&S.bots&&s&&S.bots[s]&&S.bots[s].lv||S&&S.botLv]||BOT_LV.normal;   // per-seat level is for tests
+const botSt=s=>BOT_STYLE[S.bots&&S.bots[s]&&S.bots[s].st]||BOT_STYLE.bal;
+function gauss(R){const u=Math.max(1e-9,R()),v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+// per-card cache: the market and each bot's numbers stay fixed while a card is up
+const BC={k:''};
+function botCache(g){const k=g.gid+':'+g.idx+':'+g.log.length+':'+(g.stage||'')+':'+g.items.length;if(BC.k!==k){BC.k=k;BC.m=null;BC.v={}}return BC}
+function botMarket(g){const C=botCache(g);if(C.m)return C.m;
+  const vals=g.items.slice(g.idx).filter(p=>!p.fa).map(pval).sort((a,b)=>b-a);
+  let os=0,ob=0;g.sides.forEach(t=>openSlots(g,t).forEach(x=>isBench(x)?ob++:os++));
+  const N=os+ob,vN=N>0&&vals.length>=N?vals[N-1]:-1;
+  const money=g.sides.reduce((a,t)=>a+Math.max(0,left(g,t)-openN(g,t)),0);
+  return C.m={vals,os,ob,N,vN,money}}
+// dollars per rating point for a style curve
+function botLam(g,c){const M=botMarket(g);let sum=0;M.vals.slice(0,M.N).forEach((v,r)=>{sum+=(r<M.os?1:PLACE_BENCH)*Math.pow(Math.max(0,v-M.vN),c)});return M.money/Math.max(sum,0.3)}
+// what this card adds to the side's roster over a replacement-level player
+function botGain(g,s,p){const C=botCache(g),ck='g'+s+':'+g.items.indexOf(p);if(C.v[ck]!=null)return C.v[ck];
+  const L=g.rosters[s].map(r=>({p:g.items[r.k],v:placeVal(g.items[r.k])})),sm=slotMisOf(g,s),vN=botMarket(g).vN;
+  const a=placeSearch(g,L.concat([{p,v:placeVal(p)}]),sm,vN).score,b=placeSearch(g,L.concat([{p,v:vN,flex:1}]),sm,vN).score;
+  return C.v[ck]=a-b}
+const misBonus=x=>x.bonus!=null?x.bonus:MTIER[x.tier].bonus;
+function botExtra(g,s,p){let x=0;
+  legendHints(g,p).forEach(h=>{if(h.s===s)x+=h.t==='complete'?legVal(h.L,h.L.need):0.3});
+  const P=botLv(s).aware>1&&misProg(g,s);if(P&&!P.dead&&P.done!==true)misHints(g,p).forEach(h=>{if(h.s===s)x+=h.t==='bad'?-misBonus(P.x):0.6*misBonus(P.x)});
+  if(g.rosters[s].some(r=>feudOf(p,g.items[r.k])))x-=0.6;
+  return x}
+// spending limits from money missions (高手 only)
+function botCap(g,s){let cap=maxBid(g,s);const P=botLv(s).aware>1&&misProg(g,s);
+  if(P&&!P.dead&&P.done!==true){const t=misT(P.m,budOf(g,s));
+    if(P.m.k==='left')cap=Math.min(cap,left(g,s)-t-(openN(g,s)-1));
+    if(P.m.k==='cap')cap=Math.min(cap,t)}
+  return Math.max(0,cap)}
+const realLeft=g=>g.items.slice(g.idx).filter(p=>!p.fa).length;
+// most this side would pay for card p. opt.est: a plain estimate for a rival (no noise, no extras, balanced style)
+function botMax(g,s,p,opt){p=p||cur(g);if(!p||!openN(g,s))return 0;const est=opt&&opt.est,C=botCache(g),ck=(est?'e':'m')+s+':'+g.items.indexOf(p);
+  if(C.v[ck]!=null)return C.v[ck];
+  const lv=botLv(s),c=est?1:botSt(s).c,M=botMarket(g);
+  const sur=botGain(g,s,p)+(!est&&lv.aware?botExtra(g,s,p):0);
+  const nz=est?1:Math.exp(lv.noise*gauss(rng(hash(g.gid+':'+g.items.indexOf(p)+':'+s))));
+  // a team holding more spare money than the table average can afford to pay more (money left past the savings cap is wasted)
+  const spare=t=>Math.max(0,left(g,t)-openN(g,t)),avg=g.sides.reduce((x,t)=>x+spare(t),0)/g.sides.length,rich=avg>0?clamp(Math.sqrt(spare(s)/avg),0.6,1.6):1;
+  let v=sur>0?1+botLam(g,c)*(est?1:rich)*Math.pow(sur,c)*nz:0;
+  // cards are running out: the alternative is a free agent. Unspent money is worth SAVE_PT rating per $ in the match
+  // sim, and nothing past SAVE_CAP, so money a team cannot spend well is better spent on anyone above a free agent
+  if(realLeft(g)<=M.N+1){const L=g.rosters[s].map(r=>({p:g.items[r.k],v:placeVal(g.items[r.k])})),sm=slotMisOf(g,s);
+    const gFA=placeSearch(g,L.concat([{p,v:placeVal(p)}]),sm,-1).score-placeSearch(g,L.concat([{p,v:-1,flex:1}]),sm,-1).score;
+    const spare=left(g,s)-openN(g,s);
+    if(gFA>0)v=Math.max(v,1+gFA/SAVE_PT+Math.max(0,spare-SAVE_CAP/SAVE_PT)/Math.max(1,openN(g,s)))}
+  if(!est&&lv.aware>1){const P=misProg(g,s);                        // 一擲千金 / 標王: be ready to pay big for a top card
+    if(P&&!P.dead&&P.done!==true&&(P.m.k==='big'||P.m.k==='topbid')&&M.vals.length&&pval(p)>=M.vals[Math.min(2,M.vals.length-1)]){
+      const t=P.m.k==='big'?misT(P.m,budOf(g,s)):Math.max(0,...g.sides.filter(x=>x!==s).flatMap(x=>g.rosters[x].map(r=>r.price)))+1;
+      if(t<=maxBid(g,s))v=Math.max(v,t)}}
+  return C.v[ck]=Math.max(0,Math.min(Math.floor(v),est?maxBid(g,s):botCap(g,s)))}
+const botRivalMax=(g,s,p)=>Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).map(t=>Math.min(maxBid(g,t),isBot(t)?botMax(g,t,p):botMax(g,t,p,{est:1}))));
+
+/* ---------- decisions ---------- */
+function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.amt+':'+(g.stage||'')+(g.tie?'t':''))),lv=botLv(s),rr=(a,b)=>a+(b-a)*R();
+  if(S.phase==='mission'){const M=g.mis[s],i=lv.aware?Math.max(0,M.opts.findIndex(x=>x.tier===2)):Math.floor(R()*M.opts.length);return{a:'mpick',who:s,i}}
+  if(S.phase==='lineup')return{a:'ready',who:s,v:true};
+  if(g.stage==='nom'){const Mk=market(g),me=left(g,s)-openN(g,s),rich=g.sides.every(t=>t===s||left(g,t)-openN(g,t)<=me);
+    const sc=x=>{if(!lv.aware)return starScore(x.p)+R()*3;const mine=botMax(g,s,x.p),opp=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).map(t=>botMax(g,t,x.p,{est:1})));
+      return rich&&mine>=opp?mine*1.2:opp-0.7*mine};
+    const best=Mk.slice().sort((a,b)=>sc(b)-sc(a))[0];return{a:'nominate',who:s,j:best.j,idx:g.idx}}
+  if(g.sb){const lo=g.tie?g.tie.amt:0,mx=Math.max(lo,botMax(g,s));let amt;
+    if(g.tie)amt=mx>lo?Math.min(mx,lo+1+(R()<0.4?1:0)):lo;
+    else if(mx<=0)amt=0;
+    else if(lv.shade)amt=Math.round(mx*rr(...lv.shade));
+    else{const want=Math.round(botRivalMax(g,s)*(lv.aware>1?rr(0.95,1.05):rr(0.85,1.12)));amt=mx>want?Math.min(mx,want+1):Math.round(mx*rr(0.8,0.95))}
+    return{a:'sbid',who:s,amt:clamp(amt,lo,Math.max(lo,Math.min(mx,maxBid(g,s)))),idx:g.idx}}
+  if(g.price!=null)return botMax(g,s)>=g.price&&(lv.aware||R()>0.15||realLeft(g)<=botMarket(g).N+1)?{a:'grab',who:s,idx:g.idx}:{a:'spass',who:s,idx:g.idx};
+  // the last team with open spots: $1 per card, a few skips
+  if(g.solo&&g.solo.who===s){const up=g.items.slice(g.idx+1,g.idx+1+openN(g,s)+g.solo.skips+2).filter(p=>!p.fa).map(p=>botGain(g,s,p)).sort((a,b)=>b-a);
+    const take=g.solo.skips<=0||botGain(g,s,cur(g))>=(up[openN(g,s)-1]??-Infinity);
+    return take?{a:'bid',who:s,amt:1,idx:g.idx}:{a:'pass',who:s,idx:g.idx}}
+  const mx=botMax(g,s),b=g.bid.amt;if(mx<=b)return{a:'pass',who:s,idx:g.idx};
+  const rivalCap=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0&&!g.pass[t]).map(t=>maxBid(g,t)));
+  let amt=!b?Math.max(1,Math.round(mx*(lv.aware?rr(0.3,0.5):rr(0.2,0.7)))):b+1;
+  if(b&&mx-b>=5&&R()<lv.jump)amt=b+1+Math.ceil((mx-b)*rr(0.15,0.35));   // the odd jump bid, like people do
+  return{a:'bid',who:s,amt:clamp(amt,b+1,Math.min(mx,Math.max(b+1,rivalCap+1))),idx:g.idx}}
+
+/* ---------- driver: runs on the 250 ms tick, one pending decision per bot ---------- */
+const BOT={};
+function botNeed(s){const g=S.game;if(!g||!g.sides.includes(s))return null;
+  if(S.phase==='mission'){const M=g.mis&&g.mis[s];return M&&M.pick==null?'m'+g.gid:null}
+  if(S.phase==='lineup')return g.ready[s]?null:'l'+g.gid;
+  if(S.phase!=='auction'||inGap(g)||!openN(g,s))return null;const k=g.gid+':'+g.idx+':';
+  if(g.stage==='nom')return g.nomBy===s?k+'n':null;
+  if(g.sb){const el=g.tie?g.tie.sides:bidders(g);return el.includes(s)&&g.sb[s]==null?k+'s'+(g.tie?'t':''):null}
+  if(g.price!=null)return !g.grab&&!g.pass[s]&&bidders(g).includes(s)?k+'g':null;
+  return g.turn===s?k+g.bid.amt+':'+g.bid.who:null}
+function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-x)*R(),t0=Math.max(now(),g.gapEnd||0);
+  if(window.BB_FAST)return now();
+  switch(a.a){
+    case 'mpick':return t0+rr([2500,5000]);
+    case 'ready':return t0+rr([2500,5500]);
+    case 'nominate':return t0+rr([1800,3800]);
+    case 'sbid':return t0+rr([2500,7000]);
+    case 'grab':return Math.max(t0,g.openAt)+rr(lv.react);
+    case 'spass':return Math.max(t0,g.openAt)+rr([1300,2800]);
+    case 'pass':return t0+(g.solo?rr(lv.think):rr([700,1500]));
+    default:return t0+rr(lv.think)+Math.min(1500,(a.amt||0)*50)}}   // bigger money, a little longer to think
+function botAct(a){const prev=snapOf();if(apply(S,a,{cid:'bot',role:'all'})){fx(prev);commit()}}
+function tickBots(){if(NET.mode!=='ai'||!S||!S.bots||!S.game)return;
+  for(const s of S.game.sides){if(!isBot(s))continue;const k=botNeed(s);
+    if(!k){delete BOT[s];continue}
+    if(!BOT[s]||BOT[s].k!==k){const a=botDecide(s);BOT[s]={k,a,due:botWait(s,a)}}
+    if(now()>=BOT[s].due){const a=BOT[s].a;BOT[s].due=Infinity;botAct(a);return}}}   // one action per tick keeps things readable
+// a fresh AI table: the human is A, styles are shuffled so each session feels different
+function aiState(){const s=newState(),st=['bal','star','depth'].sort(()=>Math.random()-0.5);
+  s.bots={B:{st:st[0]},C:{st:st[1]}};s.botLv='normal';s.names={A:clean(MYNAME)||'玩家',B:BOT_STYLE[st[0]].nm,C:BOT_STYLE[st[1]].nm};return s}
 
 /* ---------- sound ----------
  Small synthesized sounds (no files to download). Guidelines followed:
@@ -1482,6 +1641,14 @@ function roleChip(g,s,p,locked){const r=p.role||natRole(p),f=roleFit(p,r),nx=BRO
 function benchSummary(g,s){const E=g.rosters[s].filter(r=>isBench(r.slot)),c=k=>E.filter(r=>r.role===k).length,ok=benchOK(g,s);
   return `<div class="blab">替補<span class="bsum">後衛 ${c('G')}・鋒線 ${c('F')}・第六人 ${c('X')}</span></div>${ok?'':'<div class="bwarn">替補至少要 1 位後衛、1 位鋒線，第六人只能 1 位</div>'}`}
 function sfxBtn(){const ic=['🔇','🔈','🔊'][SFX.lv];return `<button class="small mut sfxb" data-act="sfx" aria-label="音效">${ic}</button>`}
+// lobby card for a game against the computer: your name, the opponents, difficulty
+function aiLobby(sides,dis){const bots=sides.filter(isBot),lv=S.botLv||'normal';
+  return `<section class="card"><h2>挑戰電腦</h2>
+    <div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col('A')}"></span><input data-in="name" data-i="A" maxlength="12" value="${esc(S.names.A)}" ${dis} aria-label="你的名字"></div>
+    ${bots.map(s=>`<div class="botrow"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><small>${['bal','star','depth'].map(k=>k===S.bots[s].st?{bal:'預算平均分配',star:'愛砸大錢買巨星',depth:'追求便宜好用'}[k]:'').join('')}</small></div>`).join('')}
+    <div class="fl" style="margin-top:12px">電腦強度</div>
+    <div class="fgrid lv">${Object.entries(BOT_LV).map(([k,L])=>`<button class="fopt ${lv===k?'on':''}" data-act="ailv" data-v="${k}" ${dis}><b>${L.nm}</b><small>${L.d}</small></button>`).join('')}</div>
+    <div class="small mut" style="margin-top:8px">電腦只能用跟你一樣的按鈕出價，看不到你的任務卡和暗標金額。</div></section>`}
 
 /* ---------- matchup model ----------
  Base: OBPM+DBPM (Box Plus/Minus, Basketball-Reference), shrunk toward replacement level for small samples.
@@ -1539,7 +1706,7 @@ function baseRate(Rall,g,leftover){const R=starters(Rall),Bn=benchOf(Rall);
   const O=R.reduce((t,p)=>t+shr(p.obpm,p,REPL.obpm),0),D=R.reduce((t,p)=>t+shr(p.dbpm,p,REPL.dbpm),0);
   const bv=benchValue(Bn),benchAdj=bv.adj;
   const U=R.reduce((t,p)=>t+num(p.usg,REPL.usg),0),usgAdj=-0.05*Math.max(0,U-110);
-  const ch=chem(Rall,g),savAdj=Math.min(2.5,0.3*Math.max(0,leftover||0));
+  const ch=chem(Rall,g),savAdj=Math.min(SAVE_CAP,SAVE_PT*Math.max(0,leftover||0));
   const off=O+usgAdj+ch.tm/2+ch.lgv/2-0.6*ch.fd+savAdj/2+benchAdj/2,def=D+ch.tm/2+ch.lgv/2+ch.sw-0.4*ch.fd+savAdj/2+benchAdj/2;
   return{bv,O,D,U,usgAdj,tmAdj:ch.tm,lgAdj:ch.lgv,swAdj:ch.sw,fdAdj:-ch.fd,savAdj,benchAdj,off,def,net:off+def,ch};
 }
@@ -1641,6 +1808,7 @@ function mqttConnect(bi){return new Promise((res,rej)=>{let done=false;
 function commit(){
   if(!S)return;S.v=(S.v||0)+1;S.t=Date.now();S.app=APPV;
   if(NET.mode==='local')lsSet(LS,S);
+  if(NET.mode==='ai')lsSet(LS_AI,S);
   if(NET.mode==='host')publishState();
   render();
 }
@@ -1706,7 +1874,7 @@ async function joinRoom(code,bi){
   NET.busy=false;render();
 }
 let wl=null;async function wakeLock(){try{if(navigator.wakeLock&&document.visibilityState==='visible')wl=await navigator.wakeLock.request('screen')}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NET.mode&&NET.mode!=='local'){wakeLock();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NET.mode&&!offline()){wakeLock();
   // back from the lock screen / another app: reconnect right away if the socket went quiet, then say we are here
   if(NET.client){if(Date.now()-(NET.lastRx||0)>6000){NET.lastRx=Date.now();try{NET.client.reconnect()}catch(e){}}else if(NET.hb)NET.hb()}}});
 function setHash(){try{history.replaceState(null,'',location.pathname+location.search+'#room-'+NET.code+'-'+NET.bi)}catch(e){}}
@@ -1716,6 +1884,7 @@ function leaveNet(){NET.timers.forEach(clearInterval);NET.timers=[];if(NET.clien
 let lastN=0;
 async function sendAct(a){let n=Date.now();if(n<=lastN)n=lastN+1;lastN=n;NET.pending.push({a,n,sent:Date.now()});NET.pending=NET.pending.slice(-8);
   if(NET.client)NET.client.publish(topic('a'),await seal({cid:CID,n,a}),{qos:1});render()}
+function startAI(){NET.mode='ai';NET.skew=0;const sv=lsGet(LS_AI);S=sv&&sv.v&&sv.cfg&&sv.cfg.cats&&sv.bots?sv:aiState();render()}
 function startLocal(){NET.mode='local';NET.skew=0;const sv=lsGet(LS);S=sv&&sv.v&&sv.cfg&&sv.cfg.cats?sv:newState();render()}
 function dispatch(a){
   if(!S)return;
@@ -1746,7 +1915,7 @@ function fx(prev){
     if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,2600);ui.hold={gid:g.gid,k:prev.idx,l,until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
   else if(g.bid.amt>prev.bid)vibe(12);
 }
-setInterval(()=>{snapPrev=snapOf();tickAuth()},250);
+setInterval(()=>{snapPrev=snapOf();tickAuth();tickBots()},250);
 
 /* ---------- views ---------- */
 let ui={quit:false,sel:null,themeOpen:false,reveal:new Set(),amt:{},pb:null,pbDone:new Set(),pbSp:null};
@@ -1780,13 +1949,14 @@ function runCounters(){document.querySelectorAll('[data-count]').forEach(el=>{
 function vHome(){
   const hm=/^#room-([a-z0-9]{6})(?:-(\d))?$/.exec(location.hash||''),inv=hm&&hm[1],last=(lsGet('bb_room')||'').split('-')[0];
   return `<header class="hero"><div class="logo">🏀</div><h1>BALLER<br><b>BID!</b></h1><div class="sub">球星喊價</div>
-  <p>用有限預算標下 NBA 球星，最後用真實數據模擬對戰。2～3 人一起玩。</p></header>
+  <p>用有限預算標下 NBA 球星，最後用真實數據模擬對戰。2～3 人一起玩，也能一個人挑戰電腦。</p></header>
   ${inv?`<section class="card invite" style="border-color:var(--acc)"><div class="small mut">你被邀請加入房間</div><div class="code">${esc(inv.toUpperCase())}</div>
     <input data-in="myname" maxlength="14" placeholder="輸入你的名字" value="${esc(MYNAME)}" style="margin-top:12px;text-align:center">
     <button class="big" data-act="joinhash" ${NET.busy?'disabled':''}>${NET.busy?'<span class="spin"></span> 連線中…':'加入房間 →'}</button></section>`
-  :`<section class="card"><h2>你的名字（線上用）</h2><input data-in="myname" maxlength="14" placeholder="例如：Jerry" value="${esc(MYNAME)}"></section>`}
+  :`<section class="card"><h2>你的名字</h2><input data-in="myname" maxlength="14" placeholder="例如：Jerry" value="${esc(MYNAME)}"></section>`}
   ${NET.err?`<div class="err">${esc(NET.err)}</div>`:''}
   <button class="mode hot" data-act="create" ${NET.busy?'disabled':''}><span class="ic">🌐</span><span><b>線上對戰</b><span>產生邀請連結，朋友點開就能加入，不用登入</span></span></button>
+  <button class="mode" data-act="ai"><span class="ic">🤖</span><span><b>挑戰電腦</b><span>一個人玩：跟 1～2 位 AI 總管搶球星</span></span></button>
   <button class="mode" data-act="local"><span class="ic">📱</span><span><b>同一台手機玩</b><span>大家輪流用一支手機出價</span></span></button>
   ${inv?'':`<section class="card"><h2>用房號加入</h2>
     <div class="row"><input data-in="code" maxlength="6" placeholder="6 位房號" style="text-transform:uppercase;letter-spacing:.2em;font-weight:800" value="${esc(last||'')}">
@@ -1802,6 +1972,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>預算</b>：每個空位至少留 $1。沒花完的錢每 $1 加 0.3 實力，最多加 2.5。</li>
   <li><b>排陣</b>：90 秒（10 人 120 秒），拖曳或點兩位球員互換。</li>
   <li><b>對戰</b>：每兩隊打七戰四勝，系列賽贏最多的奪冠。</li>
+  <li><b>挑戰電腦</b>：一個人跟 1～2 位 AI 總管對戰。電腦依自己陣容缺什麼、剩多少錢、場上還有哪些球員來估價，只能用跟你一樣的按鈕，看不到你的任務卡和暗標金額。新手常亂出價；普通會看陣容缺什麼；高手還會做任務、精算暗標。</li>
   <li><b>拍賣方式</b>（大廳選）：🔨 一般喊價；🤫 暗標（同時偷偷出價，最高價得標，平手加賽一次，再平手空位多的一方得標）；⚡ 搶標（每張有標價，倒數完先按先得，0.6 秒內同時按下就抽籤）。季賽可選「每局輪換」。</li>
   <li><b>輪流提名</b>（選用）：桌上翻開 4 張，輪到的人挑一張拿出來拍，提名的人先出價。</li>
   <li><b>替補</b>（10 人）：5 個替補自己分配「替補後衛／替補鋒線／第六人」，至少各 1 位、第六人只能 1 位。換人時由對應角色上場，第六人上場最多；放錯角色會扣分，沒有能補的角色也會扣分。</li>
@@ -1817,6 +1988,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>夢幻隊模式（10 人）</b>：替補約是先發 1/4 的影響力。火爆浪子可能吃兩次 T 被驅逐，犯規麻煩的人可能犯滿，都由最強的替補頂上。</li>
   <li><b>數據</b>：Basketball-Reference。1974 年前部分數據是推估，卡片上標「估」。</li></ul></details></section>`}
 function vRoomBar(){
+  if(NET.mode==='ai')return `<div class="roombar"><span>🤖 挑戰電腦・${esc(botLv().nm)}</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
   if(NET.mode==='local')return `<div class="roombar"><span>📱 同一台手機</span><span class="grow"></span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>`;
   const r=myRole(),label=ALL.includes(r)?nm(S,r):'觀眾';
   return `<div class="roombar"><span class="mut">房號</span><span class="code">${esc((NET.code||'').toUpperCase())}</span><span class="grow small">你是 <b>${esc(label)}</b>${pend()}</span>${sfxBtn()}<button class="small mut" data-act="exit">離開</button></div>${ui.verWarn?'<div class="err">⚠️ 你和房間裡其他人的遊戲版本不同，可能會出錯。請大家都重新整理網頁後再開房。</div>':''}
@@ -1829,8 +2001,9 @@ function seatRow(k){
   const watching=s&&S.last&&!(S.back&&S.back[s.cid])&&!me;
   return `<div class="seat ${k} ${me?'me':''}"><span class="lab">玩家 ${k}</span><span class="who">${s?`<span class="dot ${watching&&on?'pulse':''}" style="background:${!on?'#bbb':watching?'var(--acc)':'var(--ok)'}"></span> ${esc(s.name)}${me?'（你）':''}${watching&&on?' <span class="small" style="color:#d9730d">結算畫面中</span>':!on?' <span class="small mut">離線</span>':''}`:'<span class="mut">空位</span>'}</span>${btn}</div>`}
 function vLobby(){
-  const c=S.cfg,r=myRole(),isP=r==='all'||ALL.includes(r),sides=sidesOf(c.players);let top='';
-  if(NET.mode==='local')top=`<section class="card"><h2>玩家</h2>${sides.map(s=>`<div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col(s)}"></span><input data-in="name" data-i="${s}" maxlength="12" value="${esc(S.names[s])}"></div>`).join('')}</section>`;
+  const c=S.cfg,r=myRole(),isP=r==='all'||ALL.includes(r),sides=sidesOf(c.players),dis0=S.season?'disabled':'';let top='';
+  if(NET.mode==='ai')top=aiLobby(sides,dis0);
+  else if(NET.mode==='local')top=`<section class="card"><h2>玩家</h2>${sides.map(s=>`<div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col(s)}"></span><input data-in="name" data-i="${s}" maxlength="12" value="${esc(S.names[s])}"></div>`).join('')}</section>`;
   else top=`<section class="card invite"><div class="small mut">房號</div><div class="code">${esc(NET.code.toUpperCase())}</div>
       <button class="big" data-act="share">📨 傳送邀請連結</button><div class="small mut" style="margin-top:8px;word-break:break-all">${esc(inviteLink())}</div>
       <div class="small mut" style="margin-top:6px">🔒 對戰內容有加密，只有拿到房號的人看得到。</div></section>
@@ -1883,7 +2056,7 @@ function vLobby(){
       <button class="crow ${c.bal!==false?'on':''}" style="margin-top:10px" data-act="cfg" data-k="bal" data-v="${c.bal!==false?0:1}" ${dis}><span class="ck">${c.bal!==false?'✓':''}</span><span class="grow"><b>平衡機制</b><small>上局冠軍下一局預算 −10%，積分墊底 +10%</small></span></button>
       <div class="small mut" style="margin-top:8px">積分：冠軍 3 分${c.players===3?'、第二名 1 分':'、輸家打滿七場拿 1 分'}${c.mis?'、完成任務 +1（★★★ +2）':''}。每局換新主題${c.theme==='random'||c.pmode==='one'?'，同一季不重複':''}。</div>`:''}
       ${c.mis&&!c.season?'<div class="small mut" style="margin-top:8px">任務保密，只有自己看得到，結算時才揭曉。</div>':''}${fmtLobby(c,dis)}</section>`;
-  const cfg=play+`<section class="card"><h2>人數</h2><div class="seg">${[2,3].map(n=>`<button class="chip ${c.players===n?'on':''}" data-act="cfg" data-k="players" data-v="${n}" ${dis}>${n} 人</button>`).join('')}</div></section>
+  const cfg=play+`<section class="card"><h2>${NET.mode==='ai'?'對手':'人數'}</h2><div class="seg">${[2,3].map(n=>`<button class="chip ${c.players===n?'on':''}" data-act="cfg" data-k="players" data-v="${n}" ${dis}>${NET.mode==='ai'?`${n-1} 位電腦`:`${n} 人`}</button>`).join('')}</div></section>
     <section class="card"><h2>陣容</h2><div class="seg">${[[5,'正規 5 人'],[10,'夢幻隊模式 10 人']].map(([n,l])=>`<button class="chip ${(c.size||5)===n?'on':''}" data-act="cfg" data-k="size" data-v="${n}" ${dis}>${l}</button>`).join('')}</div>
       <div class="small mut" style="margin-top:6px">${(c.size||5)===10?`5 先發＋5 替補，每人要標 10 位，卡池至少要 ${c.players*10} 人。建議預算 $${c.players===3?30:25} 以上。`:'5 位先發，標滿就開打。'}</div></section>
     <section class="card"><h2>每人預算</h2><div class="row wrapx">${[10,15,20,25].map(b=>`<button class="chip ${c.budget===b?'on':''}" data-act="cfg" data-k="budget" data-v="${b}" ${dis}>$${b}</button>`).join('')}
@@ -1934,7 +2107,7 @@ function bidRow(g,s,r,held){
   const full=openN(g,s)===0,lead=g.bid.who===s,mx=maxBid(g,s),mine=r==='all'||r===s,passed=g.pass[s],turn=g.turn===s;
   const out=full||passed||(!lead&&mx<=g.bid.amt);
   const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?(q&&q.role?BROLE[q.role].sh:'替'):x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
-  const offl=NET.mode!=='local'&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
+  const offl=!offline()&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
   const state=held?'':fmtBusy(g)&&!g.solo?(offl?'📴 離線中・':'')+(full?'陣容已滿':fmtState(g,s)):(offl?'📴 離線中（自動跳過）・':'')+(g.solo&&g.solo.who===s&&!full?(turn?(mine?'對手都滿了：每位 $1，拿或跳過':'挑選中…'):''):full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
   const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt,solo=g.solo&&g.solo.who===s&&!full;
   const fb=fmtBusy(g)&&!g.solo;
@@ -2365,8 +2538,6 @@ function drawBall(ctx,x,y,h){ctx.beginPath();ctx.arc(x,y+h*0.25+2,3.2,0,7);ctx.f
   ctx.beginPath();ctx.arc(x,y-h,3.6+h*0.08,0,7);ctx.fillStyle='#f07a1e';ctx.fill();ctx.strokeStyle='#7a3a0c';ctx.lineWidth=.8;ctx.stroke()}
 function pop(ctx,x,y,txt,u,size){const sc=u<.25?u/.25*1.2:1.2-(u-.25)*.27;ctx.save();ctx.globalAlpha=u>.8?(1-u)/.2:1;ctx.translate(x,y-u*8);ctx.scale(sc,sc);
   ctx.font=`900 ${size||16}px system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.strokeText(txt,0,0);ctx.fillStyle='#1c2333';ctx.fillText(txt,0,0);ctx.restore()}
-function pbScore(st){const {G,P,pe,done}=st,qa=G.q[0],qb=G.q[1];if(done)return[G.sa,G.sb];const full=Math.floor(pe);let a=0,b=0;
-  for(let i=0;i<P;i++){if(i<full){a+=qa[i];b+=qb[i]}else if(i===full){const f=pe-full;a+=Math.floor(qa[i]*f);b+=Math.floor(qb[i]*f)}}return[a,b]}
 requestAnimationFrame(courtFrame);
 function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayback()}
   const {L,G,e,P,pe,done}=st,z=G.z,two=g.sides.length===2,ns=S.sim.series.length;
@@ -2486,10 +2657,12 @@ document.addEventListener('click',e=>{
   if(a!=='quit')ui.quit=false;if(a!=='endSeason')ui.endSe=false;
   switch(a){
     case 'local':return startLocal();
+    case 'ai':return startAI();
+    case 'ailv':return dispatch({a:'ailv',v:d.v});
     case 'create':return createRoom();
     case 'join':return joinRoom(document.querySelector('[data-in="code"]').value);
     case 'joinhash':{const m=/^#room-([a-z0-9]{6})(?:-(\d))?$/.exec(location.hash);if(m)joinRoom(m[1],m[2]!=null?+m[2]:undefined);return}
-    case 'exit':if(NET.mode!=='local')leaveNet();else NET.mode=null;S=null;return render();
+    case 'exit':if(!offline())leaveNet();else NET.mode=null;S=null;return render();
     case 'share':{const url=inviteLink(),txt='來玩 BALLER BID 球星喊價！點連結直接加入：';
       if(navigator.share){navigator.share({title:'BALLER BID 球星喊價',text:txt,url}).catch(()=>{})}else copyText(txt+url,'邀請連結已複製 ✅');return}
     case 'copy':return withView(()=>copyText(summaryText(),'已複製 ✅'));

@@ -63,3 +63,11 @@ function roleChip(g,s,p,locked){const r=p.role||natRole(p),f=roleFit(p,r),nx=BRO
 function benchSummary(g,s){const E=g.rosters[s].filter(r=>isBench(r.slot)),c=k=>E.filter(r=>r.role===k).length,ok=benchOK(g,s);
   return `<div class="blab">替補<span class="bsum">後衛 ${c('G')}・鋒線 ${c('F')}・第六人 ${c('X')}</span></div>${ok?'':'<div class="bwarn">替補至少要 1 位後衛、1 位鋒線，第六人只能 1 位</div>'}`}
 function sfxBtn(){const ic=['🔇','🔈','🔊'][SFX.lv];return `<button class="small mut sfxb" data-act="sfx" aria-label="音效">${ic}</button>`}
+// lobby card for a game against the computer: your name, the opponents, difficulty
+function aiLobby(sides,dis){const bots=sides.filter(isBot),lv=S.botLv||'normal';
+  return `<section class="card"><h2>挑戰電腦</h2>
+    <div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col('A')}"></span><input data-in="name" data-i="A" maxlength="12" value="${esc(S.names.A)}" ${dis} aria-label="你的名字"></div>
+    ${bots.map(s=>`<div class="botrow"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><small>${['bal','star','depth'].map(k=>k===S.bots[s].st?{bal:'預算平均分配',star:'愛砸大錢買巨星',depth:'追求便宜好用'}[k]:'').join('')}</small></div>`).join('')}
+    <div class="fl" style="margin-top:12px">電腦強度</div>
+    <div class="fgrid lv">${Object.entries(BOT_LV).map(([k,L])=>`<button class="fopt ${lv===k?'on':''}" data-act="ailv" data-v="${k}" ${dis}><b>${L.nm}</b><small>${L.d}</small></button>`).join('')}</div>
+    <div class="small mut" style="margin-top:8px">電腦只能用跟你一樣的按鈕出價，看不到你的任務卡和暗標金額。</div></section>`}
