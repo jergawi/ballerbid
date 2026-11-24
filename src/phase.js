@@ -27,3 +27,10 @@ function phaseGap(k){if(!PH_D){const acc={};THEMES.forEach(t=>t.items.forEach(p=
     (acc[k2]=acc[k2]||[]).push(pval(p)-pval({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:c.g}))}));
   PH_D={};Object.keys(PHASE).forEach(x=>{const L=(acc[x]||[]).sort((a,b)=>a-b);PH_D[x]=L.length?L[L.length>>1]:0})}
   return k?PH_D[k]||0:0}
+
+/* 綜合評分: the same public number the bots price cards with (career BPM-based value + the phase adjustment, see
+   pubVal in bot.js), put on a 2K-style 45-99 scale: role players in the 60s-70s, All-Stars mid-80s, the very top 95+.
+   It exists so a person does not have to work out from points per game what the computer already knows. */
+const ovrOf=p=>!p||p.fa?45:Math.max(45,Math.min(99,Math.round(72+2.3*pubVal(p))));
+const ovrTier=v=>v>=92?'t5':v>=86?'t4':v>=80?'t3':v>=74?'t2':'t1';
+function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p);return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>評分</i></div>`}

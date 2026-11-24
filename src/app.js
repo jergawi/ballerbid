@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24w';
+const APPV='2026.11.24x';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -197,7 +197,7 @@ function startGame(S){
   const t=now();
   S.game={gid:Math.random().toString(36).slice(2,9),theme:{id:th.id,name:th.name,tag:th.tag,cat:th.cat||'自訂',random:c.theme==='random'||!!th.random},
     pool:th.items,items:drawItems(th.items,draw,n*size/5),extra:0,idx:0,sides,size,rosters:{},spent:{},
-    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
+    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,ovr:c.ovr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
   sides.forEach(s=>{S.game.rosters[s]=[];S.game.spent[s]=0});S.game.base=S.game.items.length;
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false,fmt0:Math.floor(Math.random()*FMT_ROT.length)};
   const se=S.season;S.game.fmt=fmtFor(S);S.game.nom=!!c.nom;if(se){if(baseId)se.used.push(baseId);S.game.round=se.rounds.length+1;S.game.rounds=se.n}
@@ -281,7 +281,7 @@ function apply(S,a,actor){
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
-      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.read!=null&&READ_OPTS.includes(n.read|0))c.read=n.read|0;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
+      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.ovr!=null)c.ovr=!!n.ovr;if(n.read!=null&&READ_OPTS.includes(n.read|0))c.read=n.read|0;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
       if(n.players===2||n.players===3){c.players=n.players;if(n.players===2&&S.seats.C&&NET.mode!=='local')S.seats.C=null}
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
@@ -687,6 +687,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <h3>對戰怎麼算</h3><ul>
   <li><b>傳奇組合</b>：湊齊三巨頭或王朝核心（公牛、Showtime、熱火、勇士、GDP…）另外加 0.8–2 戰力。</li>
   <li><b>爆發之夜</b>：角色球員偶爾會打出生涯代表作，那場多拿好幾分。</li>
+  <li><b>綜合評分</b>：卡片左上角的數字（45–99），由生涯攻防效率（BPM）和生涯階段算出，跟電腦估價用的是同一個數字。比賽實際用的是那張卡所屬球季的表現，所以評分是很準的參考，但不是答案。大廳可關掉。</li>
   <li><b>球星接管</b>：卡上標「爆發型」的球星（MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星），每場約 5–7% 機會接管比賽，那場球隊多約 4 分。巔峰期機率最高。電腦出價只看一般數據，不算這個。</li>
   <li><b>看牌時間</b>：每張卡翻開先停幾秒（大廳可調），倒數完才能出價，電腦也得等。</li>
   <li><b>實力</b>：先發五人的 BPM 加總（以當年聯盟平均為基準），用 1,230 支真實球隊校正過。</li>
@@ -777,7 +778,8 @@ function vLobby(){
     <section class="card"><h2>進階</h2><div class="seg">
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
       <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
-      <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button></div>
+      <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button>
+      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示綜合評分</button></div>
       <div class="small mut" style="margin-top:6px">前兩個會透露主題的球隊和年代，預設關閉。年份只透露年代，預設開啟；想更神秘可以關掉。每張卡都會標巔峰期／生涯早期／生涯晚期。</div></section>
     ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
     ${isP?(waitingFor().length?`<button class="big" disabled>等 ${esc(waitingFor().join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">${c.season?`開始季賽（${c.season} 局）→`:'開始競標 →'}</button>`):`<div class="note">觀眾無法變更設定。</div>`}`;
@@ -818,7 +820,7 @@ function amtFor(g,s){const mn=g.bid.amt+1,mx=maxBid(g,s);let v=ui.amt[s];if(!(v>
 function bidRow(g,s,r,held){
   const full=openN(g,s)===0,lead=g.bid.who===s,mx=maxBid(g,s),mine=r==='all'||r===s,passed=g.pass[s],turn=g.turn===s;
   const out=full||passed||(!lead&&mx<=g.bid.amt);
-  const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?(q&&q.role?BROLE[q.role].sh:'替'):x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
+  const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?(q&&q.role?BROLE[q.role].sh:'替'):x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}${g.ovr!==false?`<em class="rov">${ovrOf(g.items[q.k])}</em>`:''}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
   const offl=!offline()&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
   const state=held?'':fmtBusy(g)?(offl?'📴 離線中・':'')+(full?'陣容已滿':fmtState(g,s)):(offl?'📴 離線中（自動跳過）・':'')+(full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
   const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt;
@@ -846,7 +848,7 @@ function vAuction(){
     ${leftPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`;
   if(g.stage==='nom')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}${fmtPill(g)}</div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${nomPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}${r==='all'||ALL.includes(r)?`<button class="quit" data-act="quit">${ui.quit?'再按一次確認放棄本局':'放棄本局'}</button>`:''}`;
-  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${g.price!=null?`<div class="ptag">$${g.grab?g.grab.price:dutchAt(g,now())}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
+  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${ovrBadge(pl,g)}${g.price!=null?`<div class="ptag">$${g.grab?g.grab.price:dutchAt(g,now())}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
       ${g.showStats?`<div class="psub">${esc(sub(pl))}</div><div class="pstats">${[['pts','PTS'],['trb','REB'],['ast','AST'],['stl','STL'],['blk','BLK']].map(([k,l])=>`<div><b>${fmt(pl[k])}</b><i>${l}</i></div>`).join('')}</div>`:''}</div>`;
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
@@ -1122,7 +1124,7 @@ function endLayout(E,z,ro,prevL){if(!E||DEAD.has(E.kind))return prevL;
    the ball), not when its line appears in the feed. Jumps in the clock (seeking, a new game) make no sound, and at high
    speed the per-sound minimum gaps in sfx() keep it from turning into noise. */
 const PB_SND={three:'swish',logo:'swish',dunk:'dunk',alley:'dunk',rim:'net',mid:'net',post:'net',putback:'net',and1:'net',ankle:'net',assist:'net',
-  block:'block',steal:'steal',clutch:'clutch',takeover:'ooh',boom:'ooh',run:'ooh',foul:'whistle',tech:'whistle',eject:'whistle',foulout:'whistle',timeout:'whistle',ot:'horn'};
+  block:'block',steal:'steal',clutch:'clutch',takeover:'ooh',boom:'ooh',foul:'whistle',tech:'whistle',eject:'whistle',foulout:'whistle',timeout:'whistle',ot:'horn'};
 let pbSnd={k:null,e:0};
 function pbSound(G,ev,e,done){const k=G.si+'-'+G.gi;if(pbSnd.k!==k||e<pbSnd.e||e-pbSnd.e>1200||done){pbSnd={k,e};return}const e0=pbSnd.e;pbSnd.e=e;
   ev.forEach((x,i)=>{const nm=PB_SND[x.kind];if(!nm)return;let T=x.T;const s0=i>0?ev[i-1].T+PB_POST:0;
@@ -1434,7 +1436,7 @@ document.addEventListener('click',e=>{
     case 'tclr':return dispatch({a:'cfg',cfg:{teams:[]}});
     case 'pdel':return dispatch({a:'cfg',cfg:{picks:(S.cfg.picks||[]).filter(x=>x!==d.v)}});
     case 'cat':{const c=new Set(S.cfg.cats);c.has(d.v)?c.delete(d.v):c.add(d.v);return dispatch({a:'cfg',cfg:{cats:[...c]}})}
-    case 'cfg':{const val=['showStats','hints','mis','bal','cards','showYr'].includes(d.k)?d.v==='1':['pmode','fmt'].includes(d.k)?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
+    case 'cfg':{const val=['showStats','hints','mis','bal','cards','showYr','ovr'].includes(d.k)?d.v==='1':['pmode','fmt'].includes(d.k)?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
     case 'csel':{const g=S.game,who=d.who||(NET.mode==='local'?g.sides.find(s=>!g.cards[s].pick):myRole());let L=(ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===who?ui.csel.ids:g.cards[who]&&g.cards[who].pick)||[];L=L.slice();
       const i=L.indexOf(d.v);if(i>=0)L.splice(i,1);else{L.push(d.v);if(L.length>CARD_PICK)L.shift()}ui.csel={gid:g.gid,who,ids:L};return render()}
     case 'cpick':{const g=S.game;const ids=ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===d.who?ui.csel.ids:g.cards[d.who].pick;ui.csel=null;return dispatch({a:'card',id:'pick',who:d.who,ids})}

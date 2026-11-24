@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-kVV3OY4eAoCYvKDfXML5Q98s7iVYhhgKLmBDZqgovT8=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-ZKt5L5T/1euME5nGalDzLPy1pYua0UcwXugbjNyFAa4=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -621,6 +621,19 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .readb .rdbtn{margin-top:2px;padding:9px 12px;font-size:15px}
 .phb .ph.tk{letter-spacing:.06em}
 
+/* 綜合評分 badge */
+.pcard.front{position:relative}
+.ovrb{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;align-items:center;min-width:46px;padding:4px 6px 3px;border-radius:10px;
+  background:var(--oc,#8a93a6);color:#fff;line-height:1;box-shadow:0 2px 6px rgba(20,30,60,.18);z-index:2}
+.ovrb b{font-size:22px;font-weight:900;letter-spacing:-.02em}.ovrb i{font-style:normal;font-size:9.5px;font-weight:700;opacity:.9;margin-top:2px;letter-spacing:.1em}
+.ovrb.sm{left:6px;top:6px;min-width:32px;padding:3px 4px 2px;border-radius:7px}.ovrb.sm b{font-size:15px}.ovrb.sm i{display:none}
+.ovrb.t1{--oc:#8a93a6}.ovrb.t2{--oc:#3f9a5c}.ovrb.t3{--oc:#2f6fd6}.ovrb.t4{--oc:#7b3fc4}.ovrb.t5{--oc:linear-gradient(135deg,#1d1d1f,#4a3b12);background:linear-gradient(135deg,#232325,#5a4714);color:#ffd970}
+.mcard2{position:relative}
+.rov{font-style:normal;font-weight:800;font-size:.82em;margin-left:3px;opacity:.6}
+.mcard2 .ovrb.sm{position:static;display:inline-flex;flex-direction:row;align-self:flex-start;box-shadow:none;margin:0 0 4px}
+.pcard .ovrb:not(.sm){position:static;flex-direction:row;align-items:baseline;gap:6px;width:max-content;margin:0 auto 4px;padding:5px 12px 4px;box-shadow:none}
+.pcard .ovrb:not(.sm) b{font-size:20px}.pcard .ovrb:not(.sm) i{font-size:11px;margin:0}
+
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
 <script src="https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js" integrity="sha384-ilRYg/zm2XqUafLvBoGVk40UfNRnvUkYMy+e/JPo4YgsFR6X9Q3jYEkqFQXquX4r" crossorigin="anonymous" async></script>
@@ -649,7 +662,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24w';
+const APPV='2026.11.24x';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -832,7 +845,7 @@ function startGame(S){
   const t=now();
   S.game={gid:Math.random().toString(36).slice(2,9),theme:{id:th.id,name:th.name,tag:th.tag,cat:th.cat||'自訂',random:c.theme==='random'||!!th.random},
     pool:th.items,items:drawItems(th.items,draw,n*size/5),extra:0,idx:0,sides,size,rosters:{},spent:{},
-    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
+    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,ovr:c.ovr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
   sides.forEach(s=>{S.game.rosters[s]=[];S.game.spent[s]=0});S.game.base=S.game.items.length;
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false,fmt0:Math.floor(Math.random()*FMT_ROT.length)};
   const se=S.season;S.game.fmt=fmtFor(S);S.game.nom=!!c.nom;if(se){if(baseId)se.used.push(baseId);S.game.round=se.rounds.length+1;S.game.rounds=se.n}
@@ -916,7 +929,7 @@ function apply(S,a,actor){
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
-      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.read!=null&&READ_OPTS.includes(n.read|0))c.read=n.read|0;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
+      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.ovr!=null)c.ovr=!!n.ovr;if(n.read!=null&&READ_OPTS.includes(n.read|0))c.read=n.read|0;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
       if(n.players===2||n.players===3){c.players=n.players;if(n.players===2&&S.seats.C&&NET.mode!=='local')S.seats.C=null}
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
@@ -1370,6 +1383,13 @@ function phaseGap(k){if(!PH_D){const acc={};THEMES.forEach(t=>t.items.forEach(p=
     (acc[k2]=acc[k2]||[]).push(pval(p)-pval({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:c.g}))}));
   PH_D={};Object.keys(PHASE).forEach(x=>{const L=(acc[x]||[]).sort((a,b)=>a-b);PH_D[x]=L.length?L[L.length>>1]:0})}
   return k?PH_D[k]||0:0}
+
+/* 綜合評分: the same public number the bots price cards with (career BPM-based value + the phase adjustment, see
+   pubVal in bot.js), put on a 2K-style 45-99 scale: role players in the 60s-70s, All-Stars mid-80s, the very top 95+.
+   It exists so a person does not have to work out from points per game what the computer already knows. */
+const ovrOf=p=>!p||p.fa?45:Math.max(45,Math.min(99,Math.round(72+2.3*pubVal(p))));
+const ovrTier=v=>v>=92?'t5':v>=86?'t4':v>=80?'t3':v>=74?'t2':'t1';
+function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p);return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>評分</i></div>`}
 
 /* ---------- bench roles (10-man mode) ----------
  Five bench spots, each holding one of three roles: 替補後衛 (covers PG/SG), 替補鋒線 (covers SF/PF/C) and one 第六人
@@ -1918,18 +1938,18 @@ const SND={
   /* ---- game playback ----
      Built the way procedural-audio work builds impacts: a noise source shaped by filters for air and net, and a few
      damped sine modes at non-integer ratios for metal (that inharmonic spread is what makes a rim sound like steel). */
-  // a three that touches nothing but net: a short falling "shh" of nylon plus the snap of the net, very little low end
-  swish:(c,t)=>{burst(c,t,{f:jit(5200,.06),f2:2300,q:0.8,dur:0.24,peak:0.13});burst(c,t+0.015,{f:jit(7600,.05),q:1.2,dur:0.09,peak:0.06});
-    burst(c,t+0.09,{f:jit(3000,.06),f2:1800,q:1,dur:0.14,peak:0.04});voice(c,t,{f:jit(170,.05),f2:110,dur:0.07,peak:0.035})},
-  // any other make: the same net, softer and shorter
-  net:(c,t)=>{burst(c,t,{f:jit(4200,.08),f2:2200,q:0.9,dur:0.16,peak:0.075});burst(c,t+0.06,{f:jit(2600,.06),q:1,dur:0.08,peak:0.025})},
-  // dunk: a body thump, the rim ringing (steel modes) and the stanchion rattling for a moment, then a short roar
+  // a three that touches nothing but net: one crisp, bright "tsh" (about a tenth of a second audible) - the ball through the
+  // cords and the snap of the net - with no falling sweep and no long tail, which is what made the old one sound like surf
+  swish:(c,t)=>{burst(c,t,{f:jit(5600,.05),q:0.7,dur:0.17,peak:0.17});burst(c,t+0.03,{f:jit(8500,.05),q:1.1,dur:0.08,peak:0.1});
+    burst(c,t+0.006,{f:jit(3600,.06),q:1.4,dur:0.035,peak:0.05})},
+  // any other make: a shorter, softer version
+  net:(c,t)=>{burst(c,t,{f:jit(6000,.06),q:0.8,dur:0.1,peak:0.08});burst(c,t+0.022,{f:jit(8800,.05),q:1.2,dur:0.035,peak:0.04})},
+  // dunk: a body thump, the rim ringing (steel modes) and the stanchion rattling for a moment
   dunk:(c,t)=>{voice(c,t,{f:jit(120,.05),f2:44,dur:0.26,peak:0.32});burst(c,t,{f:jit(380,.06),q:0.8,dur:0.07,peak:0.22});burst(c,t+0.004,{f:jit(2600,.05),q:2,dur:0.03,peak:0.08});
     const f0=jit(395,.04);[[1,0.055,0.9],[2.32,0.04,0.65],[3.87,0.03,0.45],[5.61,0.02,0.3],[7.42,0.012,0.2]].forEach(([r,p,d])=>voice(c,t+0.003,{f:f0*r,dur:d,peak:p,a:0.002}));
-    for(let i=0;i<7;i++)burst(c,t+0.03+i*0.034,{f:jit(260,.12),q:2.2,dur:0.045,peak:0.09*Math.pow(0.7,i)});
-    crowd(c,t+0.12,{dur:1.3,peak:0.06,voices:3,claps:6})},
-  // block: a hand slapping the ball (a dull pop with some slap on top) and a crowd "ooh"
-  block:(c,t)=>{voice(c,t,{f:jit(200,.05),f2:85,dur:0.1,peak:0.22});burst(c,t,{f:jit(1300,.08),q:1,dur:0.045,peak:0.15});crowd(c,t+0.1,{dur:1,peak:0.045,voices:3,claps:0})},
+    for(let i=0;i<7;i++)burst(c,t+0.03+i*0.034,{f:jit(260,.12),q:2.2,dur:0.045,peak:0.09*Math.pow(0.7,i)})},
+  // block: a hand slapping the ball (a dull pop with some slap on top)
+  block:(c,t)=>{voice(c,t,{f:jit(200,.05),f2:85,dur:0.1,peak:0.22});burst(c,t,{f:jit(1300,.08),q:1,dur:0.045,peak:0.15})},
   // steal: two short sneaker squeaks
   steal:(c,t)=>{[0,0.07].forEach((d,i)=>{voice(c,t+d,{type:'triangle',f:jit(2000+i*250,.04),f2:2600+i*200,dur:0.055,peak:0.04});burst(c,t+d,{f:2400,q:6,dur:0.04,peak:0.025})})},
   // referee whistle: a pea whistle, a high tone with the fast flutter of the pea
@@ -1938,8 +1958,9 @@ const SND={
     g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.05,t+0.02);g.gain.setValueAtTime(0.05,t+0.28);g.gain.exponentialRampToValueAtTime(0.0001,t+0.36);
     o.connect(am);am.connect(g);g.connect(SFX.out);o.start(t);lfo.start(t);o.stop(t+0.4);lfo.stop(t+0.4);o.onended=()=>{o.disconnect();lfo.disconnect();lg.disconnect();am.disconnect();g.disconnect()}},
   // a crowd swell for big moments inside a game (a run, a takeover, a career night)
-  ooh:(c,t)=>crowd(c,t,{dur:1.7,peak:0.075,voices:4,claps:8}),
-  clutch:(c,t)=>{SND.swish(c,t);crowd(c,t+0.1,{dur:2,peak:0.12,voices:6,claps:20})}};
+  // (voices and claps only: the noise bed of the full crowd is what read as waves in the middle of a game)
+  ooh:(c,t)=>crowd(c,t,{dur:1.4,peak:0.07,voices:5,claps:10,bed:false}),
+  clutch:(c,t)=>{SND.swish(c,t);crowd(c,t+0.12,{dur:1.8,peak:0.1,voices:6,claps:22,bed:false})}};
 const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90,swish:140,net:140,dunk:350,block:300,steal:250,whistle:400,ooh:1500,clutch:1500};
 // gesture: called inside a tap, so a context that is still resuming may queue the sound (it plays as soon as it resumes)
 function sfx(name,delay,gesture,arg){if(!SFX.lv||!SND[name])return;sfxInit();const c=SFX.ctx;if(!c)return;if(c.state!=='running'){c.resume().catch(()=>{});if(!gesture)return}
@@ -1963,7 +1984,7 @@ function fmtLobby(c,dis){const opts=Object.keys(FMTS).concat(c.season?['rotate']
 function miniTags(p){const b=(p&&!p.fa&&bioOf(p))||{},t=[];if(b.mvp)t.push(`👑MVP${b.mvp>1?'×'+b.mvp:''}`);if(b.ring)t.push(`🏆×${b.ring}`);if(b.as)t.push(`⭐×${b.as}`);
   if(!t.length&&b.roy)t.push('🌱新人王');const sg=typeof sigOf==='function'&&sigOf(p);if(sg)t.push(`✨${sg.lab}`);return t.slice(0,3)}
 function miniCard(g,x,opts){const p=x.p,nk=nickOf(p);
-  return `<${opts.btn?'button':'div'} class="mcard2 ${opts.sel?'sel':''} ${p.extra?'xtra':''}" ${opts.btn?`data-act="${opts.act||'nompick'}" data-v="${x.j}"`:''} style="--i:${opts.i||0}">
+  return `<${opts.btn?'button':'div'} class="mcard2 ${opts.sel?'sel':''} ${p.extra?'xtra':''}" ${opts.btn?`data-act="${opts.act||'nompick'}" data-v="${x.j}"`:''} style="--i:${opts.i||0}">${ovrBadge(p,g,1)}
     <div class="mn">${esc(p.n)}</div>${nk?`<div class="mk">“${esc(nk)}”</div>`:''}${phaseBadge(p,g,1)}<div class="mp">${canPlay(p).map(x=>`<i>${x}</i>`).join('')}</div>
     <div class="mt">${miniTags(p).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${opts.sel?'<span class="mck2">✓</span>':''}</${opts.btn?'button':'div'}>`}
 function nomPanel(g,r){const mine=r==='all'||r===g.nomBy,M=market(g),sel=ui.nomSel&&ui.nomSel.gid===g.gid&&ui.nomSel.idx===g.idx?ui.nomSel.j:null;
@@ -2410,6 +2431,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <h3>對戰怎麼算</h3><ul>
   <li><b>傳奇組合</b>：湊齊三巨頭或王朝核心（公牛、Showtime、熱火、勇士、GDP…）另外加 0.8–2 戰力。</li>
   <li><b>爆發之夜</b>：角色球員偶爾會打出生涯代表作，那場多拿好幾分。</li>
+  <li><b>綜合評分</b>：卡片左上角的數字（45–99），由生涯攻防效率（BPM）和生涯階段算出，跟電腦估價用的是同一個數字。比賽實際用的是那張卡所屬球季的表現，所以評分是很準的參考，但不是答案。大廳可關掉。</li>
   <li><b>球星接管</b>：卡上標「爆發型」的球星（MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星），每場約 5–7% 機會接管比賽，那場球隊多約 4 分。巔峰期機率最高。電腦出價只看一般數據，不算這個。</li>
   <li><b>看牌時間</b>：每張卡翻開先停幾秒（大廳可調），倒數完才能出價，電腦也得等。</li>
   <li><b>實力</b>：先發五人的 BPM 加總（以當年聯盟平均為基準），用 1,230 支真實球隊校正過。</li>
@@ -2500,7 +2522,8 @@ function vLobby(){
     <section class="card"><h2>進階</h2><div class="seg">
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
       <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
-      <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button></div>
+      <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button>
+      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示綜合評分</button></div>
       <div class="small mut" style="margin-top:6px">前兩個會透露主題的球隊和年代，預設關閉。年份只透露年代，預設開啟；想更神秘可以關掉。每張卡都會標巔峰期／生涯早期／生涯晚期。</div></section>
     ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
     ${isP?(waitingFor().length?`<button class="big" disabled>等 ${esc(waitingFor().join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">${c.season?`開始季賽（${c.season} 局）→`:'開始競標 →'}</button>`):`<div class="note">觀眾無法變更設定。</div>`}`;
@@ -2541,7 +2564,7 @@ function amtFor(g,s){const mn=g.bid.amt+1,mx=maxBid(g,s);let v=ui.amt[s];if(!(v>
 function bidRow(g,s,r,held){
   const full=openN(g,s)===0,lead=g.bid.who===s,mx=maxBid(g,s),mine=r==='all'||r===s,passed=g.pass[s],turn=g.turn===s;
   const out=full||passed||(!lead&&mx<=g.bid.amt);
-  const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?(q&&q.role?BROLE[q.role].sh:'替'):x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
+  const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?(q&&q.role?BROLE[q.role].sh:'替'):x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}${g.ovr!==false?`<em class="rov">${ovrOf(g.items[q.k])}</em>`:''}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
   const offl=!offline()&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
   const state=held?'':fmtBusy(g)?(offl?'📴 離線中・':'')+(full?'陣容已滿':fmtState(g,s)):(offl?'📴 離線中（自動跳過）・':'')+(full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
   const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt;
@@ -2569,7 +2592,7 @@ function vAuction(){
     ${leftPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`;
   if(g.stage==='nom')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}${fmtPill(g)}</div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${nomPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}${r==='all'||ALL.includes(r)?`<button class="quit" data-act="quit">${ui.quit?'再按一次確認放棄本局':'放棄本局'}</button>`:''}`;
-  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${g.price!=null?`<div class="ptag">$${g.grab?g.grab.price:dutchAt(g,now())}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
+  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${ovrBadge(pl,g)}${g.price!=null?`<div class="ptag">$${g.grab?g.grab.price:dutchAt(g,now())}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
       ${g.showStats?`<div class="psub">${esc(sub(pl))}</div><div class="pstats">${[['pts','PTS'],['trb','REB'],['ast','AST'],['stl','STL'],['blk','BLK']].map(([k,l])=>`<div><b>${fmt(pl[k])}</b><i>${l}</i></div>`).join('')}</div>`:''}</div>`;
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
@@ -2845,7 +2868,7 @@ function endLayout(E,z,ro,prevL){if(!E||DEAD.has(E.kind))return prevL;
    the ball), not when its line appears in the feed. Jumps in the clock (seeking, a new game) make no sound, and at high
    speed the per-sound minimum gaps in sfx() keep it from turning into noise. */
 const PB_SND={three:'swish',logo:'swish',dunk:'dunk',alley:'dunk',rim:'net',mid:'net',post:'net',putback:'net',and1:'net',ankle:'net',assist:'net',
-  block:'block',steal:'steal',clutch:'clutch',takeover:'ooh',boom:'ooh',run:'ooh',foul:'whistle',tech:'whistle',eject:'whistle',foulout:'whistle',timeout:'whistle',ot:'horn'};
+  block:'block',steal:'steal',clutch:'clutch',takeover:'ooh',boom:'ooh',foul:'whistle',tech:'whistle',eject:'whistle',foulout:'whistle',timeout:'whistle',ot:'horn'};
 let pbSnd={k:null,e:0};
 function pbSound(G,ev,e,done){const k=G.si+'-'+G.gi;if(pbSnd.k!==k||e<pbSnd.e||e-pbSnd.e>1200||done){pbSnd={k,e};return}const e0=pbSnd.e;pbSnd.e=e;
   ev.forEach((x,i)=>{const nm=PB_SND[x.kind];if(!nm)return;let T=x.T;const s0=i>0?ev[i-1].T+PB_POST:0;
@@ -3157,7 +3180,7 @@ document.addEventListener('click',e=>{
     case 'tclr':return dispatch({a:'cfg',cfg:{teams:[]}});
     case 'pdel':return dispatch({a:'cfg',cfg:{picks:(S.cfg.picks||[]).filter(x=>x!==d.v)}});
     case 'cat':{const c=new Set(S.cfg.cats);c.has(d.v)?c.delete(d.v):c.add(d.v);return dispatch({a:'cfg',cfg:{cats:[...c]}})}
-    case 'cfg':{const val=['showStats','hints','mis','bal','cards','showYr'].includes(d.k)?d.v==='1':['pmode','fmt'].includes(d.k)?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
+    case 'cfg':{const val=['showStats','hints','mis','bal','cards','showYr','ovr'].includes(d.k)?d.v==='1':['pmode','fmt'].includes(d.k)?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
     case 'csel':{const g=S.game,who=d.who||(NET.mode==='local'?g.sides.find(s=>!g.cards[s].pick):myRole());let L=(ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===who?ui.csel.ids:g.cards[who]&&g.cards[who].pick)||[];L=L.slice();
       const i=L.indexOf(d.v);if(i>=0)L.splice(i,1);else{L.push(d.v);if(L.length>CARD_PICK)L.shift()}ui.csel={gid:g.gid,who,ids:L};return render()}
     case 'cpick':{const g=S.game;const ids=ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===d.who?ui.csel.ids:g.cards[d.who].pick;ui.csel=null;return dispatch({a:'card',id:'pick',who:d.who,ids})}
