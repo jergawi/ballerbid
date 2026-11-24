@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24m';
+const APPV='2026.11.24n';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -102,7 +102,7 @@ function chem(roster,g){
 
 /* ---------- state & engine ---------- */
 function newState(){return{v:0,t:0,phase:'lobby',auth:null,code:null,
-  cfg:{players:2,budget:15,size:5,theme:'random',cats:[...CATS],era:null,teams:[],picks:[],pcat:'夢幻隊',draw:12,showStats:false,hints:false,mis:false,season:0,bal:true,fmt:'open',nom:false,custom:{name:'',text:''}},
+  cfg:{players:2,budget:15,size:5,theme:'random',cards:false,cats:[...CATS],era:null,teams:[],picks:[],pcat:'夢幻隊',draw:12,showStats:false,hints:false,mis:false,season:0,bal:true,fmt:'open',nom:false,custom:{name:'',text:''}},
   seats:{A:null,B:null,C:null},names:{A:'玩家 A',B:'玩家 B',C:'玩家 C'},game:null,acks:{},scores:{},sim:null,err:'',by:null,season:null,lastSeason:null}}
 const sidesOf=n=>ALL.slice(0,n);
 const openSlots=(g,s)=>{const u=g.rosters[s].map(r=>r.slot);return SLOTS(g).filter(x=>!u.includes(x))};
@@ -113,7 +113,6 @@ const maxBid=(g,s)=>openN(g,s)?(g.solo&&g.solo.who===s?1:left(g,s)-(openN(g,s)-1
    so it cannot flip through the whole pool for free */
 const fmtBusy=g=>!!(g.stage||g.sb||g.price!=null);
 const soloOf=g=>{if(g.sides.length<2)return null;const e=g.sides.filter(s=>openN(g,s)>0);return e.length===1?e[0]:null};
-const SOLO_SKIPS=n=>Math.min(3,Math.ceil(n/2));
 const remain=g=>g.items.length-g.idx;
 const isOver=g=>g.sides.every(s=>openN(g,s)===0)||g.idx>=g.items.length;
 const cur=g=>g.items[g.idx];
@@ -204,8 +203,8 @@ function startGame(S){
   const se=S.season;S.game.fmt=fmtFor(S);S.game.nom=!!c.nom;if(se){if(baseId)se.used.push(baseId);S.game.round=se.rounds.length+1;S.game.rounds=se.n}
   const bb=seasonBudgets(S);S.game.bud=bb.b;S.game.budAdj=bb.adj;
   S.sim=null;S.last=null;S.back={};S.sready={};
-  if(c.mis){const M=dealMissions(S.game,rng(hash(S.game.gid+'mis')));if(sides.every(s=>M[s].opts.length)){S.game.mis=M;S.game.misEnd=t+T_MIS*(NET.mode==='local'?n:1);S.phase='mission';return true}}
-  S.phase='auction';startCard(S);return true;
+  if(c.cards){S.game.cards=dealCards(S.game);S.game.cardEnd=t+T_CARD*(NET.mode==='local'?n:1);S.phase='cards';return true}
+  prepNext(S);return true;
 }
 function beginAuction(S){const g=S.game;S.phase='auction';startCard(S)}
 function autoPick(g,s){const M=g.mis[s];if(M.pick!=null)return;const i=M.opts.findIndex(x=>x.tier===2);M.pick=i>=0?i:0;M.auto=1}
@@ -220,7 +219,7 @@ function advance(S){const g=S.game,o=g.order||g.sides,n=o.length;let i=o.indexOf
   for(let k=1;k<=n;k++){const s=o[(i+k)%n];if(canAct(g,s)){g.turn=s;g.deadline=t0(g)+(g.bid.who?T_BID:T_NOBID);return}}
   g.turn=null;if(g.bid.who)sell(S,g.bid.who,g.bid.amt);else skipCard(S)}
 function startCard(S){const g=S.game;g.bid={who:null,amt:0};g.pass={};g.order=cardOrder(g);g.turn=null;
-  const so=soloOf(g);if(so&&(!g.solo||g.solo.who!==so))g.solo={who:so,skips:SOLO_SKIPS(openN(g,so))};if(fmtStart(S))return;advance(S)}
+  const so=soloOf(g);if(so&&(!g.solo||g.solo.who!==so))g.solo={who:so};if(fmtStart(S))return;advance(S)}
 /* deck runs out: free agents fill whatever is left (see addExtra for passed cards) */
 const FA={obpm:-2,dbpm:-0.5,usg:16,astp:12,trbp:10,blkp:1,stlp:1.5,mp:18,g:60,pts:6,trb:3,ast:1,stl:0.5,blk:0.3,tov:0.9};
 function fillFA(g){g.sides.forEach(s=>openSlots(g,s).forEach(x=>{const i=isBench(x)?3:POS.indexOf(x)+1;
@@ -235,8 +234,8 @@ function nextCard(S){const g=S.game;g.gapEnd=now()+gapMs(g);g.idx++;g.bid={who:n
 const gapMs=g=>window.BB_FAST?0:g.reveal&&g.reveal.idx===g.idx&&g.reveal.win?(g.reveal.grab?1500:2400):1000;
 const t0=g=>Math.max(now(),g.gapEnd||0),inGap=g=>now()<(g.gapEnd||0)-200;
 // a won card goes straight onto the roster (see autoPlace); every card ends here or in skipCard
-function sell(S,who,amt){const g=S.game;g.turn=null;g.rosters[who].push({slot:null,k:g.idx,price:amt});g.spent[who]+=amt;autoPlace(g,who);
-  g.log.push({n:cur(g).n,who,amt,slot:placeNote(g,who,g.idx)});nextCard(S)}
+function sell(S,who,amt){const g=S.game;g.turn=null;const pay=couponPay(g,who,amt);g.rosters[who].push({slot:null,k:g.idx,price:pay});g.spent[who]+=pay;autoPlace(g,who);
+  g.log.push({n:cur(g).n,who,amt:pay,slot:placeNote(g,who,g.idx),...(pay<amt?{full:amt}:{})});nextCard(S)}
 function skipCard(S){const g=S.game;g.log.push({n:cur(g).n,who:null});if(g.sides.some(s=>openN(g,s)>0))addExtra(g);nextCard(S)}
 /* timers run only on the device that owns the game state */
 function tickAuth(){
@@ -246,16 +245,17 @@ function tickAuth(){
   const off=new Set();if(NET.mode==='host'&&NET.joinedAt&&Date.now()-NET.joinedAt>15000){const on=onlineSet();g.sides.forEach(s=>{const c=S.seats[s]&&S.seats[s].cid;if(c&&c!==CID&&!on.has(c))off.add(s)})}
   if(S.phase==='auction'&&off.size){
     if(inGap(g)){}
-    else if(g.solo&&off.has(g.solo.who)&&g.turn===g.solo.who){g.bid={who:g.turn,amt:1};sell(S,g.turn,1);changed=true}
     else if(!fmtBusy(g)){for(const s of off)if(openN(g,s)>0&&!g.pass[s]&&g.bid.who!==s){g.pass[s]=true;changed=true}if(changed&&(!g.turn||g.pass[g.turn]))advance(S)}
   }
+  if(S.phase==='cards'&&g.cards){g.sides.forEach(s=>{if(!g.cards[s].pick&&(off.has(s)||t>g.cardEnd)){autoCards(g,s);changed=true}});
+    if(changed&&g.sides.every(s=>g.cards[s].pick))prepNext(S)}
   if(S.phase==='mission'&&g.mis){g.sides.forEach(s=>{if(g.mis[s].pick==null&&(off.has(s)||t>g.misEnd)){autoPick(g,s);changed=true}});
     if(changed&&g.sides.every(s=>g.mis[s].pick!=null))beginAuction(S)}
   if(S.phase==='lineup'&&off.size){for(const s of off)if(!g.ready[s]){g.ready[s]=true;changed=true}if(changed&&g.sides.every(s=>g.ready[s])){finish(S)}}
   if(S.phase==='auction'){
     if(inGap(g)){}
     else if(fmtBusy(g)){if(fmtTick(S,off))changed=true}
-    else if(t>g.deadline){if(g.solo&&g.turn===g.solo.who){g.bid={who:g.turn,amt:1};sell(S,g.turn,1)}else{if(g.turn)g.pass[g.turn]=true;advance(S)}changed=true}
+    else if(t>g.deadline){if(g.turn)g.pass[g.turn]=true;advance(S);changed=true}
   }else if(S.phase==='lineup'&&t>g.lineupEnd){finish(S);changed=true}
   if(changed){fx(snapPrev);commit()}
 }
@@ -271,7 +271,7 @@ function apply(S,a,actor){
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
-      if(n.mis!=null)c.mis=!!n.mis;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
+      if(n.mis!=null)c.mis=!!n.mis;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
       if(n.players===2||n.players===3){c.players=n.players;if(n.players===2&&S.seats.C&&NET.mode!=='local')S.seats.C=null}
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
@@ -290,18 +290,19 @@ function apply(S,a,actor){
     case 'start':{if(!isP||!(S.phase==='lobby'&&!S.season||S.phase==='season'&&S.season&&!S.season.done))return false;return startGame(S)}
     case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||offline()||!ALL.includes(r)||!S.season.sides.includes(r))return false;
       S.sready=S.sready||{};S.sready[r]=!!a.v;if(S.season.sides.every(x=>S.sready[x])&&!waitingFor().length)return startGame(S)||true;return true}
+    case 'card':{if(!g||!g.sides.includes(who))return false;return useCard(S,who,a)}
     case 'mpick':{if(S.phase!=='mission'||!g||!g.mis||!g.sides.includes(who))return false;const M=g.mis[who],i=a.i|0;if(i<0||i>=M.opts.length)return false;
       M.pick=i;M.auto=0;if(g.sides.every(s=>g.mis[s].pick!=null))beginAuction(S);return true}
     case 'endSeason':{if(!isP||S.phase!=='season'||!S.season||S.season.done)return false;if(!S.season.rounds.length){S.season=null;S.phase='lobby';return true}seasonEnd(S);return true}
     case 'closeSeason':{if(!isP||S.phase!=='season'||!S.season||!S.season.done)return false;S.lastSeason=S.season;S.season=null;S.phase='lobby';return true}
-    case 'nominate':case 'sbid':case 'grab':case 'spass':return g.sides.includes(who)?fmtApply(S,a,who):false;
+    case 'nominate':case 'sbid':case 'grab':case 'spass':case 'lpick':case 'lnone':return g.sides.includes(who)?fmtApply(S,a,who):false;
     case 'bid':{if(S.phase!=='auction'||inGap(g)||!g.sides.includes(who)||fmtBusy(g))return false;
-      if(a.idx!=null&&a.idx!==g.idx)return false;const amt=g.solo&&g.solo.who===who?1:a.amt|0;
+      if(a.idx!=null&&a.idx!==g.idx)return false;const amt=a.amt|0;
       if(g.turn!==who||g.pass[who]||g.bid.who===who||amt<=g.bid.amt||amt<1||amt>maxBid(g,who))return false;
       g.bid={who,amt};
       if(eligible(g).length===1)sell(S,who,amt);else advance(S);return true}
     case 'pass':{if(S.phase!=='auction'||inGap(g)||!g.sides.includes(who)||g.bid.who===who||g.pass[who]||fmtBusy(g))return false;
-      if(a.idx!=null&&a.idx!==g.idx)return false;if(g.solo&&g.solo.who===who){if(g.solo.skips<=0||g.turn!==who)return false;g.solo.skips--}
+      if(a.idx!=null&&a.idx!==g.idx)return false;
       g.pass[who]=true;if(g.turn===who||!g.turn)advance(S);return true}
     case 'swap':{if(S.phase!=='lineup'||!g.sides.includes(who)||g.ready[who])return false;
       const R=g.rosters[who],x=R.find(q=>q.slot===a.x),y=R.find(q=>q.slot===a.y);if(!x||!y||x===y)return false;[x.slot,y.slot]=[y.slot,x.slot];[x.role,y.role]=[y.role,x.role];return true}
@@ -416,7 +417,8 @@ function simulate(S){
   sides.forEach(s=>{ro[s]=rosterOf(g,s);base[s]=baseRate(ro[s],g,left(g,s))});
   sides.forEach(s=>{const sv=base[s].net+pairRate(base[s],ro[s],null).posAdj;const pct=percentile(g,ro[s],sv);
     const mb=(g.misRes&&g.misRes[s]&&g.misRes[s].bonus)||0;base[s].misAdj=mb;base[s].off+=mb/2;base[s].def+=mb/2;base[s].net+=mb;
-    teams[s]={strength:+(sv+mb).toFixed(2),pct,grade:grade(pct),base:Object.fromEntries(['O','D','U','usgAdj','tmAdj','lgAdj','swAdj','fdAdj','savAdj','benchAdj','misAdj','net'].map(k=>[k,+base[s][k].toFixed(2)])),chem:base[s].ch,sw:0,gw:0,gl:0,posSum:0,posN:0}});
+    const hc=homeAdj(g,s);base[s].hcAdj=hc;base[s].off+=hc/2;base[s].def+=hc/2;base[s].net+=hc;
+    teams[s]={strength:+(sv+mb+hc).toFixed(2),pct,grade:grade(pct),base:Object.fromEntries(['O','D','U','usgAdj','tmAdj','lgAdj','swAdj','fdAdj','savAdj','benchAdj','misAdj','hcAdj','net'].map(k=>[k,+(base[s][k]||0).toFixed(2)])),chem:base[s].ch,sw:0,gw:0,gl:0,posSum:0,posN:0}});
   const series=[];
   for(let i=0;i<sides.length;i++)for(let j=i+1;j<sides.length;j++){const a=sides[i],b=sides[j];
     const ra=pairRate(base[a],ro[a],ro[b]),rb=pairRate(base[b],ro[b],ro[a]);
@@ -469,7 +471,7 @@ function deepClean(o,d=0){if(d>12)return null;if(typeof o==='string')return o.re
 function validState(m){if(!m||typeof m!=='object'||typeof m.v!=='number')return false;const g=m.game;
   if(g){if(!Array.isArray(g.sides)||!g.sides.length||!g.sides.every(x=>ALL.includes(x)))return false;if(!/^[a-z0-9]{1,12}$/.test(String(g.gid)))return false;
     if(!Array.isArray(g.items)||!g.rosters||typeof g.rosters!=='object')return false}
-  if(m.phase&&!['lobby','mission','auction','lineup','results','season'].includes(m.phase))return false;return true}
+  if(m.phase&&!['lobby','cards','mission','auction','lineup','results','season'].includes(m.phase))return false;return true}
 const onlineSet=()=>new Set([...NET.online].filter(([,t])=>Date.now()-t<15000).map(([c])=>c));
 function mqttConnect(bi){return new Promise((res,rej)=>{let done=false;
   const c=mqtt.connect(BROKERS[bi],{clientId:'bb_'+CID+'_'+Math.random().toString(36).slice(2,6),clean:true,connectTimeout:7000,reconnectPeriod:2500,keepalive:30,timerVariant:'native'});
@@ -562,7 +564,7 @@ function dispatch(a){
   const prev=snapOf();
   if(apply(S,a,{cid:CID,role:roleOf(S,CID)})){fx(prev);commit()}else render();
 }
-function snapOf(){const g=S&&S.game;return S?(g?{log:g.log.length,bid:g.bid.amt,who:g.bid.who,turn:g.turn,gid:g.gid,idx:g.idx,phase:S.phase,sb:g.sb?Object.keys(g.sb).length:-1,grab:!!g.grab,rv:g.reveal?g.reveal.idx+':'+(g.reveal.win||'')+(g.reveal.retie||''):'',stage:g.stage,nomBy:g.nomBy}:{phase:S.phase}):null}
+function snapOf(){const g=S&&S.game;return S?(g?{log:g.log.length,bid:g.bid.amt,who:g.bid.who,turn:g.turn,gid:g.gid,idx:g.idx,phase:S.phase,sb:g.sb?Object.keys(g.sb).length:-1,grab:!!g.grab,rv:g.reveal?g.reveal.idx+':'+(g.reveal.win||'')+(g.reveal.retie||''):'',stage:g.stage,nomBy:g.nomBy,ev:g.ev?g.ev.n:0}:{phase:S.phase}):null}
 /* transitions: a short title card between phases, and the sold card stays on screen for a moment with a stamp
    before the next card flips in, so screens never just jump */
 const STAGES={mission:['🎯','抽任務卡','每人 3 張選 1 張'],auction:['🔨','競標開始','主題保密，喊價吧'],lineup:['📋','競標結束','排好陣容，準備開打'],results:['🏀','開打！','七戰四勝'],season:['🏁','季賽積分榜','']};
@@ -579,9 +581,10 @@ function fx(prev){
     if(g.grab&&!prev.grab)sfx('grab');
     if(g.bid.amt>prev.bid&&!g.sb&&!g.grab&&g.price==null){if(mine(g.bid.who))sfx('bid');else if(prev.who&&mine(prev.who)&&me!=='all')sfx('outbid');else sfx('raise')}
     if(me!=='all'&&g.turn===me&&prev.turn!==me)sfx('turn');
-    if(g.stage==='nom'&&prev.stage!=='nom'&&mine(g.nomBy)&&me!=='all')sfx('turn')}
-  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
-    if(l.who){sfx('sold');if(mine(l.who)&&me!=='all')sfx('win',0.14)}else sfx('pass');
+    if(g.stage==='nom'&&prev.stage!=='nom'&&mine(g.nomBy)&&me!=='all')sfx('turn');
+    if(g.ev&&g.ev.n!==prev.ev&&prev.gid===g.gid){sfx(g.ev.id==='coupon'?'coupon':'card');vibe(20)}}
+  if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
+    if(l.who){sfx('sold');if(l.full)sfx('coupon',0.25);if(mine(l.who)&&me!=='all')sfx('win',0.14)}else sfx('pass');
     if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,2600);ui.hold={gid:g.gid,k:prev.idx,l,until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
   else if(g.bid.amt>prev.bid)vibe(12);
 }
@@ -601,7 +604,7 @@ function render(){
   if(!THEMES.length)html=`<div class="center mut" style="margin-top:80px"><span class="spin"></span> 載入球員資料…</div>`;
   else if(!S||!NET.mode)html=`<div id="scr-home" class="screen">${vHome()}</div>`;
   else if(lastView())html=vRoomBar()+withView(()=>`<div id="scr-results${S.game.gid}" class="screen ${ui.pbFast?'fastrs':''}">${vResults()}</div>`);
-  else html=vRoomBar()+`<div id="scr-${S.phase}${S.game?S.game.gid:''}" class="screen ${S.phase==='results'&&ui.pbFast?'fastrs':''}">${({lobby:vLobby,mission:vMission,auction:vAuction,lineup:vLineup,results:vResults,season:vSeason}[S.phase]||vLobby)()}</div>`;
+  else html=vRoomBar()+`<div id="scr-${S.phase}${S.game?S.game.gid:''}" class="screen ${S.phase==='results'&&ui.pbFast?'fastrs':''}">${({lobby:vLobby,cards:vCards,mission:vMission,auction:vAuction,lineup:vLineup,results:vResults,season:vSeason}[S.phase]||vLobby)()}</div>`+(S.phase==='auction'&&S.game?cardFlash(S.game)+cardSheet():'');
   const next=document.createElement('div');next.id='app';next.className='wrap';next.innerHTML=html;
   if(window.morphdom)morphdom(app,next,{onBeforeElUpdated:(f,t)=>{if(f===document.activeElement&&(f.tagName==='INPUT'||f.tagName==='TEXTAREA'))return false;if(f.isEqualNode&&f.isEqualNode(t))return false;if(f.dataset&&f.dataset.counting)return false;return true}});
   else app.innerHTML=html;
@@ -646,7 +649,8 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>拍賣方式</b>（大廳選）：🔨 一般喊價；🤫 暗標（同時偷偷出價，最高價得標，平手加賽一次，再平手空位多的一方得標）；⚡ 搶標（每張有標價，倒數完先按先得，0.6 秒內同時按下就抽籤）。季賽可選「每局輪換」。</li>
   <li><b>輪流提名</b>（選用）：桌上翻開 4 張，輪到的人挑一張拿出來拍，提名的人先出價。</li>
   <li><b>替補</b>（10 人）：5 個替補自己分配「替補後衛／替補鋒線／第六人」，至少各 1 位、第六人只能 1 位。換人時由對應角色上場，第六人上場最多；放錯角色會扣分，沒有能補的角色也會扣分。</li>
-  <li><b>最後一隊</b>：其他人都滿了時，剩下那隊不再競標，每張 $1 拿或跳過，最多跳 3 次，時間到自動拿下。</li>
+  <li><b>最後一隊</b>：其他人都滿了時，剩下那隊不用再競標：牌堆裡剩下的牌全部翻開，每位 $1，自己挑要哪幾位（不會再補新牌）。也可以都不要，讓自由球員補。</li>
+  <li><b>🃏 能力卡</b>（選用）：開局 4 選 2，帶哪幾張是秘密，每張用一次，用的時候大家都看得到。🔄 換一張：還沒人出價的牌移到牌堆最後；💸 打折券：下一次得標 $4 以上打 85 折；🏟️ 主場優勢：對戰戰力 +1；🕵️ 球探報告：偷看接下來 3 張和一位對手的任務。</li>
   <li><b>🎯 任務卡</b>（選用）：開局每人 3 張選 1 張，任務保密，結算才揭曉。開打時達成就加戰力（卡片上寫多少就加多少）。會讓陣容變弱的任務（例如不靠 MVP）獎勵比較高。難度和獎勵依這次牌堆計算，牌堆不適合的任務不會發。</li>
   <li><b>🏁 季賽</b>（選用）：連打 3／5／7 局，冠軍 3 分、${'三人第二名 1 分、兩人輸家打滿七場 1 分'}，任務 +1（★★★ +2）。同分比冠軍數、系列賽勝負、淨勝分。可開平衡機制：上局冠軍預算 −10%、墊底 +10%。</li></ol>
   <h3>對戰怎麼算</h3><ul>
@@ -721,6 +725,7 @@ function vLobby(){
   const L=poolLenFor(c);
   const play=`<section class="card"><h2>玩法</h2><div class="otiles">
       <button class="otile ${c.mis?'on':''}" data-act="cfg" data-k="mis" data-v="${c.mis?0:1}" ${dis}><span class="oic">🎯</span><b>任務卡</b><small>每局 3 選 1，完成就加戰力</small><span class="osw"></span></button>
+      <button class="otile ${c.cards?'on':''}" data-act="cfg" data-k="cards" data-v="${c.cards?0:1}" ${dis}><span class="oic">🃏</span><b>能力卡</b><small>每局 4 選 2，換牌、打折、主場、球探</small><span class="osw"></span></button>
       <button class="otile ${c.season?'on':''}" data-act="cfg" data-k="season" data-v="${c.season?0:5}" ${dis}><span class="oic">🏁</span><b>季賽</b><small>同一群人連打多局拼積分</small><span class="osw"></span></button></div>
       ${c.season?`<div class="frow" style="margin-top:12px"><span class="fl">局數</span><div class="seg">${SEASON_N.map(n=>`<button class="chip ${c.season===n?'on':''}" data-act="cfg" data-k="season" data-v="${n}" ${dis}>${n} 局</button>`).join('')}</div></div>
       <button class="crow ${c.bal!==false?'on':''}" style="margin-top:10px" data-act="cfg" data-k="bal" data-v="${c.bal!==false?0:1}" ${dis}><span class="ck">${c.bal!==false?'✓':''}</span><span class="grow"><b>平衡機制</b><small>上局冠軍下一局預算 −10%，積分墊底 +10%</small></span></button>
@@ -778,11 +783,10 @@ function bidRow(g,s,r,held){
   const out=full||passed||(!lead&&mx<=g.bid.amt);
   const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?(q&&q.role?BROLE[q.role].sh:'替'):x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
   const offl=!offline()&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
-  const state=held?'':fmtBusy(g)&&!g.solo?(offl?'📴 離線中・':'')+(full?'陣容已滿':fmtState(g,s)):(offl?'📴 離線中（自動跳過）・':'')+(g.solo&&g.solo.who===s&&!full?(turn?(mine?'對手都滿了：每位 $1，拿或跳過':'挑選中…'):''):full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
-  const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt,solo=g.solo&&g.solo.who===s&&!full;
-  const fb=fmtBusy(g)&&!g.solo;
-  const ctrl=held?'':fb?fmtCtrl(g,s,r):solo&&mine?`<div class="solo"><button class="bb go" data-act="bid" data-who="${s}" data-amt="1" ${turn?'':'disabled'}>拿下<small>$1</small></button>
-      <button class="bb pass" data-act="pass" data-who="${s}" ${turn&&g.solo.skips>0?'':'disabled'}>跳過<small>還能跳 ${g.solo.skips} 次</small></button></div>`
+  const state=held?'':fmtBusy(g)?(offl?'📴 離線中・':'')+(full?'陣容已滿':fmtState(g,s)):(offl?'📴 離線中（自動跳過）・':'')+(full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
+  const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt;
+  const fb=fmtBusy(g);
+  const ctrl=held?'':fb?fmtCtrl(g,s,r)
     :mine&&!out&&!lead?`<div class="bidin"><button class="stp" data-act="step" data-who="${s}" data-v="-1" ${can&&v>g.bid.amt+1?'':'disabled'}>−</button>
       <input class="amt" type="number" inputmode="numeric" pattern="[0-9]*" data-in="amt" data-who="${s}" min="${g.bid.amt+1}" max="${mx}" value="${v}" ${turn?'':'disabled'} aria-label="出價金額">
       <button class="stp" data-act="step" data-who="${s}" data-v="1" ${can&&v<mx?'':'disabled'}>＋</button>
@@ -790,7 +794,7 @@ function bidRow(g,s,r,held){
     <div class="bbtns"><button class="bb all" data-act="bid" data-who="${s}" data-amt="${mx}" ${can?'':'disabled'}>全下 $${mx}</button>
       <button class="bb pass" data-act="pass" data-who="${s}">不要${turn?'':'（先跳過）'}</button></div>`:'';
   return `<div class="brow ${s} ${lead?'lead':''} ${out?'out':''} ${turn?'turn':''}"><div class="hd"><span class="nm">${turn?'▶ ':''}${esc(nm(S,s))}${r===s?'（你）':''}</span><span class="mx">${full?'':`最高 $${mx}`}</span><span class="mo">$${left(g,s)}${g.budAdj&&g.budAdj[s]?`<small class="${g.budAdj[s]<0?'dn':'up'}">${g.budAdj[s]<0?'冠軍稅':'補償'}</small>`:''}</span></div>
-    ${misChip(g,s)}<div class="bd"><div class="rost">${rost}</div>${state?`<div class="small ${turn&&mine?'':'mut'}" style="margin-top:6px">${state}</div>`:''}${ctrl}</div></div>`;
+    ${misChip(g,s)}<div class="bd"><div class="rost">${rost}</div>${held?'':cardTray(g,s,r)}${state?`<div class="small ${turn&&mine?'':'mut'}" style="margin-top:6px">${state}</div>`:''}${ctrl}</div></div>`;
 }
 function clock(end,tot,label,tick){return `<div class="small mut" data-end="${end}" data-tot="${tot}" ${tick?'data-tick="1"':''} style="width:100%">${label} <b class="tx"></b> 秒<div class="cd"><i></i></div></div>`}
 function vAuction(){
@@ -800,6 +804,8 @@ function vAuction(){
       <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)||'<div class="cur"><div class="line"><div class="mut">下一張準備中…</div></div></div>'}
       ${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`}
   const pct=Math.round(g.idx/g.items.length*100);
+  if(g.stage==='left')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<span class="fpill">🧺 撿剩下的</span></div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
+    ${leftPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`;
   if(g.stage==='nom')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}${fmtPill(g)}</div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${nomPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}${r==='all'||ALL.includes(r)?`<button class="quit" data-act="quit">${ui.quit?'再按一次確認放棄本局':'放棄本局'}</button>`:''}`;
   const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${g.price!=null?`<div class="ptag">⚡ $${g.price}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
@@ -807,8 +813,8 @@ function vAuction(){
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
   const b=g.bid;
-  const curBox=g.sb?(g.tie?revealBox(g,g.idx):'')+sealedBox(g):g.price!=null?snatchBox(g):`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${g.solo&&!b.who?`<div class="mut">只剩 <b style="color:${col(g.solo.who)}">${esc(nm(S,g.solo.who))}</b> 有空位：不用競標，每位 $1<br><span class="small">跳過的牌直接流標，還能跳 ${g.solo.skips} 次；時間到自動拿下</span></div>`:!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
-    ${!g.turn?'':clock(g.deadline,b.who?T_BID:T_NOBID,`輪到 <b style="color:${col(g.turn)}">${esc(nm(S,g.turn))}</b>・`+(g.solo&&g.turn===g.solo.who?'時間到自動拿下：':b.who?'不加價就算放棄：':'不出價就算不要：'),r===g.turn&&NET.mode!=='local')}</div>`;
+  const curBox=g.sb?(g.tie?revealBox(g,g.idx):'')+sealedBox(g):g.price!=null?snatchBox(g):`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
+    ${!g.turn?'':clock(g.deadline,b.who?T_BID:T_NOBID,`輪到 <b style="color:${col(g.turn)}">${esc(nm(S,g.turn))}</b>・`+(b.who?'不加價就算放棄：':'不出價就算不要：'),r===g.turn&&NET.mode!=='local')}</div>`;
   const ex=g.extra||0,base=g.base||g.items.length,openAll=g.sides.reduce((t,s)=>t+openN(g,s),0),left2=g.items.length-g.idx,canAdd=EXTRA_MAX-ex;
   const deckNote=pl.extra?`<div class="xnote">🔔 加牌 ${g.idx-base+1}/${ex}・流標換來的明星，${canAdd?`還能再補 ${canAdd} 張`:'這是最後幾張了'}</div>`
     :left2+canAdd<openAll+2&&left2<=openAll+1?`<div class="xnote warn">⚠️ 牌快不夠了：還剩 ${left2} 張${canAdd?`＋最多補 ${canAdd} 張`:''}，沒標到的位置會用自由球員補</div>`:'';
@@ -1287,6 +1293,7 @@ function vResults(){
     ${rowT('更衣室不合','有記錄的隊內不合',s=>T[s].base.fdAdj)}
     ${g.size===10?rowT('替補深度','5 位替補比起板凳等級球員',s=>T[s].base.benchAdj||0):''}
     ${rowT('省錢紅利','剩下的錢',s=>T[s].base.savAdj)}
+    ${S.game.cards?rowT('🏟️ 主場優勢','能力卡',s=>T[s].base.hcAdj||0):''}
     ${g.misRes?rowT('任務獎勵','完成任務的加成',s=>T[s].base.misAdj||0):''}
     ${rowT('<b>總評</b>','',s=>T[s].base.net+T[s].posAdj)}</table>
     <div class="small mut" style="margin-top:8px">每 1 分總評差距 ≈ 每場多贏 0.8 分（用 1,230 支真實球隊校正）。單場有約 ±13 分的運氣，所以系列賽也可能爆冷。</div></section>`;
@@ -1361,7 +1368,13 @@ document.addEventListener('click',e=>{
     case 'tclr':return dispatch({a:'cfg',cfg:{teams:[]}});
     case 'pdel':return dispatch({a:'cfg',cfg:{picks:(S.cfg.picks||[]).filter(x=>x!==d.v)}});
     case 'cat':{const c=new Set(S.cfg.cats);c.has(d.v)?c.delete(d.v):c.add(d.v);return dispatch({a:'cfg',cfg:{cats:[...c]}})}
-    case 'cfg':{const val=['showStats','hints','mis','bal'].includes(d.k)?d.v==='1':d.k==='pmode'?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
+    case 'cfg':{const val=['showStats','hints','mis','bal','cards'].includes(d.k)?d.v==='1':d.k==='pmode'?d.v:+d.v;return dispatch({a:'cfg',cfg:{[d.k]:val}})}
+    case 'csel':{const g=S.game,who=d.who||(NET.mode==='local'?g.sides.find(s=>!g.cards[s].pick):myRole());let L=(ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===who?ui.csel.ids:g.cards[who]&&g.cards[who].pick)||[];L=L.slice();
+      const i=L.indexOf(d.v);if(i>=0)L.splice(i,1);else{L.push(d.v);if(L.length>CARD_PICK)L.shift()}ui.csel={gid:g.gid,who,ids:L};return render()}
+    case 'cpick':{const g=S.game;const ids=ui.csel&&ui.csel.gid===g.gid&&ui.csel.who===d.who?ui.csel.ids:g.cards[d.who].pick;ui.csel=null;return dispatch({a:'card',id:'pick',who:d.who,ids})}
+    case 'cinfo':ui.csheet={who:d.who,id:d.v};return render();
+    case 'cclose':ui.csheet=null;return render();
+    case 'cuse':{const x=ui.csheet;ui.csheet=null;if(!x)return render();return dispatch({a:'card',id:d.v,who:x.who,t:d.t,idx:S.game.idx})}
     case 'mpick':return dispatch({a:'mpick',who:d.who,i:+d.i});
     case 'endSeason':if(!ui.endSe){ui.endSe=true;return render()}ui.endSe=false;scrollTo(0,0);return dispatch({a:'endSeason'});
     case 'closeSeason':scrollTo(0,0);return dispatch({a:'closeSeason'});
@@ -1369,11 +1382,14 @@ document.addEventListener('click',e=>{
     case 'bidv':return bidTyped(d.who);
     case 'step':{const g=S.game;ui.amt[d.who]=clamp(amtFor(g,d.who)+(+d.v),g.bid.amt+1,maxBid(g,d.who));const el=document.querySelector(`[data-in="amt"][data-who="${d.who}"]`);if(el)el.value=ui.amt[d.who];return render()}
     case 'pass':return dispatch({a:'pass',who:d.who,idx:S.game.idx});
-    case 'nompick':ui.nomSel={gid:S.game.gid,idx:S.game.idx,j:+d.v};sfx('tap');return render();
+    case 'lsel':ui.leftSel={gid:S.game.gid,idx:S.game.idx,j:+d.v};return render();
+    case 'lpick':if(d.v==='')return;return dispatch({a:'lpick',j:+d.v,who:S.game.solo.who,idx:S.game.idx});
+    case 'lnone':if(!ui.lnone){ui.lnone=true;return render()}ui.lnone=false;return dispatch({a:'lnone',who:S.game.solo.who,idx:S.game.idx});
+    case 'nompick':ui.nomSel={gid:S.game.gid,idx:S.game.idx,j:+d.v};return render();
     case 'nominate':if(d.v==='')return;return dispatch({a:'nominate',who:S.game.nomBy,j:+d.v,idx:S.game.idx});
     case 'sstep':{const g=S.game,lo=g.tie?g.tie.amt:0,k='s'+g.idx+d.who,cur0=ui.amt[k]!=null?ui.amt[k]:(+(document.querySelector(`[data-in="samt"][data-who="${d.who}"]`)||{}).value||0);ui.amt[k]=clamp(cur0+(+d.v),lo,maxBid(g,d.who));return render()}
     case 'sbid':{const g=S.game,k='s'+g.idx+d.who,el=document.querySelector(`[data-in="samt"][data-who="${d.who}"]`);let v=+d.amt;if(el&&!t.classList.contains('pass'))v=parseInt(el.value,10);
-      const lo=g.tie?g.tie.amt:0,mx=maxBid(g,d.who);if(isNaN(v)||v<lo)return toast(`至少 $${lo}`);if(v>mx)return toast(`你最多只能出 $${mx}（要留錢補滿陣容）`);sfx('tap');return dispatch({a:'sbid',who:d.who,amt:v,idx:g.idx})}
+      const lo=g.tie?g.tie.amt:0,mx=maxBid(g,d.who);if(isNaN(v)||v<lo)return toast(`至少 $${lo}`);if(v>mx)return toast(`你最多只能出 $${mx}（要留錢補滿陣容）`);return dispatch({a:'sbid',who:d.who,amt:v,idx:g.idx})}
     case 'grab':sfx('grab');return dispatch({a:'grab',who:d.who,idx:S.game.idx});
     case 'spass':return dispatch({a:'spass',who:d.who,idx:S.game.idx});
     case 'brole':return dispatch({a:'brole',who:d.who,slot:d.v,role:d.role});

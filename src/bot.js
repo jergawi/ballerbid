@@ -22,7 +22,9 @@
    snatch  grabs when the price is under its max, after a human-like reaction time (no instant snipes).
    nominate puts up the card rivals want most and it wants least (drains their money); when it is the richest
            team it nominates its own target instead.
-   last team ($1 rule) takes a card if it is among its best options left, otherwise uses a skip.
+   last team: signs the leftover card that adds most to its roster ($1 each).
+   ability cards: 普通/高手 bring home court plus the coupon (sometimes the swap), arm the coupon before a big buy and swap
+           away a card a rival values far more than they do; 新手 picks and plays them more randomly.
  Timing: every decision waits a "thinking" delay that grows with the stakes, and never runs into the deadline. */
 const BOT_LV={
   easy:{nm:'新手',d:'常亂出價，適合熟悉規則',noise:0.3,aware:0,shade:[0.45,0.95],react:[1000,2000],think:[1600,3600],jump:0.3},
@@ -87,8 +89,15 @@ const botRivalMax=(g,s,p)=>Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).
 
 /* ---------- decisions ---------- */
 function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.amt+':'+(g.stage||'')+(g.tie?'t':''))),lv=botLv(s),rr=(a,b)=>a+(b-a)*R();
+  if(S.phase==='cards')return{a:'card',id:'pick',who:s,ids:lv.aware?(R()<0.25?['home','swap']:['home','coupon']):CARD_IDS.slice().sort(()=>R()-0.5).slice(0,CARD_PICK)};
+  // ability cards: swap away a card a rival wants far more; arm the coupon before a big buy
+  if(S.phase==='auction'&&g.cards&&g.cards[s]&&!g.stage){const C=g.cards[s],own=botMax(g,s),riv=botRivalMax(g,s);
+    if(canSwap(g,s)&&(lv.aware?riv-own>=4&&riv>=5:R()<0.05))return{a:'card',id:'swap',who:s,idx:g.idx};
+    if(hasCard(g,s,'coupon')&&!C.armed&&(lv.aware?own>=Math.max(COUPON_MIN+1,0.3*left(g,s)):R()<0.15))return{a:'card',id:'coupon',who:s};
+    if(hasCard(g,s,'scout')&&R()<0.12)return{a:'card',id:'scout',who:s,t:g.sides.find(t=>t!==s)}}
   if(S.phase==='mission'){const M=g.mis[s],i=lv.aware?Math.max(0,M.opts.findIndex(x=>x.tier===2)):Math.floor(R()*M.opts.length);return{a:'mpick',who:s,i}}
   if(S.phase==='lineup')return{a:'ready',who:s,v:true};
+  if(g.stage==='left'){const j=bestLeft(g,s);return j==null?{a:'lnone',who:s,idx:g.idx}:{a:'lpick',who:s,j,idx:g.idx}}
   if(g.stage==='nom'){const Mk=market(g),me=left(g,s)-openN(g,s),rich=g.sides.every(t=>t===s||left(g,t)-openN(g,t)<=me);
     const sc=x=>{if(!lv.aware)return starScore(x.p)+R()*3;const mine=botMax(g,s,x.p),opp=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).map(t=>botMax(g,t,x.p,{est:1})));
       return rich&&mine>=opp?mine*1.2:opp-0.7*mine};
@@ -100,10 +109,6 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
     else{const want=Math.round(botRivalMax(g,s)*(lv.aware>1?rr(0.95,1.05):rr(0.85,1.12)));amt=mx>want?Math.min(mx,want+1):Math.round(mx*rr(0.8,0.95))}
     return{a:'sbid',who:s,amt:clamp(amt,lo,Math.max(lo,Math.min(mx,maxBid(g,s)))),idx:g.idx}}
   if(g.price!=null)return botMax(g,s)>=g.price&&(lv.aware||R()>0.15||realLeft(g)<=botMarket(g).N+1)?{a:'grab',who:s,idx:g.idx}:{a:'spass',who:s,idx:g.idx};
-  // the last team with open spots: $1 per card, a few skips
-  if(g.solo&&g.solo.who===s){const up=g.items.slice(g.idx+1,g.idx+1+openN(g,s)+g.solo.skips+2).filter(p=>!p.fa).map(p=>botGain(g,s,p)).sort((a,b)=>b-a);
-    const take=g.solo.skips<=0||botGain(g,s,cur(g))>=(up[openN(g,s)-1]??-Infinity);
-    return take?{a:'bid',who:s,amt:1,idx:g.idx}:{a:'pass',who:s,idx:g.idx}}
   const mx=botMax(g,s),b=g.bid.amt;if(mx<=b)return{a:'pass',who:s,idx:g.idx};
   const rivalCap=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0&&!g.pass[t]).map(t=>maxBid(g,t)));
   let amt=!b?Math.max(1,Math.round(mx*(lv.aware?rr(0.3,0.5):rr(0.2,0.7)))):b+1;
@@ -113,13 +118,17 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
 /* ---------- driver: runs on the 250 ms tick, one pending decision per bot ---------- */
 const BOT={};
 function botNeed(s){const g=S.game;if(!g||!g.sides.includes(s))return null;
+  if(S.phase==='cards'){const C=g.cards&&g.cards[s];return C&&!C.pick?'c'+g.gid:null}
   if(S.phase==='mission'){const M=g.mis&&g.mis[s];return M&&M.pick==null?'m'+g.gid:null}
   if(S.phase==='lineup')return g.ready[s]?null:'l'+g.gid;
-  if(S.phase!=='auction'||inGap(g)||!openN(g,s))return null;const k=g.gid+':'+g.idx+':';
+  if(S.phase!=='auction'||inGap(g)||!openN(g,s))return null;const k=g.gid+':'+g.idx+':'+(g.ev?g.ev.n:0)+':';   // a played card can restart the same deck position
   if(g.stage==='nom')return g.nomBy===s?k+'n':null;
-  if(g.sb){const el=g.tie?g.tie.sides:bidders(g);return el.includes(s)&&g.sb[s]==null?k+'s'+(g.tie?'t':''):null}
-  if(g.price!=null)return !g.grab&&!g.pass[s]&&bidders(g).includes(s)?k+'g':null;
-  return g.turn===s?k+g.bid.amt+':'+g.bid.who:null}
+  if(g.stage==='left')return g.solo.who===s?k+'l':null;
+  // playing an ability card changes the key, so the bot then decides its bid afresh
+  const C=g.cards&&g.cards[s],ck=C?':'+Object.keys(C.used).join('')+(C.armed?'a':''):'';
+  if(g.sb){const el=g.tie?g.tie.sides:bidders(g);return el.includes(s)&&g.sb[s]==null?k+'s'+(g.tie?'t':'')+ck:null}
+  if(g.price!=null)return !g.grab&&!g.pass[s]&&bidders(g).includes(s)?k+'g'+ck:null;
+  return g.turn===s?k+g.bid.amt+':'+g.bid.who+ck:null}
 function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-x)*R(),t0=Math.max(now(),g.gapEnd||0);
   if(window.BB_FAST)return now();
   switch(a.a){
@@ -129,14 +138,21 @@ function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-
     case 'sbid':return t0+rr([2500,7000]);
     case 'grab':return Math.max(t0,g.openAt)+rr(lv.react);
     case 'spass':return Math.max(t0,g.openAt)+rr([1300,2800]);
-    case 'pass':return t0+(g.solo?rr(lv.think):rr([700,1500]));
+    case 'lpick':case 'lnone':return t0+rr(lv.think);
+    case 'card':return a.id==='pick'?t0+rr([2500,5000]):t0+rr([900,1800]);
+    case 'pass':return t0+rr([700,1500]);
     default:return t0+rr(lv.think)+Math.min(1500,(a.amt||0)*50)}}   // bigger money, a little longer to think
-function botAct(a){const prev=snapOf();if(apply(S,a,{cid:'bot',role:'all'})){fx(prev);commit()}}
+function botAct(a){const prev=snapOf();if(apply(S,a,{cid:'bot',role:'all'})){fx(prev);commit();return true}(window.BOT_FAILS=window.BOT_FAILS||[]).push(JSON.stringify(a));return false}
+// the safe move for a decision point (used if a planned action was refused twice)
+function botFallback(s){const g=S.game;if(S.phase==='cards')return{a:'card',id:'pick',who:s,ids:['home','coupon']};if(S.phase==='mission')return{a:'mpick',who:s,i:0};
+  if(S.phase==='lineup')return{a:'ready',who:s,v:true};if(g.stage==='nom')return{a:'nominate',who:s,j:g.idx,idx:g.idx};
+  if(g.stage==='left'){const j=bestLeft(g,s);return j==null?{a:'lnone',who:s,idx:g.idx}:{a:'lpick',who:s,j,idx:g.idx}}
+  if(g.sb)return{a:'sbid',who:s,amt:g.tie?g.tie.amt:0,idx:g.idx};if(g.price!=null)return{a:'spass',who:s,idx:g.idx};return{a:'pass',who:s,idx:g.idx}}
 function tickBots(){if(NET.mode!=='ai'||!S||!S.bots||!S.game)return;
   for(const s of S.game.sides){if(!isBot(s))continue;const k=botNeed(s);
     if(!k){delete BOT[s];continue}
     if(!BOT[s]||BOT[s].k!==k){const a=botDecide(s);BOT[s]={k,a,due:botWait(s,a)}}
-    if(now()>=BOT[s].due){const a=BOT[s].a;BOT[s].due=Infinity;botAct(a);return}}}   // one action per tick keeps things readable
+    if(now()>=BOT[s].due){const B=BOT[s];B.due=Infinity;if(!botAct(B.a)){B.fail=(B.fail||0)+1;B.a=B.fail>1?botFallback(s):botDecide(s);B.due=now()+(window.BB_FAST?0:400)}return}}}   // one action per tick keeps things readable
 // a fresh AI table: the human is A, styles are shuffled so each session feels different
 function aiState(){const s=newState(),st=['bal','star','depth'].sort(()=>Math.random()-0.5);
   s.bots={B:{st:st[0]},C:{st:st[1]}};s.botLv='normal';s.names={A:clean(MYNAME)||'玩家',B:BOT_STYLE[st[0]].nm,C:BOT_STYLE[st[1]].nm};return s}

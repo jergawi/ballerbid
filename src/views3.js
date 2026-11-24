@@ -10,7 +10,7 @@ function fmtLobby(c,dis){const opts=Object.keys(FMTS).concat(c.season?['rotate']
 function miniTags(p){const b=(p&&!p.fa&&bioOf(p))||{},t=[];if(b.mvp)t.push(`👑MVP${b.mvp>1?'×'+b.mvp:''}`);if(b.ring)t.push(`🏆×${b.ring}`);if(b.as)t.push(`⭐×${b.as}`);
   if(!t.length&&b.roy)t.push('🌱新人王');const sg=typeof sigOf==='function'&&sigOf(p);if(sg)t.push(`✨${sg.lab}`);return t.slice(0,3)}
 function miniCard(g,x,opts){const p=x.p,nk=nickOf(p);
-  return `<${opts.btn?'button':'div'} class="mcard2 ${opts.sel?'sel':''} ${p.extra?'xtra':''}" ${opts.btn?`data-act="nompick" data-v="${x.j}"`:''} style="--i:${opts.i||0}">
+  return `<${opts.btn?'button':'div'} class="mcard2 ${opts.sel?'sel':''} ${p.extra?'xtra':''}" ${opts.btn?`data-act="${opts.act||'nompick'}" data-v="${x.j}"`:''} style="--i:${opts.i||0}">
     <div class="mn">${esc(p.n)}</div>${nk?`<div class="mk">“${esc(nk)}”</div>`:''}<div class="mp">${canPlay(p).map(x=>`<i>${x}</i>`).join('')}</div>
     <div class="mt">${miniTags(p).map(t=>`<span>${esc(t)}</span>`).join('')}</div>${opts.sel?'<span class="mck2">✓</span>':''}</${opts.btn?'button':'div'}>`}
 function nomPanel(g,r){const mine=r==='all'||r===g.nomBy,M=market(g),sel=ui.nomSel&&ui.nomSel.gid===g.gid&&ui.nomSel.idx===g.idx?ui.nomSel.j:null;
@@ -71,3 +71,11 @@ function aiLobby(sides,dis){const bots=sides.filter(isBot),lv=S.botLv||'normal';
     <div class="fl" style="margin-top:12px">電腦強度</div>
     <div class="fgrid lv">${Object.entries(BOT_LV).map(([k,L])=>`<button class="fopt ${lv===k?'on':''}" data-act="ailv" data-v="${k}" ${dis}><b>${L.nm}</b><small>${L.d}</small></button>`).join('')}</div>
     <div class="small mut" style="margin-top:8px">電腦只能用跟你一樣的按鈕出價，看不到你的任務卡和暗標金額。</div></section>`}
+// last team with open spots: every card left is face up, sign the ones you want for $1
+function leftPanel(g,r){const who=g.solo.who,mine=r==='all'||r===who,L=leftovers(g),need=openN(g,who),sel=ui.leftSel&&ui.leftSel.gid===g.gid&&ui.leftSel.idx===g.idx?ui.leftSel.j:null;
+  return `<div class="nomhd"><div class="nt">只剩 <b style="color:${col(who)}">${esc(nm(S,who))}</b> 有空位</div>
+    <div class="small mut">${mine?`對手都滿了，剩下的牌全部翻開。挑 <b>${need}</b> 位，每位 $1`:`剩下的牌全部翻開，${esc(nm(S,who))} 每位 $1 挑 ${need} 位`}</div></div>
+    ${L.length?`<div class="mkt left">${L.map((x,i)=>miniCard(g,x,{btn:mine,sel:sel===x.j,i,act:'lsel'})).join('')}</div>`:'<div class="center mut" style="margin:14px 0">牌堆空了</div>'}
+    <div class="nomft">${mine&&L.length?`<button class="big" data-act="lpick" data-v="${sel==null?'':sel}" ${sel==null?'disabled':''}>${sel==null?'先點一位球員':`✍️ 簽下 ${esc(String(g.items[sel].n))}（$1）`}</button>`:''}
+    ${mine?`<button class="linkb" data-act="lnone">${ui.lnone?'再按一次確認：剩下的位置用自由球員補':`剩下的都不要，${need} 個位置用自由球員補`}</button>`:''}
+    ${clock(g.leftEnd,T_LEFT,mine?'時間到自動簽最適合你的：':'挑選倒數：',mine&&r!=='all')}</div>`}

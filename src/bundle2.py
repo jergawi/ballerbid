@@ -3,7 +3,7 @@ import json, os, re
 B=os.environ.get('BB_SRC',os.path.dirname(os.path.abspath(__file__)))+'/'
 NPM=os.environ.get('BB_NPM',B+'node_modules')+'/'
 # game modules, spliced into app.js just before the matchup model (order matters: later modules use earlier ones)
-MODULES=['mis.js','season.js','views2.js','legend.js','bench.js','place.js','formats.js','bot.js','sfx.js','views3.js']
+MODULES=['mis.js','season.js','views2.js','legend.js','bench.js','place.js','formats.js','cards.js','bot.js','sfx.js','views3.js']
 css=open(B+'style4.css').read()
 app=open(B+'app.js').read()
 extra=''.join(open(B+m).read()+'\n' for m in MODULES)
