@@ -34,7 +34,13 @@ const BOT_STYLE={bal:{nm:'🤖 穩健派',c:1},star:{nm:'🤖 巨星控',c:1.3},
 const SAVE_PT=0.3,SAVE_CAP=2.5;   // savAdj in baseRate: 0.3 rating per leftover $, capped at 2.5
 const isBot=s=>NET.mode==='ai'&&!!(S&&S.bots&&S.bots[s]);
 const botLv=s=>BOT_LV[S&&S.bots&&s&&S.bots[s]&&S.bots[s].lv||S&&S.botLv]||BOT_LV.normal;   // per-seat level is for tests
-const botSt=s=>BOT_STYLE[S.bots&&S.bots[s]&&S.bots[s].st]||BOT_STYLE.bal;
+const BOT_DESC={bal:'預算平均分配',star:'愛砸大錢買巨星',depth:'追求便宜好用'};
+// st is the chosen style or 'rand'; play is the style actually used this game
+const botSt=s=>{const b=S.bots&&S.bots[s];return BOT_STYLE[b&&(b.st==='rand'?b.play:b.st)]||BOT_STYLE.bal};
+// before each game: random styles get rolled (once per season, so a season keeps the same opponents), names follow the style
+function aiAssign(S){if(!S.bots)return;const sides=Object.keys(S.bots),taken=sides.filter(s=>S.bots[s].st!=='rand').map(s=>S.bots[s].st);
+  sides.forEach(s=>{const b=S.bots[s];if(b.st==='rand'&&(!S.season||!b.play)){const free=Object.keys(BOT_STYLE).filter(k=>!taken.includes(k));b.play=free[Math.floor(Math.random()*free.length)]||'bal'}
+    if(b.st==='rand')taken.push(b.play);S.names[s]=BOT_STYLE[b.st==='rand'?b.play:b.st].nm})}
 function gauss(R){const u=Math.max(1e-9,R()),v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
 const BC={k:''};
@@ -153,6 +159,6 @@ function tickBots(){if(NET.mode!=='ai'||!S||!S.bots||!S.game)return;
     if(!k){delete BOT[s];continue}
     if(!BOT[s]||BOT[s].k!==k){const a=botDecide(s);BOT[s]={k,a,due:botWait(s,a)}}
     if(now()>=BOT[s].due){const B=BOT[s];B.due=Infinity;if(!botAct(B.a)){B.fail=(B.fail||0)+1;B.a=B.fail>1?botFallback(s):botDecide(s);B.due=now()+(window.BB_FAST?0:400)}return}}}   // one action per tick keeps things readable
-// a fresh AI table: the human is A, styles are shuffled so each session feels different
-function aiState(){const s=newState(),st=['bal','star','depth'].sort(()=>Math.random()-0.5);
-  s.bots={B:{st:st[0]},C:{st:st[1]}};s.botLv='normal';s.names={A:clean(MYNAME)||'玩家',B:BOT_STYLE[st[0]].nm,C:BOT_STYLE[st[1]].nm};return s}
+// a fresh AI table: the human is A, every computer starts on a random style (re-rolled each game)
+function aiState(){const s=newState();
+  s.bots={B:{st:'rand'},C:{st:'rand'}};s.botLv='normal';s.names={A:clean(MYNAME)||'玩家',B:'🤖 電腦 B',C:'🤖 電腦 C'};s.aiv=2;aiAssign(s);return s}

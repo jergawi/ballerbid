@@ -558,3 +558,4 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 @keyframes aflash{0%{opacity:0}8%{opacity:1}78%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(-50%,-62%)}}
 @media (prefers-reduced-motion:reduce){.acard,.aflash .acard.big1,.acard.sel::after,.achip.live,.achip.armed{animation:none}}
 .asheet .abg{position:absolute;inset:0}.asheet .ain{position:relative}
+.seg.bstyle{margin:2px 0 8px 18px;flex-wrap:wrap}.seg.bstyle .chip{font-size:13px;padding:6px 10px}

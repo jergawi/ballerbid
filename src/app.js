@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24n';
+const APPV='2026.11.24p';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -267,6 +267,7 @@ function apply(S,a,actor){
       if(seat!=='spec'&&S.seats[seat]&&S.seats[seat].cid!==actor.cid)return false;
       for(const k of ALL)if(S.seats[k]&&S.seats[k].cid===actor.cid&&k!==seat)S.seats[k]=null;
       if(seat!=='spec')S.seats[seat]={cid:actor.cid,name:clean(a.name)||'無名氏'};return true}
+    case 'aist':{if(NET.mode!=='ai'||S.phase!=='lobby'||S.season||!S.bots||!S.bots[a.s]||!(own(BOT_STYLE,a.v)||a.v==='rand'))return false;S.bots[a.s].st=a.v;if(a.v!=='rand')S.names[a.s]=BOT_STYLE[a.v].nm;return true}
     case 'ailv':{if(NET.mode!=='ai'||S.phase!=='lobby'||S.season||!own(BOT_LV,a.v))return false;S.botLv=a.v;return true}
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
@@ -287,7 +288,7 @@ function apply(S,a,actor){
       if(n.draw!=null)c.draw=n.draw|0;else if(n.theme||n.players||n.custom||n.picks||n.size)c.draw=defaultDraw(c);
       const L=poolLenFor(c),need=c.players*(c.size||5);if(L)c.draw=clamp(c.draw,Math.min(need,L),L);
       S.err='';S.by=actor.cid;return true}
-    case 'start':{if(!isP||!(S.phase==='lobby'&&!S.season||S.phase==='season'&&S.season&&!S.season.done))return false;return startGame(S)}
+    case 'start':{if(!isP||!(S.phase==='lobby'&&!S.season||S.phase==='season'&&S.season&&!S.season.done))return false;if(NET.mode==='ai')aiAssign(S);return startGame(S)}
     case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||offline()||!ALL.includes(r)||!S.season.sides.includes(r))return false;
       S.sready=S.sready||{};S.sready[r]=!!a.v;if(S.season.sides.every(x=>S.sready[x])&&!waitingFor().length)return startGame(S)||true;return true}
     case 'card':{if(!g||!g.sides.includes(who))return false;return useCard(S,who,a)}
@@ -556,7 +557,8 @@ function leaveNet(){NET.timers.forEach(clearInterval);NET.timers=[];if(NET.clien
 let lastN=0;
 async function sendAct(a){let n=Date.now();if(n<=lastN)n=lastN+1;lastN=n;NET.pending.push({a,n,sent:Date.now()});NET.pending=NET.pending.slice(-8);
   if(NET.client)NET.client.publish(topic('a'),await seal({cid:CID,n,a}),{qos:1});render()}
-function startAI(){NET.mode='ai';NET.skew=0;const sv=lsGet(LS_AI);S=sv&&sv.v&&sv.cfg&&sv.cfg.cats&&sv.bots?sv:aiState();render()}
+function startAI(){NET.mode='ai';NET.skew=0;const sv=lsGet(LS_AI);S=sv&&sv.v&&sv.cfg&&sv.cfg.cats&&sv.bots?sv:aiState();
+  if(!S.aiv){Object.values(S.bots).forEach(b=>{b.st='rand';delete b.play});S.aiv=2;if(!S.season)aiAssign(S)}render()}   // older saves had one fixed style
 function startLocal(){NET.mode='local';NET.skew=0;const sv=lsGet(LS);S=sv&&sv.v&&sv.cfg&&sv.cfg.cats?sv:newState();render()}
 function dispatch(a){
   if(!S)return;
@@ -1336,6 +1338,7 @@ document.addEventListener('click',e=>{
     case 'local':return startLocal();
     case 'ai':return startAI();
     case 'ailv':return dispatch({a:'ailv',v:d.v});
+    case 'aist':return dispatch({a:'aist',s:d.who,v:d.v});
     case 'create':return createRoom();
     case 'join':return joinRoom(document.querySelector('[data-in="code"]').value);
     case 'joinhash':{const m=/^#room-([a-z0-9]{6})(?:-(\d))?$/.exec(location.hash);if(m)joinRoom(m[1],m[2]!=null?+m[2]:undefined);return}

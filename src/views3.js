@@ -67,7 +67,8 @@ function sfxBtn(){const ic=['🔇','🔈','🔊'][SFX.lv];return `<button class=
 function aiLobby(sides,dis){const bots=sides.filter(isBot),lv=S.botLv||'normal';
   return `<section class="card"><h2>挑戰電腦</h2>
     <div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col('A')}"></span><input data-in="name" data-i="A" maxlength="12" value="${esc(S.names.A)}" ${dis} aria-label="你的名字"></div>
-    ${bots.map(s=>`<div class="botrow"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><small>${['bal','star','depth'].map(k=>k===S.bots[s].st?{bal:'預算平均分配',star:'愛砸大錢買巨星',depth:'追求便宜好用'}[k]:'').join('')}</small></div>`).join('')}
+    ${bots.map(s=>{const st=S.bots[s].st;return `<div class="botrow"><span class="dot" style="background:${col(s)}"></span><b>${st==='rand'?'🤖 電腦 '+s:esc(nm(S,s))}</b><small>${st==='rand'?'每局隨機換風格':BOT_DESC[st]}</small></div>
+      <div class="seg bstyle">${Object.keys(BOT_STYLE).concat(['rand']).map(k=>`<button class="chip ${st===k?'on':''}" data-act="aist" data-who="${s}" data-v="${k}" ${dis}>${k==='rand'?'🎲 隨機':BOT_STYLE[k].nm.replace('🤖 ','')}</button>`).join('')}</div>`}).join('')}
     <div class="fl" style="margin-top:12px">電腦強度</div>
     <div class="fgrid lv">${Object.entries(BOT_LV).map(([k,L])=>`<button class="fopt ${lv===k?'on':''}" data-act="ailv" data-v="${k}" ${dis}><b>${L.nm}</b><small>${L.d}</small></button>`).join('')}</div>
     <div class="small mut" style="margin-top:8px">電腦只能用跟你一樣的按鈕出價，看不到你的任務卡和暗標金額。</div></section>`}
