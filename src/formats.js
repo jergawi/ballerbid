@@ -6,25 +6,28 @@
    sealed – everyone bids once in secret; highest bid wins and pays it. A tie gets one sealed re-bid between the tied
             players (a silent player keeps the tied amount); a second tie goes to the team with more empty spots,
             then to the earlier player in this card's turn order.
-   snatch – each card shows a fixed price; after a short countdown the first to tap gets it. Taps that reach the game
-            within GRAB_WIN of the first one count as simultaneous and are settled by a seeded coin flip, so network
-            delay does not decide everything.
+   snatch – 降價搶標, a Dutch clock: the price starts high and drops $1 at a time; the first to tap buys at the price
+            shown. Everyone sees the price at every moment; the skill is waiting versus losing the card. The clock runs a
+            full descent in about 8 s (a very fast clock pushes prices down). Taps that reach the game within GRAB_WIN of
+            the first one count as simultaneous and are settled by a seeded coin flip, so network delay does not decide.
  Nominations (optional): a market of up to MKT face-up cards; players take turns choosing which one goes up next.
  The chosen card is swapped into the current deck position, so the rest of the deck logic is untouched.
  Leftovers: once only one team still has open spots there is nobody to bid against, so every card left in the deck is
  turned face up and that team signs the ones it wants for $1 each (or lets free agents fill the rest). No extra cards
  are added in this stage, so there is nothing to farm: the team only chooses among cards that were already dealt. */
-const FMTS={open:{nm:'一般喊價',ic:'🔨',d:'輪流加價，最高價得標'},sealed:{nm:'暗標',ic:'🤫',d:'大家同時偷偷出價，一次揭曉，最高價得標'},snatch:{nm:'搶標',ic:'⚡',d:'每張牌有標價，倒數完先搶先得'}};
+const FMTS={open:{nm:'一般喊價',ic:'🔨',d:'輪流加價，最高價得標'},sealed:{nm:'暗標',ic:'🤫',d:'大家同時偷偷出價，一次揭曉，最高價得標'},snatch:{nm:'降價搶標',ic:'⚡',d:'標價從高往下掉，第一個按的人用當下價格買走'}};
 const FMT_ROT=['open','sealed','snatch'];
-const T_SEAL=20000,T_SEAL_TIE=12000,T_SNATCH=12000,SNATCH_LEAD=1600,GRAB_WIN=600,T_NOM=20000,MKT=4,T_LEFT=25000;
+const T_SEAL=20000,T_SEAL_TIE=12000,T_FLOOR=2500,DUTCH_RUN=8000,SNATCH_LEAD=1600,GRAB_WIN=600,T_NOM=20000,MKT=4,T_LEFT=25000;
 const fmtOf=g=>g&&FMTS[g.fmt]?g.fmt:'open';
 // format of the next game: fixed in a single game; in a season 'rotate' cycles through all three
 function fmtFor(S){const c=S.cfg;if(c.fmt==='rotate'&&S.season)return FMT_ROT[((S.season.fmt0||0)+S.season.rounds.length)%FMT_ROT.length];return FMTS[c.fmt]?c.fmt:'open'}
 const bidders=g=>g.sides.filter(s=>openN(g,s)>0&&maxBid(g,s)>=1);
-// snatch price from the card's standing in this deck: average price per spot, scaled from ~0.35x to ~2x
-function snatchPrice(g,p){const L=g.items.filter(x=>!x.fa).map(starScore).sort((a,b)=>a-b),v=starScore(p);
+// a fair price from the card's standing in this deck (from what the card face shows): average price per spot, ~0.35x to ~2x
+function snatchPrice(g,p){const L=g.items.filter(x=>!x.fa).map(pubStar).sort((a,b)=>a-b),v=pubStar(p);
   const pct=L.length>1?L.filter(x=>x<v).length/(L.length-1):0.5,avg=(g.budget||10)/(g.size||5);
   return clamp(Math.round(avg*(0.35+1.65*pct)),1,Math.max(1,Math.round(avg*2.2)))}
+// the Dutch clock: price shown at time t (never below $1)
+const dutchAt=(g,t)=>g.price==null?null:clamp(g.price-Math.floor(Math.max(0,t-g.openAt)/(g.step||1000)),1,g.price);
 const market=g=>g.items.slice(g.idx,g.idx+MKT).map((p,i)=>({p,j:g.idx+i}));
 const leftovers=g=>g.items.slice(g.idx).map((p,i)=>({p,j:g.idx+i})).filter(x=>!x.p.fa);
 // the leftover card that helps this team most (timeouts, offline players, bots)
@@ -41,7 +44,10 @@ function fmtStart(S){const g=S.game;g.sb=null;g.grab=null;g.price=null;g.openAt=
   else if(g.nom&&remain(g)>=2){const by=g.order.find(s=>openN(g,s)>0);if(by){g.stage='nom';g.nomBy=by;g.nomEnd=t0(g)+T_NOM;g.turn=null;return true}}
   const f=fmtOf(g);
   if(f==='sealed'){g.sb={};g.deadline=t0(g)+T_SEAL;g.turn=null;return true}
-  if(f==='snatch'){g.price=snatchPrice(g,cur(g));g.openAt=t0(g)+SNATCH_LEAD;g.deadline=g.openAt+T_SNATCH;g.turn=null;return true}
+  if(f==='snatch'){const cap=Math.max(1,...bidders(g).map(s=>maxBid(g,s))),avg=(g.budget||10)/(g.size||5);
+    g.price=clamp(Math.round(snatchPrice(g,cur(g))*1.8),3,Math.max(3,Math.min(cap,Math.round(avg*4))));   // start price; it only goes down
+    g.step=clamp(Math.round(DUTCH_RUN/Math.max(1,g.price-1)),550,1100);g.openAt=t0(g)+SNATCH_LEAD;
+    g.deadline=g.openAt+(g.price-1)*g.step+T_FLOOR;g.turn=null;return true}
   return false}
 function nominate(S,j){const g=S.game;if(j<g.idx||j>=Math.min(g.items.length,g.idx+MKT))return false;
   if(j!==g.idx){const t=g.items[g.idx];g.items[g.idx]=g.items[j];g.items[j]=t}
@@ -59,7 +65,7 @@ function resolveSealed(S){const g=S.game,el=g.tie?g.tie.sides:bidders(g),bids={}
   let w=top[0];if(top.length>1){w=tieWinner(g,top);rev.tb=1}
   g.reveal={...rev,idx:g.idx,win:w};g.sb=null;g.tie=null;g.bid={who:w,amt:mx};sell(S,w,mx)}
 function resolveGrab(S){const g=S.game,L=g.grab.who;const w=L.length===1?L[0]:L[Math.floor(rng(hash(g.gid+':'+g.idx))()*L.length)];
-  g.reveal={idx:g.idx,grab:L.slice(),win:w,price:g.price};g.grab=null;g.bid={who:w,amt:g.price};sell(S,w,g.price)}
+  const pr=g.grab.price;g.reveal={idx:g.idx,grab:L.slice(),win:w,price:pr};g.grab=null;g.bid={who:w,amt:pr};sell(S,w,pr)}
 // actions for the new formats (return true when the state changed)
 function fmtApply(S,a,who){const g=S.game;if(!g||S.phase!=='auction'||inGap(g))return false;if(a.idx!=null&&a.idx!==g.idx)return false;
   switch(a.a){
@@ -69,11 +75,14 @@ function fmtApply(S,a,who){const g=S.game;if(!g||S.phase!=='auction'||inGap(g))r
     case 'sbid':{if(g.stage||!g.sb)return false;const el=g.tie?g.tie.sides:bidders(g);if(!el.includes(who))return false;
       const v=a.amt|0,lo=g.tie?g.tie.amt:0;if(v<lo||v>maxBid(g,who))return false;g.sb[who]=v;
       if(el.every(s=>g.sb[s]!=null))resolveSealed(S);return true}
-    case 'grab':{if(g.stage||g.price==null||!bidders(g).includes(who)||maxBid(g,who)<g.price||g.pass[who])return false;const t=now();if(t<g.openAt-80)return false;
-      if(!g.grab){g.grab={who:[who],until:t+GRAB_WIN};return true}
+    case 'grab':{if(g.stage||g.price==null||!bidders(g).includes(who)||g.pass[who])return false;const t=now();if(t<g.openAt-80)return false;
+      // pay the price on the clock when the tap arrives; a tap made one step earlier (network delay) keeps the price that was on screen
+      let pr=dutchAt(g,t);if(a.p!=null&&(a.p|0)===pr+1&&t-g.openAt<(g.price-pr)*g.step+400)pr=a.p|0;
+      if(!g.grab){if(maxBid(g,who)<pr)return false;g.grab={who:[who],until:t+GRAB_WIN,price:pr};return true}
+      if(maxBid(g,who)<g.grab.price)return false;
       if(t<=g.grab.until&&!g.grab.who.includes(who)){g.grab.who.push(who);return true}return false}
     case 'spass':{if(g.stage||g.price==null||g.grab||!bidders(g).includes(who))return false;g.pass[who]=true;
-      if(bidders(g).every(s=>g.pass[s]||maxBid(g,s)<g.price)){skipCard(S)}return true}}
+      if(bidders(g).every(s=>g.pass[s])){skipCard(S)}return true}}
   return false}
 // timers and offline players, run by the device that owns the game
 function fmtTick(S,off){const g=S.game,t=now();if(S.phase!=='auction'||inGap(g))return false;
@@ -83,5 +92,5 @@ function fmtTick(S,off){const g=S.game,t=now();if(S.phase!=='auction'||inGap(g))
     if(t>g.deadline||el.every(s=>g.sb[s]!=null)){resolveSealed(S);return true}return ch}
   if(g.price!=null){if(g.grab&&t>g.grab.until){resolveGrab(S);return true}
     if(!g.grab){let ch=false;bidders(g).forEach(s=>{if(off.has(s)&&!g.pass[s]){g.pass[s]=true;ch=true}});
-      if(t>g.deadline||bidders(g).every(s=>g.pass[s]||maxBid(g,s)<g.price)){skipCard(S);return true}return ch}}
+      if(t>g.deadline||bidders(g).every(s=>g.pass[s])){skipCard(S);return true}return ch}}
   return false}

@@ -30,11 +30,16 @@ function sealedBox(g){const el=g.tie?g.tie.sides:bidders(g);
     ${tb?`<div class="tbn">如果又一樣：<b style="color:${col(tb)}">${esc(nm(S,tb))}</b> 得標（${why}）。其他人要加價才贏得到。</div>`:''}
     <div class="sst">${el.map(s=>`<span class="${g.sb[s]!=null?'done':''}" style="--c:${col(s)}">${esc(nm(S,s))} ${g.sb[s]!=null?'✓ 已出價':'思考中…'}</span>`).join('')}</div>
     ${clock(g.deadline,g.tie?T_SEAL_TIE:T_SEAL,'時間到沒出價就算 $'+(g.tie?g.tie.amt:0)+'：',ALL.includes(myRole())&&el.includes(myRole())&&g.sb[myRole()]==null)}</div>`}
-function snatchBox(g){const t=now(),wait=g.openAt>t;
-  if(wait){clearTimeout(ui.openT);const key=g.gid+':'+g.idx;ui.openT=setTimeout(()=>{if(ui.goFor!==key){ui.goFor=key;sfx('go')}render()},Math.max(30,g.openAt-t+20))}
-  return `<div class="cur snatch ${wait?'wait':'live'}">${g.grab?`<div class="sh">⚡ 有人按下了！判定中…</div>`
-      :wait?`<div class="cdn" data-end="${g.openAt}" data-tot="${SNATCH_LEAD}"><b class="tx"></b></div><div class="small mut">準備…倒數完才能搶</div>`
-      :`<div class="sh">⚡ 搶！標價 <b>$${g.price}</b>，先按先得</div>${clock(g.deadline,T_SNATCH,'沒人搶就流標：')}`}</div>`}
+// the Dutch clock: a big price stepping down, a bar for the current step, a re-render (and a soft tick) at every step
+function snatchBox(g){const t=now(),wait=g.openAt>t,pr=dutchAt(g,t),key=g.gid+':'+g.idx;
+  clearTimeout(ui.openT);
+  if(!g.grab){const nextAt=wait?g.openAt:pr>1?g.openAt+(g.price-pr+1)*g.step:null;
+    if(nextAt)ui.openT=setTimeout(()=>{const p2=dutchAt(g,now());if(now()>=g.openAt&&ui.goFor!==key){ui.goFor=key;sfx('go')}else if(p2!==ui.dLast)sfx('dtick',0,false,p2);ui.dLast=p2;render()},Math.max(30,nextAt-t+15))}
+  const floorAt=g.openAt+(g.price-1)*g.step;
+  return `<div class="cur snatch ${wait?'wait':'live'}">${g.grab?`<div class="sh">⚡ 有人按下了！判定中…</div><div class="dprice"><b>$${g.grab.price}</b></div>`
+      :wait?`<div class="cdn" data-end="${g.openAt}" data-tot="${SNATCH_LEAD}"><b class="tx"></b></div><div class="small mut">起標 <b>$${g.price}</b>，開始後每 ${(g.step/1000).toFixed(1)} 秒降 $1</div>`
+      :`<div class="dprice" id="dp-${key}-${pr}"><b>$${pr}</b>${pr>1?`<i style="animation-duration:${g.step}ms"></i>`:''}</div>
+        <div class="small mut">${pr>1?`每 ${(g.step/1000).toFixed(1)} 秒降 $1・第一個按的人用這個價格買走`:'最低價 $1'}</div>${pr<=1?clock(g.deadline,T_FLOOR,'沒人要就流標：'):''}`}</div>`}
 // reveal after a sealed or snatch card (shown while the winner picks a spot and during the SOLD stamp)
 function revealBox(g,idx){const v=g.reveal;if(!v||v.idx!==idx)return '';
   if(v.grab)return `<div class="reveal"><div class="rt">⚡ 搶標結果</div>${v.grab.length>1?`<div class="small mut">${v.grab.map(s=>esc(nm(S,s))).join('、')} 幾乎同時按下，抽籤決定</div>`:''}
@@ -54,12 +59,12 @@ function fmtCtrl(g,s,r){const mine=r==='all'||r===s;if(!mine)return '';
       <button class="bb go" data-act="sbid" data-who="${s}" data-amt="${v}">${g.sb[s]!=null&&NET.mode!=='local'?'改成':'送出'}<small>$${v}</small></button></div>
       <div class="bbtns"><button class="bb pass" data-act="sbid" data-who="${s}" data-amt="${lo}" style="grid-column:1/-1">${lo?`維持 $${lo}`:'不要（出 $0）'}</button></div>
       ${g.sb[s]!=null&&NET.mode!=='local'?`<div class="small" style="margin-top:6px;color:var(--ok);font-weight:800">✓ 已送出 $${g.sb[s]}，揭曉前還能改</div>`:''}`}
-  if(g.price!=null&&!g.grab){if(!bidders(g).includes(s))return '';const can=maxBid(g,s)>=g.price,open=now()>=g.openAt;
+  if(g.price!=null&&!g.grab){if(!bidders(g).includes(s))return '';const pr=dutchAt(g,now()),can=maxBid(g,s)>=pr,open=now()>=g.openAt;
     if(g.pass[s])return '<div class="small mut" style="margin-top:6px">這張不要了</div>';
-    return `<div class="solo"><button class="bb go grabb" data-act="grab" data-who="${s}" ${can&&open?'':'disabled'}>${can?`⚡ 搶<small>$${g.price}</small>`:'錢不夠'}</button>
+    return `<div class="solo"><button class="bb go grabb" data-act="grab" data-who="${s}" data-p="${pr}" ${can&&open?'':'disabled'}>${can?`⚡ 用 $${pr} 買<small>${open?'先按先得':'準備…'}</small>`:`等降到 $${maxBid(g,s)}`}</button>
       <button class="bb pass" data-act="spass" data-who="${s}">不要</button></div>`}
   return ''}
-const fmtState=(g,s)=>g.sb?'':g.price!=null?(g.grab&&g.grab.who.includes(s)?'按下了！':g.pass[s]?'不要了':maxBid(g,s)<g.price&&openN(g,s)?'錢不夠':''):g.stage==='nom'?(g.nomBy===s?'提名中…':''):'';
+const fmtState=(g,s)=>g.sb?'':g.price!=null?(g.grab&&g.grab.who.includes(s)?'按下了！':g.pass[s]?'不要了':maxBid(g,s)<dutchAt(g,now())&&openN(g,s)?'等降價':''):g.stage==='nom'?(g.nomBy===s?'提名中…':''):'';
 // role chip on a bench plate in the lineup screen (tap to cycle)
 function roleChip(g,s,p,locked){const r=p.role||natRole(p),f=roleFit(p,r),nx=BROLES[(BROLES.indexOf(r)+1)%BROLES.length];
   return `<button class="rolec r${r}" ${locked?'disabled':''} data-act="brole" data-who="${s}" data-v="${p.slot}" data-role="${nx}">${BROLE[r].nm}${f.tier>0?` <i class="tag t${f.tier>1?2:1}">${f.tier>1?'不適合':'勉強'}</i>`:''} <span>⇄</span></button>`}

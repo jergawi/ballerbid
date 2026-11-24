@@ -19,7 +19,8 @@
            could still pay, passes at its max.
    sealed  bids just above what it expects the strongest rival to pay (rival rosters and budgets are public),
            never above its own max; 新手 shades at random.
-   snatch  grabs when the price is under its max, after a human-like reaction time (no instant snipes).
+   snatch  (Dutch clock) picks the price to stop at like a sealed bid, then taps when the clock reaches it, after a
+           human-like reaction time.
    nominate puts up the card rivals want most and it wants least (drains their money); when it is the richest
            team it nominates its own target instead.
    last team: signs the leftover card that adds most to its roster ($1 each).
@@ -105,6 +106,11 @@ function botMax(g,s,p,opt){p=p||cur(g);if(!p||!openN(g,s))return 0;const est=opt
   return C.v[ck]=Math.max(0,Math.min(Math.floor(v),est?maxBid(g,s):botCap(g,s)))}
 const botRivalMax=(g,s,p)=>Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).map(t=>Math.min(maxBid(g,t),isBot(t)?botMax(g,t,p):botMax(g,t,p,{est:1}))));
 
+// first-price bid (sealed bid, or where to stop the Dutch clock): just above what the strongest rival is expected to pay,
+// never above the bot's own max, and spread around that target (a mixed strategy) so it cannot be read off after a few cards
+function botFirstPrice(g,s,R,lv,mx){const rr=(a,b)=>a+(b-a)*R();if(mx<=0)return 0;if(lv.shade)return Math.round(mx*rr(...lv.shade));
+  const est=botRivalMax(g,s)*(lv.aware>1?rr(0.92,1.08):rr(0.8,1.15)),target=mx>est?Math.min(mx,Math.round(est)+1):Math.round(mx*rr(0.75,0.95));
+  const u=R();return clamp(u<0.2?Math.round(rr(target,mx)):u<0.35?Math.round(rr(Math.max(1,mx*0.5),target)):target+(R()<0.5?0:R()<0.5?1:-1),0,mx)}
 /* ---------- decisions ---------- */
 function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.amt+':'+(g.stage||'')+(g.tie?'t':''))),lv=botLv(s),rr=(a,b)=>a+(b-a)*R();
   if(S.phase==='cards')return{a:'card',id:'pick',who:s,ids:lv.aware?(R()<0.25?['home','swap']:['home','coupon']):CARD_IDS.slice().sort(()=>R()-0.5).slice(0,CARD_PICK)};
@@ -122,13 +128,10 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
     const best=Mk.slice().sort((a,b)=>sc(b)-sc(a))[0];return{a:'nominate',who:s,j:best.j,idx:g.idx}}
   if(g.sb){const lo=g.tie?g.tie.amt:0,mx=Math.max(lo,botMax(g,s));let amt;
     if(g.tie)amt=mx<=lo?lo:g.tie.tb===s?(R()<0.65?lo:Math.min(mx,lo+1)):Math.min(mx,lo+1+(R()<0.35?1:0));   // a second tie goes to tie.tb
-    else if(mx<=0)amt=0;
-    else if(lv.shade)amt=Math.round(mx*rr(...lv.shade));
-    else{const est=botRivalMax(g,s)*(lv.aware>1?rr(0.92,1.08):rr(0.8,1.15)),target=mx>est?Math.min(mx,Math.round(est)+1):Math.round(mx*rr(0.75,0.95));
-      // a mixed strategy: a fixed rule is quickly learned, so the bid moves around its target (sometimes bolder, sometimes cautious)
-      const u=R();amt=u<0.2?Math.round(rr(target,mx)):u<0.35?Math.round(rr(Math.max(1,mx*0.5),target)):target+(R()<0.5?0:R()<0.5?1:-1)}
+    else amt=botFirstPrice(g,s,R,lv,mx);
     return{a:'sbid',who:s,amt:clamp(amt,lo,Math.max(lo,Math.min(mx,maxBid(g,s)))),idx:g.idx}}
-  if(g.price!=null)return botMax(g,s)>=g.price&&(lv.aware||R()>0.15||realLeft(g)<=botMarket(g).N+1)?{a:'grab',who:s,idx:g.idx}:{a:'spass',who:s,idx:g.idx};
+  // Dutch clock: choose the price to stop at (like a sealed bid), then tap when the clock gets there
+  if(g.price!=null){const thr=Math.min(g.price,botFirstPrice(g,s,R,lv,botMax(g,s)));return thr>=1?{a:'grab',who:s,idx:g.idx,p:thr}:{a:'spass',who:s,idx:g.idx}}
   const mx=botMax(g,s),b=g.bid.amt;if(mx<=b)return{a:'pass',who:s,idx:g.idx};
   const rivalCap=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0&&!g.pass[t]).map(t=>maxBid(g,t)));
   let amt=!b?Math.max(1,Math.round(mx*(lv.aware?rr(0.3,0.5):rr(0.2,0.7)))):b+1;
@@ -156,7 +159,7 @@ function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-
     case 'ready':return t0+rr([2500,5500]);
     case 'nominate':return t0+rr([1800,3800]);
     case 'sbid':return t0+rr([2500,7000]);
-    case 'grab':return Math.max(t0,g.openAt)+rr(lv.react);
+    case 'grab':return Math.max(t0,g.openAt+Math.max(0,g.price-a.p)*g.step)+rr(lv.react);
     case 'spass':return Math.max(t0,g.openAt)+rr([1300,2800]);
     case 'lpick':case 'lnone':return t0+rr(lv.think);
     case 'card':return a.id==='pick'?t0+rr([2500,5000]):t0+rr([900,1800]);
@@ -172,7 +175,9 @@ function tickBots(){if(NET.mode!=='ai'||!S||!S.bots||!S.game)return;
   for(const s of S.game.sides){if(!isBot(s))continue;const k=botNeed(s);
     if(!k){delete BOT[s];continue}
     if(!BOT[s]||BOT[s].k!==k){const a=botDecide(s);BOT[s]={k,a,due:botWait(s,a)}}
-    if(now()>=BOT[s].due){const B=BOT[s];B.due=Infinity;if(!botAct(B.a)){B.fail=(B.fail||0)+1;B.a=B.fail>1?botFallback(s):botDecide(s);B.due=now()+(window.BB_FAST?0:400)}return}}}   // one action per tick keeps things readable
+    if(now()>=BOT[s].due){const B=BOT[s];
+      if(B.a.a==='grab'&&S.game.price!=null&&dutchAt(S.game,now())>B.a.p){B.due=now()+(window.BB_FAST?0:60);continue}   // wait for the clock to reach its price
+      B.due=Infinity;if(!botAct(B.a)){B.fail=(B.fail||0)+1;B.a=B.fail>1?botFallback(s):botDecide(s);B.due=now()+(window.BB_FAST?0:400)}return}}}   // one action per tick keeps things readable
 // a fresh AI table: the human is A, every computer starts on a random style (re-rolled each game)
 function aiState(){const s=newState();
   s.bots={B:{st:'rand'},C:{st:'rand'}};s.botLv='normal';s.names={A:clean(MYNAME)||'玩家',B:'🤖 電腦 B',C:'🤖 電腦 C'};s.aiv=2;aiAssign(s);return s}

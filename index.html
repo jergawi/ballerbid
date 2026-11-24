@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-9BIqegQxWayPDtK88BL2m6Z9leumn9UtY7c/Jd4HT00=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-BUVAx2nIM2Wz1+PlB5wFvvlfmSHRG+BZ9ghg0F84pEM=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -596,6 +596,24 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 @keyframes wonP{50%{transform:scale(1.015)}}
 .tbn{font-size:13px;font-weight:700;color:#5a6275;background:#f4f6fa;border-radius:10px;padding:6px 10px;margin:6px auto 2px;max-width:420px}
 @media (prefers-reduced-motion:reduce){.soldb,.soldb .sd2,.soldb .sd3,.brow.won{animation:none}}
+/* calm beat: the card steps back, the banner leads, then the winner's row */
+.pcard.held.calm{padding:14px 12px;opacity:.55;transform:scale(.94);transition:opacity .3s,transform .3s;animation:none}
+.pcard.held.calm .pname{font-size:30px}
+.brow.dim{opacity:.4;transition:opacity .3s}
+.soldb{margin-top:10px;padding:18px 16px 20px}
+.soldb .sd2{font-size:23px;animation:fadein .35s .25s both}
+.soldb .sd3{animation:soldPrice .4s var(--pop) .5s both}
+@keyframes soldPrice{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}
+.brow.won{animation:wonP 1s ease-in-out .8s 1 both}
+.brow.won .rost .f:last-child{animation:slotIn .5s var(--pop) .9s both}
+.reveal+.soldb{animation-delay:1s}.reveal+.soldb .sd2{animation-delay:1.25s}.reveal+.soldb .sd3{animation-delay:1.5s}
+/* Dutch clock */
+.cur.snatch .dprice{position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:140px;margin:2px auto 4px}
+.cur.snatch .dprice b{font-family:var(--num);font-size:68px;line-height:1;font-weight:800;color:var(--acc);animation:dstep .28s var(--pop)}
+.cur.snatch .dprice i{display:block;width:100%;height:5px;border-radius:99px;margin-top:6px;background:color-mix(in srgb,var(--acc) 30%,#fff);transform-origin:left;animation:sbar linear both}
+@keyframes dstep{0%{transform:translateY(-10px) scale(1.12);opacity:.4}100%{transform:none;opacity:1}}
+.cur.snatch.live{border-color:var(--acc)}
+.ptag{transition:none}
 
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
@@ -625,7 +643,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24u';
+const APPV='2026.11.24v';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -843,7 +861,7 @@ function nextCard(S){const g=S.game;g.gapEnd=now()+gapMs(g);g.idx++;g.bid={who:n
 /* a short authoritative pause after each card so everyone sees the result (SOLD stamp, sealed-bid reveal) before the
    next card's clock starts; actions inside the pause are ignored */
 const gapMs=g=>{if(window.BB_FAST)return 0;const v=g.reveal&&g.reveal.idx===g.idx?g.reveal:null,sold=g.log.length&&g.log[g.log.length-1].who;
-  return v&&v.win&&!v.grab?3400:sold?2300:1300};   // sealed reveal (bars, then the winner) / any sale / a pass
+  return v&&v.win&&!v.grab?3600:sold?2800:1400};   // sealed reveal (bars, then the winner) / any sale / a pass
 const t0=g=>Math.max(now(),g.gapEnd||0),inGap=g=>now()<(g.gapEnd||0)-200;
 // a won card goes straight onto the roster (see autoPlace); every card ends here or in skipCard
 function sell(S,who,amt){const g=S.game;g.turn=null;const pay=couponPay(g,who,amt);g.rosters[who].push({slot:null,k:g.idx,price:pay});g.spent[who]+=pay;autoPlace(g,who);
@@ -1423,25 +1441,28 @@ const placeNote=(g,s,k)=>{const e=g.rosters[s].find(r=>r.k===k);return !e?'':isB
    sealed – everyone bids once in secret; highest bid wins and pays it. A tie gets one sealed re-bid between the tied
             players (a silent player keeps the tied amount); a second tie goes to the team with more empty spots,
             then to the earlier player in this card's turn order.
-   snatch – each card shows a fixed price; after a short countdown the first to tap gets it. Taps that reach the game
-            within GRAB_WIN of the first one count as simultaneous and are settled by a seeded coin flip, so network
-            delay does not decide everything.
+   snatch – 降價搶標, a Dutch clock: the price starts high and drops $1 at a time; the first to tap buys at the price
+            shown. Everyone sees the price at every moment; the skill is waiting versus losing the card. The clock runs a
+            full descent in about 8 s (a very fast clock pushes prices down). Taps that reach the game within GRAB_WIN of
+            the first one count as simultaneous and are settled by a seeded coin flip, so network delay does not decide.
  Nominations (optional): a market of up to MKT face-up cards; players take turns choosing which one goes up next.
  The chosen card is swapped into the current deck position, so the rest of the deck logic is untouched.
  Leftovers: once only one team still has open spots there is nobody to bid against, so every card left in the deck is
  turned face up and that team signs the ones it wants for $1 each (or lets free agents fill the rest). No extra cards
  are added in this stage, so there is nothing to farm: the team only chooses among cards that were already dealt. */
-const FMTS={open:{nm:'一般喊價',ic:'🔨',d:'輪流加價，最高價得標'},sealed:{nm:'暗標',ic:'🤫',d:'大家同時偷偷出價，一次揭曉，最高價得標'},snatch:{nm:'搶標',ic:'⚡',d:'每張牌有標價，倒數完先搶先得'}};
+const FMTS={open:{nm:'一般喊價',ic:'🔨',d:'輪流加價，最高價得標'},sealed:{nm:'暗標',ic:'🤫',d:'大家同時偷偷出價，一次揭曉，最高價得標'},snatch:{nm:'降價搶標',ic:'⚡',d:'標價從高往下掉，第一個按的人用當下價格買走'}};
 const FMT_ROT=['open','sealed','snatch'];
-const T_SEAL=20000,T_SEAL_TIE=12000,T_SNATCH=12000,SNATCH_LEAD=1600,GRAB_WIN=600,T_NOM=20000,MKT=4,T_LEFT=25000;
+const T_SEAL=20000,T_SEAL_TIE=12000,T_FLOOR=2500,DUTCH_RUN=8000,SNATCH_LEAD=1600,GRAB_WIN=600,T_NOM=20000,MKT=4,T_LEFT=25000;
 const fmtOf=g=>g&&FMTS[g.fmt]?g.fmt:'open';
 // format of the next game: fixed in a single game; in a season 'rotate' cycles through all three
 function fmtFor(S){const c=S.cfg;if(c.fmt==='rotate'&&S.season)return FMT_ROT[((S.season.fmt0||0)+S.season.rounds.length)%FMT_ROT.length];return FMTS[c.fmt]?c.fmt:'open'}
 const bidders=g=>g.sides.filter(s=>openN(g,s)>0&&maxBid(g,s)>=1);
-// snatch price from the card's standing in this deck: average price per spot, scaled from ~0.35x to ~2x
-function snatchPrice(g,p){const L=g.items.filter(x=>!x.fa).map(starScore).sort((a,b)=>a-b),v=starScore(p);
+// a fair price from the card's standing in this deck (from what the card face shows): average price per spot, ~0.35x to ~2x
+function snatchPrice(g,p){const L=g.items.filter(x=>!x.fa).map(pubStar).sort((a,b)=>a-b),v=pubStar(p);
   const pct=L.length>1?L.filter(x=>x<v).length/(L.length-1):0.5,avg=(g.budget||10)/(g.size||5);
   return clamp(Math.round(avg*(0.35+1.65*pct)),1,Math.max(1,Math.round(avg*2.2)))}
+// the Dutch clock: price shown at time t (never below $1)
+const dutchAt=(g,t)=>g.price==null?null:clamp(g.price-Math.floor(Math.max(0,t-g.openAt)/(g.step||1000)),1,g.price);
 const market=g=>g.items.slice(g.idx,g.idx+MKT).map((p,i)=>({p,j:g.idx+i}));
 const leftovers=g=>g.items.slice(g.idx).map((p,i)=>({p,j:g.idx+i})).filter(x=>!x.p.fa);
 // the leftover card that helps this team most (timeouts, offline players, bots)
@@ -1458,7 +1479,10 @@ function fmtStart(S){const g=S.game;g.sb=null;g.grab=null;g.price=null;g.openAt=
   else if(g.nom&&remain(g)>=2){const by=g.order.find(s=>openN(g,s)>0);if(by){g.stage='nom';g.nomBy=by;g.nomEnd=t0(g)+T_NOM;g.turn=null;return true}}
   const f=fmtOf(g);
   if(f==='sealed'){g.sb={};g.deadline=t0(g)+T_SEAL;g.turn=null;return true}
-  if(f==='snatch'){g.price=snatchPrice(g,cur(g));g.openAt=t0(g)+SNATCH_LEAD;g.deadline=g.openAt+T_SNATCH;g.turn=null;return true}
+  if(f==='snatch'){const cap=Math.max(1,...bidders(g).map(s=>maxBid(g,s))),avg=(g.budget||10)/(g.size||5);
+    g.price=clamp(Math.round(snatchPrice(g,cur(g))*1.8),3,Math.max(3,Math.min(cap,Math.round(avg*4))));   // start price; it only goes down
+    g.step=clamp(Math.round(DUTCH_RUN/Math.max(1,g.price-1)),550,1100);g.openAt=t0(g)+SNATCH_LEAD;
+    g.deadline=g.openAt+(g.price-1)*g.step+T_FLOOR;g.turn=null;return true}
   return false}
 function nominate(S,j){const g=S.game;if(j<g.idx||j>=Math.min(g.items.length,g.idx+MKT))return false;
   if(j!==g.idx){const t=g.items[g.idx];g.items[g.idx]=g.items[j];g.items[j]=t}
@@ -1476,7 +1500,7 @@ function resolveSealed(S){const g=S.game,el=g.tie?g.tie.sides:bidders(g),bids={}
   let w=top[0];if(top.length>1){w=tieWinner(g,top);rev.tb=1}
   g.reveal={...rev,idx:g.idx,win:w};g.sb=null;g.tie=null;g.bid={who:w,amt:mx};sell(S,w,mx)}
 function resolveGrab(S){const g=S.game,L=g.grab.who;const w=L.length===1?L[0]:L[Math.floor(rng(hash(g.gid+':'+g.idx))()*L.length)];
-  g.reveal={idx:g.idx,grab:L.slice(),win:w,price:g.price};g.grab=null;g.bid={who:w,amt:g.price};sell(S,w,g.price)}
+  const pr=g.grab.price;g.reveal={idx:g.idx,grab:L.slice(),win:w,price:pr};g.grab=null;g.bid={who:w,amt:pr};sell(S,w,pr)}
 // actions for the new formats (return true when the state changed)
 function fmtApply(S,a,who){const g=S.game;if(!g||S.phase!=='auction'||inGap(g))return false;if(a.idx!=null&&a.idx!==g.idx)return false;
   switch(a.a){
@@ -1486,11 +1510,14 @@ function fmtApply(S,a,who){const g=S.game;if(!g||S.phase!=='auction'||inGap(g))r
     case 'sbid':{if(g.stage||!g.sb)return false;const el=g.tie?g.tie.sides:bidders(g);if(!el.includes(who))return false;
       const v=a.amt|0,lo=g.tie?g.tie.amt:0;if(v<lo||v>maxBid(g,who))return false;g.sb[who]=v;
       if(el.every(s=>g.sb[s]!=null))resolveSealed(S);return true}
-    case 'grab':{if(g.stage||g.price==null||!bidders(g).includes(who)||maxBid(g,who)<g.price||g.pass[who])return false;const t=now();if(t<g.openAt-80)return false;
-      if(!g.grab){g.grab={who:[who],until:t+GRAB_WIN};return true}
+    case 'grab':{if(g.stage||g.price==null||!bidders(g).includes(who)||g.pass[who])return false;const t=now();if(t<g.openAt-80)return false;
+      // pay the price on the clock when the tap arrives; a tap made one step earlier (network delay) keeps the price that was on screen
+      let pr=dutchAt(g,t);if(a.p!=null&&(a.p|0)===pr+1&&t-g.openAt<(g.price-pr)*g.step+400)pr=a.p|0;
+      if(!g.grab){if(maxBid(g,who)<pr)return false;g.grab={who:[who],until:t+GRAB_WIN,price:pr};return true}
+      if(maxBid(g,who)<g.grab.price)return false;
       if(t<=g.grab.until&&!g.grab.who.includes(who)){g.grab.who.push(who);return true}return false}
     case 'spass':{if(g.stage||g.price==null||g.grab||!bidders(g).includes(who))return false;g.pass[who]=true;
-      if(bidders(g).every(s=>g.pass[s]||maxBid(g,s)<g.price)){skipCard(S)}return true}}
+      if(bidders(g).every(s=>g.pass[s])){skipCard(S)}return true}}
   return false}
 // timers and offline players, run by the device that owns the game
 function fmtTick(S,off){const g=S.game,t=now();if(S.phase!=='auction'||inGap(g))return false;
@@ -1500,7 +1527,7 @@ function fmtTick(S,off){const g=S.game,t=now();if(S.phase!=='auction'||inGap(g))
     if(t>g.deadline||el.every(s=>g.sb[s]!=null)){resolveSealed(S);return true}return ch}
   if(g.price!=null){if(g.grab&&t>g.grab.until){resolveGrab(S);return true}
     if(!g.grab){let ch=false;bidders(g).forEach(s=>{if(off.has(s)&&!g.pass[s]){g.pass[s]=true;ch=true}});
-      if(t>g.deadline||bidders(g).every(s=>g.pass[s]||maxBid(g,s)<g.price)){skipCard(S);return true}return ch}}
+      if(t>g.deadline||bidders(g).every(s=>g.pass[s])){skipCard(S);return true}return ch}}
   return false}
 
 /* ---------- ability cards (能力卡) ----------
@@ -1615,7 +1642,8 @@ function cardFlash(g){const e=g&&g.ev;if(!e||now()-e.at>2200)return '';const K=C
            could still pay, passes at its max.
    sealed  bids just above what it expects the strongest rival to pay (rival rosters and budgets are public),
            never above its own max; 新手 shades at random.
-   snatch  grabs when the price is under its max, after a human-like reaction time (no instant snipes).
+   snatch  (Dutch clock) picks the price to stop at like a sealed bid, then taps when the clock reaches it, after a
+           human-like reaction time.
    nominate puts up the card rivals want most and it wants least (drains their money); when it is the richest
            team it nominates its own target instead.
    last team: signs the leftover card that adds most to its roster ($1 each).
@@ -1701,6 +1729,11 @@ function botMax(g,s,p,opt){p=p||cur(g);if(!p||!openN(g,s))return 0;const est=opt
   return C.v[ck]=Math.max(0,Math.min(Math.floor(v),est?maxBid(g,s):botCap(g,s)))}
 const botRivalMax=(g,s,p)=>Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0).map(t=>Math.min(maxBid(g,t),isBot(t)?botMax(g,t,p):botMax(g,t,p,{est:1}))));
 
+// first-price bid (sealed bid, or where to stop the Dutch clock): just above what the strongest rival is expected to pay,
+// never above the bot's own max, and spread around that target (a mixed strategy) so it cannot be read off after a few cards
+function botFirstPrice(g,s,R,lv,mx){const rr=(a,b)=>a+(b-a)*R();if(mx<=0)return 0;if(lv.shade)return Math.round(mx*rr(...lv.shade));
+  const est=botRivalMax(g,s)*(lv.aware>1?rr(0.92,1.08):rr(0.8,1.15)),target=mx>est?Math.min(mx,Math.round(est)+1):Math.round(mx*rr(0.75,0.95));
+  const u=R();return clamp(u<0.2?Math.round(rr(target,mx)):u<0.35?Math.round(rr(Math.max(1,mx*0.5),target)):target+(R()<0.5?0:R()<0.5?1:-1),0,mx)}
 /* ---------- decisions ---------- */
 function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.amt+':'+(g.stage||'')+(g.tie?'t':''))),lv=botLv(s),rr=(a,b)=>a+(b-a)*R();
   if(S.phase==='cards')return{a:'card',id:'pick',who:s,ids:lv.aware?(R()<0.25?['home','swap']:['home','coupon']):CARD_IDS.slice().sort(()=>R()-0.5).slice(0,CARD_PICK)};
@@ -1718,13 +1751,10 @@ function botDecide(s){const g=S.game,R=rng(hash(g.gid+':'+g.idx+':'+s+':'+g.bid.
     const best=Mk.slice().sort((a,b)=>sc(b)-sc(a))[0];return{a:'nominate',who:s,j:best.j,idx:g.idx}}
   if(g.sb){const lo=g.tie?g.tie.amt:0,mx=Math.max(lo,botMax(g,s));let amt;
     if(g.tie)amt=mx<=lo?lo:g.tie.tb===s?(R()<0.65?lo:Math.min(mx,lo+1)):Math.min(mx,lo+1+(R()<0.35?1:0));   // a second tie goes to tie.tb
-    else if(mx<=0)amt=0;
-    else if(lv.shade)amt=Math.round(mx*rr(...lv.shade));
-    else{const est=botRivalMax(g,s)*(lv.aware>1?rr(0.92,1.08):rr(0.8,1.15)),target=mx>est?Math.min(mx,Math.round(est)+1):Math.round(mx*rr(0.75,0.95));
-      // a mixed strategy: a fixed rule is quickly learned, so the bid moves around its target (sometimes bolder, sometimes cautious)
-      const u=R();amt=u<0.2?Math.round(rr(target,mx)):u<0.35?Math.round(rr(Math.max(1,mx*0.5),target)):target+(R()<0.5?0:R()<0.5?1:-1)}
+    else amt=botFirstPrice(g,s,R,lv,mx);
     return{a:'sbid',who:s,amt:clamp(amt,lo,Math.max(lo,Math.min(mx,maxBid(g,s)))),idx:g.idx}}
-  if(g.price!=null)return botMax(g,s)>=g.price&&(lv.aware||R()>0.15||realLeft(g)<=botMarket(g).N+1)?{a:'grab',who:s,idx:g.idx}:{a:'spass',who:s,idx:g.idx};
+  // Dutch clock: choose the price to stop at (like a sealed bid), then tap when the clock gets there
+  if(g.price!=null){const thr=Math.min(g.price,botFirstPrice(g,s,R,lv,botMax(g,s)));return thr>=1?{a:'grab',who:s,idx:g.idx,p:thr}:{a:'spass',who:s,idx:g.idx}}
   const mx=botMax(g,s),b=g.bid.amt;if(mx<=b)return{a:'pass',who:s,idx:g.idx};
   const rivalCap=Math.max(0,...g.sides.filter(t=>t!==s&&openN(g,t)>0&&!g.pass[t]).map(t=>maxBid(g,t)));
   let amt=!b?Math.max(1,Math.round(mx*(lv.aware?rr(0.3,0.5):rr(0.2,0.7)))):b+1;
@@ -1752,7 +1782,7 @@ function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-
     case 'ready':return t0+rr([2500,5500]);
     case 'nominate':return t0+rr([1800,3800]);
     case 'sbid':return t0+rr([2500,7000]);
-    case 'grab':return Math.max(t0,g.openAt)+rr(lv.react);
+    case 'grab':return Math.max(t0,g.openAt+Math.max(0,g.price-a.p)*g.step)+rr(lv.react);
     case 'spass':return Math.max(t0,g.openAt)+rr([1300,2800]);
     case 'lpick':case 'lnone':return t0+rr(lv.think);
     case 'card':return a.id==='pick'?t0+rr([2500,5000]):t0+rr([900,1800]);
@@ -1768,7 +1798,9 @@ function tickBots(){if(NET.mode!=='ai'||!S||!S.bots||!S.game)return;
   for(const s of S.game.sides){if(!isBot(s))continue;const k=botNeed(s);
     if(!k){delete BOT[s];continue}
     if(!BOT[s]||BOT[s].k!==k){const a=botDecide(s);BOT[s]={k,a,due:botWait(s,a)}}
-    if(now()>=BOT[s].due){const B=BOT[s];B.due=Infinity;if(!botAct(B.a)){B.fail=(B.fail||0)+1;B.a=B.fail>1?botFallback(s):botDecide(s);B.due=now()+(window.BB_FAST?0:400)}return}}}   // one action per tick keeps things readable
+    if(now()>=BOT[s].due){const B=BOT[s];
+      if(B.a.a==='grab'&&S.game.price!=null&&dutchAt(S.game,now())>B.a.p){B.due=now()+(window.BB_FAST?0:60);continue}   // wait for the clock to reach its price
+      B.due=Infinity;if(!botAct(B.a)){B.fail=(B.fail||0)+1;B.a=B.fail>1?botFallback(s):botDecide(s);B.due=now()+(window.BB_FAST?0:400)}return}}}   // one action per tick keeps things readable
 // a fresh AI table: the human is A, every computer starts on a random style (re-rolled each game)
 function aiState(){const s=newState();
   s.bots={B:{st:'rand'},C:{st:'rand'}};s.botLv='normal';s.names={A:clean(MYNAME)||'玩家',B:'🤖 電腦 B',C:'🤖 電腦 C'};s.aiv=2;aiAssign(s);return s}
@@ -1815,11 +1847,27 @@ function burst(c,t,{f=2000,q=1.5,dur=0.06,peak=0.15,f2}){const n=Math.max(1,Math
   bp.frequency.setValueAtTime(f,t);if(f2)bp.frequency.exponentialRampToValueAtTime(f2,t+dur);bp.Q.value=q;
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
   s.connect(bp);bp.connect(g);g.connect(SFX.out);s.start(t);s.stop(t+dur+0.02);s.onended=()=>{s.disconnect();bp.disconnect();g.disconnect()}}
+// a crowd: a band-passed noise bed whose level wanders like many voices, a few rising "woo" voices and scattered claps.
+// Built fresh each time with random timing, so no two cheers sound the same.
+function crowd(c,t,{dur=2.6,peak=0.16,voices=6,claps=26,bed=true}){
+  if(bed){const n=Math.floor(c.sampleRate*dur),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);let last=0;
+    for(let i=0;i<n;i++){const w=Math.random()*2-1;last=0.97*last+0.03*w;d[i]=w*0.6+last*3}           // white + a little brown: fuller, less hiss
+    const s=c.createBufferSource(),g=c.createGain();s.buffer=b;
+    [[500,0.9,1],[1100,0.9,0.8],[2300,1.1,0.45]].forEach(([f,q,k])=>{const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f;bp.Q.value=q;const gg=c.createGain();gg.gain.value=k;s.connect(bp);bp.connect(gg);gg.connect(g)});
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak*0.55,t+0.12);g.gain.exponentialRampToValueAtTime(peak,t+0.45);
+    for(let x=0.5;x<dur*0.55;x+=0.07)g.gain.setTargetAtTime(peak*(0.78+Math.random()*0.3),t+x,0.04);   // the swell of many voices
+    g.gain.setTargetAtTime(0.0001,t+dur*0.55,dur*0.16);g.connect(SFX.out);s.start(t);s.stop(t+dur+0.05);s.onended=()=>{s.disconnect();g.disconnect()}}
+  for(let i=0;i<voices;i++){const st=t+0.1+Math.random()*0.45,len=1+Math.random()*1.1,f=260+Math.random()*260,o=c.createOscillator(),bp=c.createBiquadFilter(),g=c.createGain();
+    o.type='sawtooth';o.frequency.setValueAtTime(f,st);o.frequency.linearRampToValueAtTime(f*1.18,st+0.35);o.frequency.linearRampToValueAtTime(f*1.05,st+len);
+    bp.type='bandpass';bp.frequency.value=900+Math.random()*500;bp.Q.value=3;
+    g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.012,st+0.15);g.gain.exponentialRampToValueAtTime(0.0001,st+len);
+    o.connect(bp);bp.connect(g);g.connect(SFX.out);o.start(st);o.stop(st+len+0.05);o.onended=()=>{o.disconnect();bp.disconnect();g.disconnect()}}
+  for(let i=0;i<claps;i++)burst(c,t+0.15+Math.random()*(dur*0.8),{f:1400+Math.random()*1600,q:1.2,dur:0.018,peak:0.04+Math.random()*0.05})}
 const SND={
   // buttons (5-60 ms, quiet)
-  tap:(c,t)=>burst(c,t,{f:jit(3400,.08),q:3,dur:0.018,peak:0.09}),
+  tap:(c,t)=>burst(c,t,{f:jit(3400,.08),q:3,dur:0.018,peak:0.14}),
   tick2:(c,t)=>{burst(c,t,{f:jit(2800,.06),q:4,dur:0.014,peak:0.08});voice(c,t,{f:jit(1760,.03),dur:0.035,peak:0.035})},
-  press:(c,t)=>{burst(c,t,{f:jit(3000,.06),q:3,dur:0.016,peak:0.10});voice(c,t+0.004,{type:'triangle',f:jit(1180,.03),f2:1420,dur:0.06,peak:0.06})},
+  press:(c,t)=>{burst(c,t,{f:jit(3000,.06),q:3,dur:0.016,peak:0.14});voice(c,t+0.004,{type:'triangle',f:jit(1180,.03),f2:1420,dur:0.06,peak:0.08})},
   back:(c,t)=>{burst(c,t,{f:jit(1500,.06),q:2.5,dur:0.02,peak:0.08});voice(c,t,{f:jit(700,.03),f2:560,dur:0.05,peak:0.035})},
   // game events
   bid:(c,t)=>{const f=jit(880,.03);voice(c,t,{type:'triangle',f,dur:0.09,peak:0.16});voice(c,t+0.05,{type:'sine',f:f*1.5,dur:0.12,peak:0.10})},
@@ -1827,6 +1875,8 @@ const SND={
   outbid:(c,t)=>{voice(c,t,{type:'triangle',f:jit(620,.02),dur:0.11,peak:0.15});voice(c,t+0.1,{type:'triangle',f:jit(470,.02),dur:0.16,peak:0.13})},
   turn:(c,t)=>{voice(c,t,{f:jit(1046,.02),dur:0.18,peak:0.13});voice(c,t+0.07,{f:jit(1568,.02),dur:0.22,peak:0.08})},
   tick:(c,t)=>burst(c,t,{f:jit(1500,.05),q:6,dur:0.045,peak:0.12}),
+  // Dutch clock step: a soft wooden tick that climbs as the price nears $1 (tension builds without getting louder)
+  dtick:(c,t,p)=>{const k=clamp(10-(p||10),0,9);burst(c,t,{f:1100+k*120,q:7,dur:0.035,peak:0.08});voice(c,t,{type:'triangle',f:520+k*45,dur:0.06,peak:0.045})},
   last:(c,t)=>{burst(c,t,{f:jit(1900,.04),q:7,dur:0.05,peak:0.14});voice(c,t,{f:jit(1320,.02),dur:0.07,peak:0.05})},
   // gavel: wood knock in the mid range, a low thump for headphones underneath
   sold:(c,t)=>{burst(c,t,{f:jit(2400,.05),q:2,dur:0.03,peak:0.16});voice(c,t,{type:'triangle',f:jit(420,.04),f2:300,dur:0.12,peak:0.2});voice(c,t,{f:jit(150,.04),f2:80,dur:0.16,peak:0.18});
@@ -1841,12 +1891,18 @@ const SND={
   card:(c,t)=>{burst(c,t,{f:600,f2:5200,q:1.4,dur:0.32,peak:0.06});[659,880,1175,1568].forEach((f,i)=>voice(c,t+0.05+i*0.055,{type:'triangle',f:jit(f,.01),dur:0.24,peak:0.09}));
     voice(c,t+0.27,{f:2093,dur:0.35,peak:0.04})},
   coupon:(c,t)=>{voice(c,t,{type:'triangle',f:jit(1318,.01),dur:0.08,peak:0.1});voice(c,t+0.08,{type:'triangle',f:jit(1760,.01),dur:0.14,peak:0.1});burst(c,t+0.08,{f:6000,q:3,dur:0.08,peak:0.04})},
+  // final buzzer: a short, slightly rough two-tone horn in the mid range (phone speakers carry it)
+  horn:(c,t)=>{[[440,0.034],[554,0.027]].forEach(([f,p])=>{const o=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain();o.type='square';o.frequency.value=f;lp.type='lowpass';lp.frequency.value=1700;
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(p,t+0.02);g.gain.setValueAtTime(p,t+0.62);g.gain.exponentialRampToValueAtTime(0.0001,t+0.8);
+    o.connect(lp);lp.connect(g);g.connect(SFX.out);o.start(t);o.stop(t+0.85);o.onended=()=>{o.disconnect();lp.disconnect();g.disconnect()}})},
+  cheer:(c,t)=>crowd(c,t,{dur:2.8,peak:0.17,voices:7,claps:30}),
+  applause:(c,t)=>crowd(c,t,{dur:1.9,peak:0.05,voices:0,claps:34}),
   champ:(c,t)=>{[523,659,784,1046].forEach((f,i)=>voice(c,t+i*0.11,{type:'triangle',f,dur:i===3?0.55:0.2,peak:0.13}));voice(c,t+0.33,{f:523,dur:0.6,peak:0.07})},
   error:(c,t)=>voice(c,t,{type:'triangle',f:jit(300,.02),f2:240,dur:0.12,peak:0.09})};
 const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90};
 // gesture: called inside a tap, so a context that is still resuming may queue the sound (it plays as soon as it resumes)
-function sfx(name,delay,gesture){if(!SFX.lv||!SND[name])return;sfxInit();const c=SFX.ctx;if(!c)return;if(c.state!=='running'){c.resume().catch(()=>{});if(!gesture)return}
-  const n=performance.now();if(n-(SFX.last[name]||0)<(SFX_GAP[name]||120))return;SFX.last[name]=n;try{SND[name](c,c.currentTime+0.01+(delay||0))}catch(e){}}
+function sfx(name,delay,gesture,arg){if(!SFX.lv||!SND[name])return;sfxInit();const c=SFX.ctx;if(!c)return;if(c.state!=='running'){c.resume().catch(()=>{});if(!gesture)return}
+  const n=performance.now();if(n-(SFX.last[name]||0)<(SFX_GAP[name]||120))return;SFX.last[name]=n;try{SND[name](c,c.currentTime+0.01+(delay||0),arg)}catch(e){}}
 // button sounds: one family, chosen by what the button does
 const BTN_PRESS=/^(start|create|joinhash|ai|local|nominate|lpick|sbid|bidv|bid|grab|mpick|ready|again|cpick|cuse|cardgo)$/,BTN_BACK=/^(pass|spass|exit|quit|lnone|ccancel)$/;
 document.addEventListener('click',e=>{const b=e.target.closest('button,[data-act]');if(!b||b.disabled||b.dataset.act==='sfx')return;
@@ -1885,11 +1941,16 @@ function sealedBox(g){const el=g.tie?g.tie.sides:bidders(g);
     ${tb?`<div class="tbn">如果又一樣：<b style="color:${col(tb)}">${esc(nm(S,tb))}</b> 得標（${why}）。其他人要加價才贏得到。</div>`:''}
     <div class="sst">${el.map(s=>`<span class="${g.sb[s]!=null?'done':''}" style="--c:${col(s)}">${esc(nm(S,s))} ${g.sb[s]!=null?'✓ 已出價':'思考中…'}</span>`).join('')}</div>
     ${clock(g.deadline,g.tie?T_SEAL_TIE:T_SEAL,'時間到沒出價就算 $'+(g.tie?g.tie.amt:0)+'：',ALL.includes(myRole())&&el.includes(myRole())&&g.sb[myRole()]==null)}</div>`}
-function snatchBox(g){const t=now(),wait=g.openAt>t;
-  if(wait){clearTimeout(ui.openT);const key=g.gid+':'+g.idx;ui.openT=setTimeout(()=>{if(ui.goFor!==key){ui.goFor=key;sfx('go')}render()},Math.max(30,g.openAt-t+20))}
-  return `<div class="cur snatch ${wait?'wait':'live'}">${g.grab?`<div class="sh">⚡ 有人按下了！判定中…</div>`
-      :wait?`<div class="cdn" data-end="${g.openAt}" data-tot="${SNATCH_LEAD}"><b class="tx"></b></div><div class="small mut">準備…倒數完才能搶</div>`
-      :`<div class="sh">⚡ 搶！標價 <b>$${g.price}</b>，先按先得</div>${clock(g.deadline,T_SNATCH,'沒人搶就流標：')}`}</div>`}
+// the Dutch clock: a big price stepping down, a bar for the current step, a re-render (and a soft tick) at every step
+function snatchBox(g){const t=now(),wait=g.openAt>t,pr=dutchAt(g,t),key=g.gid+':'+g.idx;
+  clearTimeout(ui.openT);
+  if(!g.grab){const nextAt=wait?g.openAt:pr>1?g.openAt+(g.price-pr+1)*g.step:null;
+    if(nextAt)ui.openT=setTimeout(()=>{const p2=dutchAt(g,now());if(now()>=g.openAt&&ui.goFor!==key){ui.goFor=key;sfx('go')}else if(p2!==ui.dLast)sfx('dtick',0,false,p2);ui.dLast=p2;render()},Math.max(30,nextAt-t+15))}
+  const floorAt=g.openAt+(g.price-1)*g.step;
+  return `<div class="cur snatch ${wait?'wait':'live'}">${g.grab?`<div class="sh">⚡ 有人按下了！判定中…</div><div class="dprice"><b>$${g.grab.price}</b></div>`
+      :wait?`<div class="cdn" data-end="${g.openAt}" data-tot="${SNATCH_LEAD}"><b class="tx"></b></div><div class="small mut">起標 <b>$${g.price}</b>，開始後每 ${(g.step/1000).toFixed(1)} 秒降 $1</div>`
+      :`<div class="dprice" id="dp-${key}-${pr}"><b>$${pr}</b>${pr>1?`<i style="animation-duration:${g.step}ms"></i>`:''}</div>
+        <div class="small mut">${pr>1?`每 ${(g.step/1000).toFixed(1)} 秒降 $1・第一個按的人用這個價格買走`:'最低價 $1'}</div>${pr<=1?clock(g.deadline,T_FLOOR,'沒人要就流標：'):''}`}</div>`}
 // reveal after a sealed or snatch card (shown while the winner picks a spot and during the SOLD stamp)
 function revealBox(g,idx){const v=g.reveal;if(!v||v.idx!==idx)return '';
   if(v.grab)return `<div class="reveal"><div class="rt">⚡ 搶標結果</div>${v.grab.length>1?`<div class="small mut">${v.grab.map(s=>esc(nm(S,s))).join('、')} 幾乎同時按下，抽籤決定</div>`:''}
@@ -1909,12 +1970,12 @@ function fmtCtrl(g,s,r){const mine=r==='all'||r===s;if(!mine)return '';
       <button class="bb go" data-act="sbid" data-who="${s}" data-amt="${v}">${g.sb[s]!=null&&NET.mode!=='local'?'改成':'送出'}<small>$${v}</small></button></div>
       <div class="bbtns"><button class="bb pass" data-act="sbid" data-who="${s}" data-amt="${lo}" style="grid-column:1/-1">${lo?`維持 $${lo}`:'不要（出 $0）'}</button></div>
       ${g.sb[s]!=null&&NET.mode!=='local'?`<div class="small" style="margin-top:6px;color:var(--ok);font-weight:800">✓ 已送出 $${g.sb[s]}，揭曉前還能改</div>`:''}`}
-  if(g.price!=null&&!g.grab){if(!bidders(g).includes(s))return '';const can=maxBid(g,s)>=g.price,open=now()>=g.openAt;
+  if(g.price!=null&&!g.grab){if(!bidders(g).includes(s))return '';const pr=dutchAt(g,now()),can=maxBid(g,s)>=pr,open=now()>=g.openAt;
     if(g.pass[s])return '<div class="small mut" style="margin-top:6px">這張不要了</div>';
-    return `<div class="solo"><button class="bb go grabb" data-act="grab" data-who="${s}" ${can&&open?'':'disabled'}>${can?`⚡ 搶<small>$${g.price}</small>`:'錢不夠'}</button>
+    return `<div class="solo"><button class="bb go grabb" data-act="grab" data-who="${s}" data-p="${pr}" ${can&&open?'':'disabled'}>${can?`⚡ 用 $${pr} 買<small>${open?'先按先得':'準備…'}</small>`:`等降到 $${maxBid(g,s)}`}</button>
       <button class="bb pass" data-act="spass" data-who="${s}">不要</button></div>`}
   return ''}
-const fmtState=(g,s)=>g.sb?'':g.price!=null?(g.grab&&g.grab.who.includes(s)?'按下了！':g.pass[s]?'不要了':maxBid(g,s)<g.price&&openN(g,s)?'錢不夠':''):g.stage==='nom'?(g.nomBy===s?'提名中…':''):'';
+const fmtState=(g,s)=>g.sb?'':g.price!=null?(g.grab&&g.grab.who.includes(s)?'按下了！':g.pass[s]?'不要了':maxBid(g,s)<dutchAt(g,now())&&openN(g,s)?'等降價':''):g.stage==='nom'?(g.nomBy===s?'提名中…':''):'';
 // role chip on a bench plate in the lineup screen (tap to cycle)
 function roleChip(g,s,p,locked){const r=p.role||natRole(p),f=roleFit(p,r),nx=BROLES[(BROLES.indexOf(r)+1)%BROLES.length];
   return `<button class="rolec r${r}" ${locked?'disabled':''} data-act="brole" data-who="${s}" data-v="${p.slot}" data-role="${nx}">${BROLE[r].nm}${f.tier>0?` <i class="tag t${f.tier>1?2:1}">${f.tier>1?'不適合':'勉強'}</i>`:''} <span>⇄</span></button>`}
@@ -2210,7 +2271,7 @@ function fx(prev){
     if(g.ev&&g.ev.n!==prev.ev&&prev.gid===g.gid){sfx(g.ev.id==='coupon'?'coupon':'card');vibe(20)}}
   if(prev.gid===g.gid&&g.log.length>prev.log){const l=g.log[g.log.length-1];if(S.phase!=='auction'||window.BB_FAST)toast(l.who?`💰 ${nm(S,l.who)} $${l.amt}${l.full?`（💸 原價 $${l.full}）`:''}・${String(l.n).split(' ').slice(-1)[0]}${l.slot?`（${l.slot}）`:''}`:`🙅 ${l.n} 流標`);vibe(30);
     if(l.who){sfx('sold');if(l.full)sfx('coupon',0.25);if(mine(l.who)&&me!=='all')sfx('win',0.14)}else sfx('pass');
-    if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,3600);ui.hold={gid:g.gid,k:prev.idx,l,at:Date.now(),until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
+    if(S.phase==='auction'&&prev.idx!=null&&g.idx>prev.idx&&!window.BB_FAST){const hm=clamp((g.gapEnd||0)-now(),300,3800);ui.hold={gid:g.gid,k:prev.idx,l,at:Date.now(),until:Date.now()+hm};clearTimeout(ui.holdT);ui.holdT=setTimeout(()=>{ui.hold=null;render()},hm+10)}}
   else if(g.bid.amt>prev.bid)vibe(12);
 }
 setInterval(()=>{snapPrev=snapOf();tickAuth();tickBots()},250);
@@ -2279,7 +2340,7 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>對戰</b>：每兩隊打七戰四勝，系列賽贏最多的奪冠。</li>
   <li><b>卡片版本</b>：每張卡是球員某一段時期的版本，比賽用的是那段時期的數據；卡面的生涯數據和榮譽是整個生涯。卡上的標籤告訴你是哪一段：新秀年、生涯早期、巔峰期（他最強的五季）、生涯晚期，年份（例如 '92）可在進階設定關掉。</li>
   <li><b>挑戰電腦</b>：一個人跟 1～2 位 AI 總管對戰。電腦依自己陣容缺什麼、剩多少錢、場上還有哪些球員來估價，只能用跟你一樣的按鈕，看不到你的任務卡和暗標金額。新手常亂出價；普通會看陣容缺什麼；高手還會做任務、精算暗標。</li>
-  <li><b>拍賣方式</b>（大廳選）：🔨 一般喊價；🤫 暗標（同時偷偷出價，最高價得標，平手加賽一次，再平手空位多的一方得標）；⚡ 搶標（每張有標價，倒數完先按先得，0.6 秒內同時按下就抽籤）。季賽可選「每局輪換」。</li>
+  <li><b>拍賣方式</b>（大廳選）：🔨 一般喊價；🤫 暗標（同時偷偷出價，最高價得標，平手加賽一次，再平手空位多的一方得標，加賽時畫面會先告訴你）；⚡ 降價搶標（標價從高往下掉，第一個按的人用當下價格買走，0.6 秒內同時按下就抽籤；降到 $1 還沒人要就流標）。季賽可選「每局輪換」。</li>
   <li><b>輪流提名</b>（選用）：桌上翻開 4 張，輪到的人挑一張拿出來拍，提名的人先出價。</li>
   <li><b>替補</b>（10 人）：5 個替補自己分配「替補後衛／替補鋒線／第六人」，至少各 1 位、第六人只能 1 位。換人時由對應角色上場，第六人上場最多；放錯角色會扣分，沒有能補的角色也會扣分。</li>
   <li><b>最後一隊</b>：其他人都滿了時，剩下那隊不用再競標：牌堆裡剩下的牌全部翻開，每位 $1，自己挑要哪幾位（不會再補新牌）。也可以都不要，讓自由球員補。</li>
@@ -2434,16 +2495,17 @@ function bidRow(g,s,r,held){
 function clock(end,tot,label,tick){return `<div class="small mut" data-end="${end}" data-tot="${tot}" ${tick?'data-tick="1"':''} style="width:100%">${label} <b class="tx"></b> 秒<div class="cd"><i></i></div></div>`}
 function vAuction(){
   const g=S.game,r=myRole();const H=ui.hold&&ui.hold.gid===g.gid&&Date.now()<ui.hold.until?ui.hold:null;const pl=H?g.items[H.k]:cur(g);if(!pl)return '';
-  if(H){const l=H.l,stamp=l.who?`<div class="stamp" style="--c:${col(l.who)}"><b>SOLD</b><span>${esc(nm(S,l.who))}・$${l.amt}</span></div>`:`<div class="stamp pass"><b>流標</b><span>沒有人要</span></div>`;
+  // the beat after a card: one focal message (the banner); the card shrinks to its name and the other rows step back
+  if(H){const l=H.l;
     return `<div class="top"><div class="prog">第<b>${H.k+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<div class="small mut">下一張準備中…</div></div><div class="bar"><i style="width:${Math.round((H.k+1)/g.items.length*100)}%"></i></div>
-      <div class="stage"><div class="pcard front held" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${stamp}</div></div>${revealBox(g,H.k)}${soldBanner(g,H)}
-      ${g.sides.map(s=>{const h=bidRow(g,s,r,true);return s===l.who?h.replace('<div class="brow ','<div class="brow won '):h}).join('')}`}
+      <div class="stage"><div class="pcard front held calm" id="held-${g.gid}-${H.k}"><div class="pname">${esc(pl.n)}</div></div></div>${g.reveal&&g.reveal.grab&&g.reveal.grab.length<2?'':revealBox(g,H.k)}${soldBanner(g,H)}
+      ${g.sides.map(s=>{const h=bidRow(g,s,r,true);return h.replace('<div class="brow ','<div class="brow '+(s===l.who?'won ':'dim '))}).join('')}`}
   const pct=Math.round(g.idx/g.items.length*100);
   if(g.stage==='left')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}<span class="fpill">🧺 撿剩下的</span></div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${leftPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}`;
   if(g.stage==='nom')return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}${fmtPill(g)}</div><div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}
     ${nomPanel(g,r)}${g.sides.map(s=>bidRow(g,s,r,true)).join('')}${r==='all'||ALL.includes(r)?`<button class="quit" data-act="quit">${ui.quit?'再按一次確認放棄本局':'放棄本局'}</button>`:''}`;
-  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${g.price!=null?`<div class="ptag">⚡ $${g.price}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
+  const card=`<div class="pcard front" id="card-${g.gid}-${g.idx}">${g.price!=null?`<div class="ptag">$${g.grab?g.grab.price:dutchAt(g,now())}</div>`:''}<div class="pname">${esc(pl.n)}</div>${nickOf(pl)?`<div class="nick"><span>${esc(nickOf(pl))}</span></div>`:''}${phaseBadge(pl,g)}${posChips(pl)}${introBlock(pl,g.gid+'-'+g.idx)}
       ${g.showStats?`<div class="psub">${esc(sub(pl))}</div><div class="pstats">${[['pts','PTS'],['trb','REB'],['ast','AST'],['stl','STL'],['blk','BLK']].map(([k,l])=>`<div><b>${fmt(pl[k])}</b><i>${l}</i></div>`).join('')}</div>`:''}</div>`;
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
@@ -2655,7 +2717,10 @@ function pbAdvance(){const p=ui.pb;if(!p)return;const now=Date.now(),dt=Math.min
 function pbState(){const L=pbData(),p=ui.pb;if(!p||p.gid!==S.game.gid)return null;
   const G=L[p.k];if(!G)return null;const e=p.vt,P=G.q[0].length,pe=Math.min(P,e/PB_Q);return{L,G,e,P,pe,done:e>=P*PB_Q,next:e>=pbDur(G)}}
 function pbStart(){ui.pb={gid:S.game.gid,k:0,vt:0,last:Date.now(),sp:ui.pbSp||pbDefSp()}}
-function pbNext(){const L=pbData();if(ui.pb.k+1>=L.length){ui.pbDone.add(S.game.gid);sfx('champ');ui.pbFast=true;ui.pb=null}else{ui.pb.k++;ui.pb.vt=0;ui.pb.last=Date.now()}render();scrollTo(0,0)}
+// the title moment: final buzzer, then the crowd. A cheer and fanfare when you (or anyone, on a shared phone) win; polite applause when you lose
+function champSound(d){const ch=S.sim&&S.sim.champ,me=myRole(),won=me==='all'||me==='spec'||me===ch,t=d||0;
+  sfx('horn',t);if(won){sfx('cheer',t+0.55);sfx('champ',t+1.2)}else sfx('applause',t+0.6)}
+function pbNext(){const L=pbData();if(ui.pb.k+1>=L.length){ui.pbDone.add(S.game.gid);champSound();ui.pbFast=true;ui.pb=null}else{ui.pb.k++;ui.pb.vt=0;ui.pb.last=Date.now()}render();scrollTo(0,0)}
 setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.pb||ui.pbDone.has(S.game.gid))return;pbAdvance();const st=pbState();if(st&&st.next&&ui.pb.auto!==false)return pbNext();render()})},150);
 
 /* ---------- mini court (top-down, canvas) ----------
@@ -2992,7 +3057,7 @@ document.addEventListener('click',e=>{
   function pbAct(a){switch(a){
     case 'pbsp':{const p=ui.pb;if(!p)return;p.sp=ui.pbSp=p.sp>=4?1:p.sp+1;return render()}
     case 'pbnext':{const st=pbState();if(!st)return;if(!st.done){ui.pb.vt=st.P*PB_Q;return render()}return pbNext()}
-    case 'pbskip':if(!ui.pbDone.has(S.game.gid))sfx('champ',0.3);ui.pbDone.add(S.game.gid);ui.pbFast=true;ui.pb=null;render();return scrollTo(0,0);
+    case 'pbskip':if(!ui.pbDone.has(S.game.gid))champSound(0.2);ui.pbDone.add(S.game.gid);ui.pbFast=true;ui.pb=null;render();return scrollTo(0,0);
   }}
   switch(a){
     case 'reveal':ui.reveal.add(d.v);return render();
@@ -3027,7 +3092,7 @@ document.addEventListener('click',e=>{
     case 'sstep':{const g=S.game,lo=g.tie?g.tie.amt:0,k='s'+g.idx+d.who,cur0=ui.amt[k]!=null?ui.amt[k]:(+(document.querySelector(`[data-in="samt"][data-who="${d.who}"]`)||{}).value||0);ui.amt[k]=clamp(cur0+(+d.v),lo,maxBid(g,d.who));return render()}
     case 'sbid':{const g=S.game,k='s'+g.idx+d.who,el=document.querySelector(`[data-in="samt"][data-who="${d.who}"]`);let v=+d.amt;if(el&&!t.classList.contains('pass'))v=parseInt(el.value,10);
       const lo=g.tie?g.tie.amt:0,mx=maxBid(g,d.who);if(isNaN(v)||v<lo)return toast(`至少 $${lo}`);if(v>mx)return toast(`你最多只能出 $${mx}（要留錢補滿陣容）`);return dispatch({a:'sbid',who:d.who,amt:v,idx:g.idx})}
-    case 'grab':sfx('grab');return dispatch({a:'grab',who:d.who,idx:S.game.idx});
+    case 'grab':sfx('grab');return dispatch({a:'grab',who:d.who,idx:S.game.idx,p:dutchAt(S.game,now())});
     case 'spass':return dispatch({a:'spass',who:d.who,idx:S.game.idx});
     case 'brole':return dispatch({a:'brole',who:d.who,slot:d.v,role:d.role});
     case 'sfx':{const nx=(SFX.lv+2)%3;sfxSet(nx);toast(['🔇 音效關閉','🔈 音效：小聲','🔊 音效：正常'][nx],1200);if(nx)setTimeout(()=>sfx('bid'),60);return render()}

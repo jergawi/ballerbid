@@ -585,3 +585,21 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 @keyframes wonP{50%{transform:scale(1.015)}}
 .tbn{font-size:13px;font-weight:700;color:#5a6275;background:#f4f6fa;border-radius:10px;padding:6px 10px;margin:6px auto 2px;max-width:420px}
 @media (prefers-reduced-motion:reduce){.soldb,.soldb .sd2,.soldb .sd3,.brow.won{animation:none}}
+/* calm beat: the card steps back, the banner leads, then the winner's row */
+.pcard.held.calm{padding:14px 12px;opacity:.55;transform:scale(.94);transition:opacity .3s,transform .3s;animation:none}
+.pcard.held.calm .pname{font-size:30px}
+.brow.dim{opacity:.4;transition:opacity .3s}
+.soldb{margin-top:10px;padding:18px 16px 20px}
+.soldb .sd2{font-size:23px;animation:fadein .35s .25s both}
+.soldb .sd3{animation:soldPrice .4s var(--pop) .5s both}
+@keyframes soldPrice{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:none}}
+.brow.won{animation:wonP 1s ease-in-out .8s 1 both}
+.brow.won .rost .f:last-child{animation:slotIn .5s var(--pop) .9s both}
+.reveal+.soldb{animation-delay:1s}.reveal+.soldb .sd2{animation-delay:1.25s}.reveal+.soldb .sd3{animation-delay:1.5s}
+/* Dutch clock */
+.cur.snatch .dprice{position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:140px;margin:2px auto 4px}
+.cur.snatch .dprice b{font-family:var(--num);font-size:68px;line-height:1;font-weight:800;color:var(--acc);animation:dstep .28s var(--pop)}
+.cur.snatch .dprice i{display:block;width:100%;height:5px;border-radius:99px;margin-top:6px;background:color-mix(in srgb,var(--acc) 30%,#fff);transform-origin:left;animation:sbar linear both}
+@keyframes dstep{0%{transform:translateY(-10px) scale(1.12);opacity:.4}100%{transform:none;opacity:1}}
+.cur.snatch.live{border-color:var(--acc)}
+.ptag{transition:none}
