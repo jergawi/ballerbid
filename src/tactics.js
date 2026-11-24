@@ -69,7 +69,10 @@ function tacOf(g,s){const t=g.tac&&g.tac[s],F=tacFit(rosterOf(g,s));return{o:t&&
 function botTac(g,s){const lv=(S.bots&&S.bots[s]&&S.bots[s].lv)||S.botLv||'normal',F=tacFit(rosterOf(g,s)),r=rng(hash(g.gid+s+'tac'));
   if(lv==='easy'){const pk=o=>{const k=Object.keys(o).sort((a,b)=>o[b]-o[a]).slice(0,3);return k[Math.floor(r()*k.length)]};return{o:pk(F.O),d:pk(F.D)}}
   if(lv!=='hard')return{o:bestOf(F.O),d:bestOf(F.D)};
-  const opp=g.sides.filter(x=>x!==s).map(x=>{const f=tacFit(rosterOf(g,x));return{o:bestOf(f.O),d:bestOf(f.D),f}});
+  // rivals' lineups are hidden until tip-off, so a hard bot guesses them: the five best cards on their roster by the
+  // public 攻守貢獻, lined up by size. It never reads their actual lineup or their tactic choice.
+  const guess=R=>R.filter(p=>!p.fa).sort((a,b)=>pubVal(b)-pubVal(a)).slice(0,5).sort((a,b)=>peOf(a)-peOf(b)).map((p,j)=>({...p,slot:POS[j]}));
+  const opp=g.sides.filter(x=>x!==s).map(x=>{const f=tacFit(guess(rosterOf(g,x)));return{o:bestOf(f.O),d:bestOf(f.D),f}});
   const so={},sd={};TO_K.forEach(o=>so[o]=FIT_O*F.O[o]+tMean(opp.map(q=>CNT_K*TAC_M[o][q.d]*(0.5+0.5*F.O[o])*(0.5+0.5*q.f.D[q.d]))));
   TD_K.forEach(d=>sd[d]=FIT_D*F.D[d]-tMean(opp.map(q=>CNT_K*TAC_M[q.o][d]*(0.5+0.5*q.f.O[q.o])*(0.5+0.5*F.D[d]))));return{o:bestOf(so),d:bestOf(sd)}}
 // the fixed part of a team's tactic edge (fit + star system), and the counter of its offense against a defense

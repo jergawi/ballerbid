@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-gWSPdhWkhlGO3ytzhhYKzHPYPgxZxJMIuYSzxFYmwKg=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-TbSbq2pX4hZOKj4Isyoe7B6l6SQbrs9N1qI3quZ7GV0=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -688,7 +688,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25e';
+const APPV='2026.11.25f';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -1745,8 +1745,22 @@ const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
 const BC={k:''};
 function botCache(g){const k=g.gid+':'+g.idx+':'+g.log.length+':'+(g.stage||'')+':'+g.items.length;if(BC.k!==k){BC.k=k;BC.m=null;BC.v={}}return BC}
+/* what is left in the deck, as far as a player at the table can know it. The bots must not read the face-down deck:
+   they see the cards that are face up (the card on the block, the nomination market, the leftover table), the number
+   of cards still to come, and the theme's player list (a person gets the same by tapping 看年代和球隊). The unseen
+   cards are estimated from the theme's players not shown yet, weighted the way the deck is drawn (stars are more
+   likely to be in it), turned into the expected values of that many cards. */
+function deckEst(g){const vis=(g.stage==='left'?leftovers(g).map(x=>x.p):g.stage==='nom'?market(g).map(x=>x.p):[cur(g)]).filter(p=>p&&!p.fa);
+  const n=Math.max(0,realLeft(g)-vis.length),shown=new Set(g.items.slice(0,g.idx).concat(vis).map(p=>p.n));
+  const rest=(g.pool||[]).filter(p=>!p.fa&&!shown.has(p.n)).map(p=>({v:pubVal(p),w:1+Math.max(0,pubStar(p))/3}));
+  let est=[];if(n>0&&rest.length){let k=n/rest.reduce((t,x)=>t+x.w,0);for(let it=0;it<4;it++){const capped=rest.filter(x=>x.w*k>=1),free=rest.filter(x=>x.w*k<1);
+      const fw=free.reduce((t,x)=>t+x.w,0);if(!fw)break;k=Math.max(0,n-capped.length)/fw}
+    const q=rest.map(x=>({v:x.v,q:Math.min(1,x.w*k)})).sort((a,b)=>b.v-a.v);let cum=0,j=0;
+    for(let i=0;i<n;i++){const t=i+0.5;while(j<q.length-1&&cum+q[j].q<t){cum+=q[j].q;j++}est.push(q[j].v)}}
+  else if(n>0)est=Array(n).fill(-1);
+  return vis.map(pubVal).concat(est).sort((a,b)=>b-a)}
 function botMarket(g){const C=botCache(g);if(C.m)return C.m;
-  const vals=g.items.slice(g.idx).filter(p=>!p.fa).map(pubVal).sort((a,b)=>b-a);
+  const vals=deckEst(g);
   let os=0,ob=0;g.sides.forEach(t=>openSlots(g,t).forEach(x=>isBench(x)?ob++:os++));
   const N=os+ob,vN=N>0&&vals.length>=N?vals[N-1]:-1;
   const money=g.sides.reduce((a,t)=>a+Math.max(0,left(g,t)-openN(g,t)),0);
@@ -2205,7 +2219,10 @@ function tacOf(g,s){const t=g.tac&&g.tac[s],F=tacFit(rosterOf(g,s));return{o:t&&
 function botTac(g,s){const lv=(S.bots&&S.bots[s]&&S.bots[s].lv)||S.botLv||'normal',F=tacFit(rosterOf(g,s)),r=rng(hash(g.gid+s+'tac'));
   if(lv==='easy'){const pk=o=>{const k=Object.keys(o).sort((a,b)=>o[b]-o[a]).slice(0,3);return k[Math.floor(r()*k.length)]};return{o:pk(F.O),d:pk(F.D)}}
   if(lv!=='hard')return{o:bestOf(F.O),d:bestOf(F.D)};
-  const opp=g.sides.filter(x=>x!==s).map(x=>{const f=tacFit(rosterOf(g,x));return{o:bestOf(f.O),d:bestOf(f.D),f}});
+  // rivals' lineups are hidden until tip-off, so a hard bot guesses them: the five best cards on their roster by the
+  // public 攻守貢獻, lined up by size. It never reads their actual lineup or their tactic choice.
+  const guess=R=>R.filter(p=>!p.fa).sort((a,b)=>pubVal(b)-pubVal(a)).slice(0,5).sort((a,b)=>peOf(a)-peOf(b)).map((p,j)=>({...p,slot:POS[j]}));
+  const opp=g.sides.filter(x=>x!==s).map(x=>{const f=tacFit(guess(rosterOf(g,x)));return{o:bestOf(f.O),d:bestOf(f.D),f}});
   const so={},sd={};TO_K.forEach(o=>so[o]=FIT_O*F.O[o]+tMean(opp.map(q=>CNT_K*TAC_M[o][q.d]*(0.5+0.5*F.O[o])*(0.5+0.5*q.f.D[q.d]))));
   TD_K.forEach(d=>sd[d]=FIT_D*F.D[d]-tMean(opp.map(q=>CNT_K*TAC_M[q.o][d]*(0.5+0.5*q.f.O[q.o])*(0.5+0.5*F.D[d]))));return{o:bestOf(so),d:bestOf(sd)}}
 // the fixed part of a team's tactic edge (fit + star system), and the counter of its offense against a defense

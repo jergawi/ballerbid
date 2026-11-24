@@ -56,8 +56,22 @@ const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
 const BC={k:''};
 function botCache(g){const k=g.gid+':'+g.idx+':'+g.log.length+':'+(g.stage||'')+':'+g.items.length;if(BC.k!==k){BC.k=k;BC.m=null;BC.v={}}return BC}
+/* what is left in the deck, as far as a player at the table can know it. The bots must not read the face-down deck:
+   they see the cards that are face up (the card on the block, the nomination market, the leftover table), the number
+   of cards still to come, and the theme's player list (a person gets the same by tapping 看年代和球隊). The unseen
+   cards are estimated from the theme's players not shown yet, weighted the way the deck is drawn (stars are more
+   likely to be in it), turned into the expected values of that many cards. */
+function deckEst(g){const vis=(g.stage==='left'?leftovers(g).map(x=>x.p):g.stage==='nom'?market(g).map(x=>x.p):[cur(g)]).filter(p=>p&&!p.fa);
+  const n=Math.max(0,realLeft(g)-vis.length),shown=new Set(g.items.slice(0,g.idx).concat(vis).map(p=>p.n));
+  const rest=(g.pool||[]).filter(p=>!p.fa&&!shown.has(p.n)).map(p=>({v:pubVal(p),w:1+Math.max(0,pubStar(p))/3}));
+  let est=[];if(n>0&&rest.length){let k=n/rest.reduce((t,x)=>t+x.w,0);for(let it=0;it<4;it++){const capped=rest.filter(x=>x.w*k>=1),free=rest.filter(x=>x.w*k<1);
+      const fw=free.reduce((t,x)=>t+x.w,0);if(!fw)break;k=Math.max(0,n-capped.length)/fw}
+    const q=rest.map(x=>({v:x.v,q:Math.min(1,x.w*k)})).sort((a,b)=>b.v-a.v);let cum=0,j=0;
+    for(let i=0;i<n;i++){const t=i+0.5;while(j<q.length-1&&cum+q[j].q<t){cum+=q[j].q;j++}est.push(q[j].v)}}
+  else if(n>0)est=Array(n).fill(-1);
+  return vis.map(pubVal).concat(est).sort((a,b)=>b-a)}
 function botMarket(g){const C=botCache(g);if(C.m)return C.m;
-  const vals=g.items.slice(g.idx).filter(p=>!p.fa).map(pubVal).sort((a,b)=>b-a);
+  const vals=deckEst(g);
   let os=0,ob=0;g.sides.forEach(t=>openSlots(g,t).forEach(x=>isBench(x)?ob++:os++));
   const N=os+ob,vN=N>0&&vals.length>=N?vals[N-1]:-1;
   const money=g.sides.reduce((a,t)=>a+Math.max(0,left(g,t)-openN(g,t)),0);
