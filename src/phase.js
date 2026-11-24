@@ -18,6 +18,8 @@ function phaseOf(p){if(!p||p.fa||!p.y0||!p.y1)return null;if(PHC.has(p))return P
     else r='late'}
   PHC.set(p,r);return r}
 const yrLab=p=>!p||p.fa||!p.y0?'':p.y0===p.y1?`'${String(p.y0).slice(2)}`:`'${String(p.y0).slice(2)}–'${String(p.y1).slice(2)}`;
+/* what the card's own season actually played like, on the same scale as 評分 (shown only after the games) */
+const seasonOvr=p=>!p||p.fa?45:Math.max(45,Math.min(99,Math.round(72+2.3*pval(p))));
 function phaseBadge(p,g,small){const k=phaseOf(p),yr=g&&g.showYr&&yrLab(p),tk=typeof tkRate==='function'&&tkRate(p)>0;if(!k&&!yr&&!tk)return '';const P=k&&PHASE[k];
   return `<div class="phb ${small?'sm':''}">${P?`<span class="ph" style="--c:${P.c}">${P.nm}</span>`:''}${tk?`<span class="ph tk" style="--c:#b0186a" title="這張卡偶爾會單場接管比賽">爆發型</span>`:''}${yr?`<span class="yr">${yr}</span>`:''}</div>`}
 /* what the badge tells a reader, in rating points: the typical gap between a card of that phase and the player's best

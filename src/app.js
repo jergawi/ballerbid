@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25a';
+const APPV='2026.11.25b';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -625,7 +625,7 @@ setInterval(()=>{snapPrev=snapOf();tickAuth();tickBots()},250);
 let NEWV=null,lastChk=0;
 async function checkUpdate(){if(location.protocol!=='https:'||NEWV||Date.now()-lastChk<300000)return;lastChk=Date.now();
   try{const t=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text(),m=/APP[V]='([^']+)'/.exec(t);if(m&&m[1]!==APPV){NEWV=m[1];render()}}catch(e){}}
-setTimeout(checkUpdate,3000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+setTimeout(checkUpdate,3000);setInterval(checkUpdate,600000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 
 /* ---------- views ---------- */
 let ui={quit:false,sel:null,themeOpen:false,reveal:new Set(),amt:{},pb:null,pbDone:new Set(),pbSp:null};
@@ -1319,6 +1319,10 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
     <div class="small mut" style="text-align:center;margin-top:6px">第 ${gNo} / ${L.length} 場</div></div>`}
 /* who could take over: each team's 爆發型 players, the chance per game that one of them takes over, and how often it
    happened, so a run with no takeovers reads as the dice it is rather than as something rigged */
+/* after the games: the card's 評分 next to what that season actually played like, so a surprise (Wade's injured
+   2007-08 shows 88 on the card and plays like a 75) is visible instead of feeling rigged */
+function ovrShift(p,g){if(!p||p.fa||g.ovr===false)return '';const a=ovrOf(p),b=seasonOvr(p),d=b-a;
+  return `<i class="tag ovs ${d<=-4?'dn':d>=3?'up':''}">評分 ${a} → 本季 ${b}</i>`}
 function tkSummary(g,sim){const rows=g.sides.map(s=>{const R=rosterOf(g,s).filter(p=>tkRate(p)>0),ch=1-R.reduce((t,p)=>t*(1-tkRate(p)),1);
     let n=0,gp=0;sim.series.forEach(z=>{if(z.a!==s&&z.b!==s)return;gp+=z.games.length;(z.tk||[]).forEach(t=>{if(t[s])n++})});
     return `<span style="color:${col(s)}">${esc(nm(S,s))}</span> ${R.length?`${R.length} 人・每場約 ${Math.round(ch*100)}%・實際 ${n}/${gp} 場`:'沒有爆發型球員'}`});
@@ -1345,7 +1349,7 @@ function vResults(){
     ${sim.mvp?`<div class="small mut" style="margin-top:8px">冠軍 MVP：${esc(sim.mvp.n)}（決勝場 ${sim.mvp.pts} 分 ${sim.mvp.reb} 籃板 ${sim.mvp.ast} 助攻）</div>`:''}${tkSummary(g,sim)}</div>`;
   const teamBlock=(s,d0)=>{const R=rosterOf(g,s),t=T[s];
     const rows=R.map((p,i)=>{const pi=posInfo(p,p.slot);return `<div class="srow ${s} rs ${isBench(p.slot)?'bench':''}" style="--d:${(d0+0.1*i).toFixed(2)}s"><div class="sl">${isBench(p.slot)?roleLab(p.role,true):esc(p.slot)}</div><div class="bd"><span class="pr">$${p.price}</span><div class="nm">${esc(p.n)}</div>
-      <div class="sb">${esc(sub(p))}${p.est&&p.est.length?' · 估':''}${pi.tier>0?`<i class="tag t${pi.tier}">${pi.lab}</i>`:''}</div>
+      <div class="sb">${esc(sub(p))}${p.est&&p.est.length?' · 估':''}${pi.tier>0?`<i class="tag t${pi.tier}">${pi.lab}</i>`:''}${ovrShift(p,g)}</div>
       <div class="st">${[['pts','PPG'],['trb','RPG'],['ast','APG'],['stl','SPG'],['blk','BPG']].map(([k,l])=>`<div><b>${fmt(p[k])}</b><i>${l}</i></div>`).join('')}</div></div></div>`}).join('');
     return `<div class="teamhead ${s} rs" style="--d:${(d0-0.1).toFixed(2)}s"><span class="nm">${esc(nm(S,s))}</span><span class="grow small mut">花 $${g.spent[s]}・剩 $${left(g,s)}</span><span class="grade">${t.grade}</span><span class="pct">贏過本主題 ${t.pct}% 的隨機陣容</span></div>${rows}`};
   let d=2.6;const blocks=sim.order.map(s=>{const h=teamBlock(s,d);d+=0.6;return h}).join('');

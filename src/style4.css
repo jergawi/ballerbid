@@ -622,3 +622,5 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .mcard2 .ovrb.sm{position:static;display:inline-flex;flex-direction:row;align-self:flex-start;box-shadow:none;margin:0 0 4px}
 .pcard .ovrb:not(.sm){position:static;flex-direction:row;align-items:baseline;gap:6px;width:max-content;margin:0 auto 4px;padding:5px 12px 4px;box-shadow:none}
 .pcard .ovrb:not(.sm) b{font-size:20px}.pcard .ovrb:not(.sm) i{font-size:11px;margin:0}
+
+.tag.ovs{background:#eef1f7;color:#4a5570}.tag.ovs.dn{background:#fdecea;color:#b3261e}.tag.ovs.up{background:#e7f6ec;color:#1e7a3c}
