@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-WU6UQPw5W08bEPxn7xhlOLs5FLJ3n3YmIvMx0BnSrzI=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-k0/YFVsG3cmLZVBGbNZmib+lJEd8/rRML6dLwzQpI84=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -452,6 +452,13 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .aw b{display:block;font-size:14.5px;line-height:1.3}
 @media (max-width:380px){.awards{grid-template-columns:1fr}.otile small{font-size:11.5px}}
 
+.mchip.hid{background:#f6f7fa;border-style:dashed;color:#8d95a8}
+.mchip .peek{font-size:12px;font-weight:800;color:var(--acc);background:none;border:0;padding:0}
+.solo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.solo .bb{min-height:54px}
+.pres .prow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--soft)}
+.pres .prow:last-of-type{border-bottom:0}
+
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
 <script src="https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js" integrity="sha384-ilRYg/zm2XqUafLvBoGVk40UfNRnvUkYMy+e/JPo4YgsFR6X9Q3jYEkqFQXquX4r" crossorigin="anonymous" async></script>
@@ -480,7 +487,7 @@ const LS='ballerbid_local_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24g';
+const APPV='2026.11.24h';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -574,7 +581,11 @@ const SD=()=>S.game?S.game.sides:sidesOf(S.cfg.players);
 const openSlots=(g,s)=>{const u=g.rosters[s].map(r=>r.slot);return SLOTS(g).filter(x=>!u.includes(x))};
 const openN=(g,s)=>openSlots(g,s).length;
 const left=(g,s)=>(g.bud&&g.bud[s]!=null?g.bud[s]:g.budget)-g.spent[s];
-const maxBid=(g,s)=>openN(g,s)?left(g,s)-(openN(g,s)-1):0;
+const maxBid=(g,s)=>openN(g,s)?(g.solo&&g.solo.who===s?1:left(g,s)-(openN(g,s)-1)):0;
+/* when every other team is full, the last team no longer bids: each next card costs $1 and it may skip only a few,
+   so it cannot flip through the whole pool for free */
+const soloOf=g=>{if(g.sides.length<2)return null;const e=g.sides.filter(s=>openN(g,s)>0);return e.length===1?e[0]:null};
+const SOLO_SKIPS=n=>Math.min(3,Math.ceil(n/2));
 const remain=g=>g.items.length-g.idx;
 const isOver=g=>g.sides.every(s=>openN(g,s)===0)||g.idx>=g.items.length;
 const cur=g=>g.items[g.idx];
@@ -653,7 +664,7 @@ function startGame(S){
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false};
   const se=S.season;if(se){if(baseId)se.used.push(baseId);S.game.round=se.rounds.length+1;S.game.rounds=se.n}
   const bb=seasonBudgets(S);S.game.bud=bb.b;S.game.budAdj=bb.adj;
-  S.sim=null;S.last=null;S.back={};
+  S.sim=null;S.last=null;S.back={};S.sready={};
   if(c.mis){const M=dealMissions(S.game,rng(hash(S.game.gid+'mis')));if(sides.every(s=>M[s].opts.length)){S.game.mis=M;S.game.misEnd=t+T_MIS*(NET.mode==='local'?n:1);S.phase='mission';return true}}
   S.phase='auction';startCard(S);return true;
 }
@@ -669,7 +680,8 @@ const canAct=(g,s)=>openN(g,s)>0&&!g.pass[s]&&g.bid.who!==s&&maxBid(g,s)>g.bid.a
 function advance(S){const g=S.game,o=g.order||g.sides,n=o.length;let i=o.indexOf(g.turn);if(i<0)i=n-1;
   for(let k=1;k<=n;k++){const s=o[(i+k)%n];if(canAct(g,s)){g.turn=s;g.deadline=now()+(g.bid.who?T_BID:T_NOBID);return}}
   g.turn=null;if(g.bid.who)sell(S,g.bid.who,g.bid.amt);else skipCard(S)}
-function startCard(S){const g=S.game;g.bid={who:null,amt:0};g.pass={};g.pending=null;g.order=cardOrder(g);g.turn=null;advance(S)}
+function startCard(S){const g=S.game;g.bid={who:null,amt:0};g.pass={};g.pending=null;g.order=cardOrder(g);g.turn=null;
+  const so=soloOf(g);if(so&&(!g.solo||g.solo.who!==so))g.solo={who:so,skips:SOLO_SKIPS(openN(g,so))};advance(S)}
 /* deck runs out: deal more from the theme, then give passed cards one more look, then fill with free agents */
 function refill(g){const need=g.sides.reduce((t,s)=>t+openN(g,s),0);if(!need)return false;
   const used=new Set(g.items.map(p=>p.n)),fresh=shuffle(g.pool.filter(p=>!used.has(p.n))).slice(0,need+1);
@@ -703,6 +715,7 @@ function tickAuth(){
   const off=new Set();if(NET.mode==='host'&&NET.joinedAt&&Date.now()-NET.joinedAt>15000){const on=onlineSet();g.sides.forEach(s=>{const c=S.seats[s]&&S.seats[s].cid;if(c&&c!==CID&&!on.has(c))off.add(s)})}
   if(S.phase==='auction'&&off.size){
     if(g.pending&&off.has(g.pending.who)){assign(S,bestSlot(g,g.pending.who));changed=true}
+    else if(!g.pending&&g.solo&&off.has(g.solo.who)&&g.turn===g.solo.who){g.bid={who:g.turn,amt:1};sell(S,g.turn,1);changed=true}
     else if(!g.pending){for(const s of off)if(openN(g,s)>0&&!g.pass[s]&&g.bid.who!==s){g.pass[s]=true;changed=true}if(changed&&(!g.turn||g.pass[g.turn]))advance(S)}
   }
   if(S.phase==='mission'&&g.mis){g.sides.forEach(s=>{if(g.mis[s].pick==null&&(off.has(s)||t>g.misEnd)){autoPick(g,s);changed=true}});
@@ -710,7 +723,7 @@ function tickAuth(){
   if(S.phase==='lineup'&&off.size){for(const s of off)if(!g.ready[s]){g.ready[s]=true;changed=true}if(changed&&g.sides.every(s=>g.ready[s])){finish(S)}}
   if(S.phase==='auction'){
     if(g.pending){if(t>g.pending.deadline){assign(S,bestSlot(g,g.pending.who));changed=true}}
-    else if(t>g.deadline){if(g.turn)g.pass[g.turn]=true;advance(S);changed=true}
+    else if(t>g.deadline){if(g.solo&&g.turn===g.solo.who){g.bid={who:g.turn,amt:1};sell(S,g.turn,1)}else{if(g.turn)g.pass[g.turn]=true;advance(S)}changed=true}
   }else if(S.phase==='lineup'&&t>g.lineupEnd){finish(S);changed=true}
   if(changed){fx(snapPrev);commit()}
 }
@@ -741,17 +754,20 @@ function apply(S,a,actor){
       const L=poolLenFor(c),need=c.players*(c.size||5);if(L)c.draw=clamp(c.draw,Math.min(need,L),L);
       S.err='';S.by=actor.cid;return true}
     case 'start':{if(!isP||!(S.phase==='lobby'&&!S.season||S.phase==='season'&&S.season&&!S.season.done))return false;return startGame(S)}
+    case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||NET.mode==='local'||!ALL.includes(r)||!S.season.sides.includes(r))return false;
+      S.sready=S.sready||{};S.sready[r]=!!a.v;if(S.season.sides.every(x=>S.sready[x])&&!waitingFor().length)return startGame(S)||true;return true}
     case 'mpick':{if(S.phase!=='mission'||!g||!g.mis||!g.sides.includes(who))return false;const M=g.mis[who],i=a.i|0;if(i<0||i>=M.opts.length)return false;
       M.pick=i;M.auto=0;if(g.sides.every(s=>g.mis[s].pick!=null))beginAuction(S);return true}
     case 'endSeason':{if(!isP||S.phase!=='season'||!S.season||S.season.done)return false;if(!S.season.rounds.length){S.season=null;S.phase='lobby';return true}seasonEnd(S);return true}
     case 'closeSeason':{if(!isP||S.phase!=='season'||!S.season||!S.season.done)return false;S.lastSeason=S.season;S.season=null;S.phase='lobby';return true}
     case 'bid':{if(S.phase!=='auction'||g.pending||!g.sides.includes(who))return false;
-      if(a.idx!=null&&a.idx!==g.idx)return false;const amt=a.amt|0;
+      if(a.idx!=null&&a.idx!==g.idx)return false;const amt=g.solo&&g.solo.who===who?1:a.amt|0;
       if(g.turn!==who||g.pass[who]||g.bid.who===who||amt<=g.bid.amt||amt<1||amt>maxBid(g,who))return false;
       g.bid={who,amt};
       if(eligible(g).length===1)sell(S,who,amt);else advance(S);return true}
     case 'pass':{if(S.phase!=='auction'||g.pending||!g.sides.includes(who)||g.bid.who===who||g.pass[who])return false;
-      if(a.idx!=null&&a.idx!==g.idx)return false;g.pass[who]=true;if(g.turn===who||!g.turn)advance(S);return true}
+      if(a.idx!=null&&a.idx!==g.idx)return false;if(g.solo&&g.solo.who===who){if(g.solo.skips<=0||g.turn!==who)return false;g.solo.skips--}
+      g.pass[who]=true;if(g.turn===who||!g.turn)advance(S);return true}
     case 'slot':{if(S.phase!=='auction'||!g.pending||!(r==='all'||r===g.pending.who))return false;return assign(S,a.slot)}
     case 'swap':{if(S.phase!=='lineup'||!g.sides.includes(who)||g.ready[who])return false;
       const R=g.rosters[who],x=R.find(q=>q.slot===a.x),y=R.find(q=>q.slot===a.y);if(!x||!y||x===y)return false;[x.slot,y.slot]=[y.slot,x.slot];return true}
@@ -976,31 +992,34 @@ function misCard(g,s,x,i,opts){const m=misOf(x.id);if(!m)return '';const on=opts
     <div class="mnm">${esc(m.nm)}</div><div class="mdesc">${esc(misDesc(x,g,s))}</div>
     ${opts.mini?'':`<div class="mfoot"><span>${esc(misFoot(x))}</span><b>${misReward(x.tier,se)}</b></div>`}
     ${on&&opts.btn?'<span class="mck">✓</span>':''}</${opts.btn?'button':'div'}>`}
-function misChip(g,s){const P=misProg(g,s);if(!P)return '';const st=P.dead?'dead':P.done===true?'ok':P.done==='now'?'now':'';
+/* missions are secret until the results: online you only see your own; on one shared phone each player can peek at his own */
+function misVis(g,s){if(!g.mis)return false;if(g.misRes)return true;if(NET.mode==='local')return ui.peek===s;return myRole()===s}
+function misChip(g,s){const P=misProg(g,s);if(!P)return '';
+  if(!misVis(g,s))return `<div class="mchip hid"><span>🎯 任務保密</span>${NET.mode==='local'?`<button class="peek" data-act="peek" data-who="${s}">👁 看我的任務</button>`:''}</div>`;const st=P.dead?'dead':P.done===true?'ok':P.done==='now'?'now':'';
   return `<div class="mchip ${st}" title="${esc(misDesc(P.x,g,s))}"><span>${P.m.ic} ${esc(P.m.nm)}</span><b>${P.dead?'✗ ':P.done===true?'✓ ':''}${esc(P.txt)}</b></div>`}
 function roundPill(g){return g&&g.round?`<span class="spill">🏁 季賽 第 ${g.round}/${g.rounds} 局</span>`:''}
 function vMission(){
   const g=S.game,r=myRole(),local=NET.mode==='local',sides=g.sides,se=!!g.round;
   const chooser=local?sides.find(s=>g.mis[s].pick==null):(ALL.includes(r)?r:null);
-  const status=sides.map(s=>{const M=g.mis[s],done=M.pick!=null,m=done?misOf(M.opts[M.pick].id):null;
-    return `<div class="mstat ${done?'done':''} ${s===chooser?'mcur':''}"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><span class="grow"></span>${done?`<span>${m.ic} ${esc(m.nm)}${M.auto?'<small>（自動）</small>':''}</span>`:'<span class="mut">選擇中…</span>'}</div>`}).join('');
+  const status=sides.map(s=>{const M=g.mis[s],done=M.pick!=null,m=done?misOf(M.opts[M.pick].id):null,show=done&&!local&&s===r;
+    return `<div class="mstat ${done?'done':''} ${s===chooser?'mcur':''}"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><span class="grow"></span>${show?`<span>${m.ic} ${esc(m.nm)}${M.auto?'<small>（自動）</small>':''}</span>`:done?`<span>已選好 ✓${M.auto?'<small>（自動）</small>':''}</span>`:'<span class="mut">選擇中…</span>'}</div>`}).join('');
   let body='';
   if(chooser){const M=g.mis[chooser];
-    body=`<div class="mwho" style="color:${col(chooser)}">${local?`輪到 <b>${esc(nm(S,chooser))}</b> 選任務`:'選一張你的任務'}</div>
+    body=`<div class="mwho" style="color:${col(chooser)}">${local?`輪到 <b>${esc(nm(S,chooser))}</b> 選任務<div class="small mut" style="font-weight:600">其他人先別看 🙈</div>`:'選一張你的任務'}</div>
       <div class="mcards" id="mc-${g.gid}-${chooser}">${M.opts.map((x,i)=>misCard(g,chooser,x,i,{btn:1,sel:M.pick===i})).join('')}</div>
       ${!local&&M.pick!=null?'<div class="small mut center" style="margin-top:8px">已選好，等其他人…（還可以改）</div>':''}`}
   else body=`<div class="center mut" style="margin:18px 0"><span class="spin"></span> 玩家正在選任務…</div>`;
   return `<div class="mhead">${roundPill(g)}<div class="mtitle">🎯 選一張任務卡</div>
-    <div class="small mut">每人 3 張選 1 張。<b>任務是公開的</b>，對手看得到，也可能搶人卡你。<br>開打前達成就能加戰力${se?'，季賽還多拿積分':''}。主題還是保密。</div>
+    <div class="small mut">每人 3 張選 1 張。<b>任務保密</b>，只有你看得到，結算時才揭曉。<br>開打前達成就能加戰力${se?'，季賽還多拿積分':''}。主題也還是保密。</div>
     <div style="max-width:300px;margin:10px auto 0">${clock(g.misEnd,T_MIS*(NET.mode==='local'?g.sides.length:1),'時間到自動選 ★★：')}</div></div>
     ${body}<section class="card mstats">${status}</section>
     <div class="mlegend small mut">★ 簡單 +${MTIER[1].bonus}・★★ 普通 +${MTIER[2].bonus}・★★★ 困難 +${MTIER[3].bonus} 戰力${se?'（★★★ 季賽 +2 分，其他 +1 分）':''}。難度是依照這次牌堆算的。</div>`}
 // small strip on the auction screen with every player's mission
-function misStrip(g){if(!g.mis)return '';
-  return `<details class="mstrip" ${ui.mstrip?'open':''}><summary data-act="mstrip">🎯 任務 ${g.sides.map(s=>{const P=misProg(g,s);return P?`<i style="background:${col(s)}" class="${P.dead?'dead':P.done===true?'ok':''}"></i>`:''}).join('')}</summary>
-    ${g.sides.map(s=>{const P=misProg(g,s);if(!P)return '';return `<div class="msrow"><b style="color:${col(s)}">${esc(nm(S,s))}</b>${misChip(g,s)}<div class="small mut">${esc(misDesc(P.x,g,s))}</div></div>`}).join('')}</details>`}
-function misHintBox(g,pl){const H=misHints(g,pl);if(!H.length)return '';
-  return `<div class="mhint">${H.map(h=>`<div style="color:${col(h.s)}">${h.t==='bad'?'⚠️':'🎯'} ${h.t==='bad'?`會讓 ${esc(nm(S,h.s))} 的「${esc(h.m.nm)}」破功`:`符合 ${esc(nm(S,h.s))} 的「${esc(h.m.nm)}」`}</div>`).join('')}</div>`}
+function misStrip(g){if(!g.mis||NET.mode==='local'||!g.sides.some(s=>misVis(g,s)))return '';const vis=g.sides.filter(s=>misVis(g,s));
+  return `<details class="mstrip" ${ui.mstrip?'open':''}><summary data-act="mstrip">🎯 我的任務 ${vis.map(s=>{const P=misProg(g,s);return P?`<i style="background:${col(s)}" class="${P.dead?'dead':P.done===true?'ok':''}"></i>`:''}).join('')}</summary>
+    ${vis.map(s=>{const P=misProg(g,s);if(!P)return '';return `<div class="msrow"><b style="color:${col(s)}">${esc(nm(S,s))}</b>${misChip(g,s)}<div class="small mut">${esc(misDesc(P.x,g,s))}</div></div>`}).join('')}</details>`}
+function misHintBox(g,pl){const H=misHints(g,pl).filter(h=>misVis(g,h.s));if(!H.length)return '';
+  return `<div class="mhint">${H.map(h=>`<div style="color:${col(h.s)}">${h.t==='bad'?'⚠️':'🎯'} ${h.t==='bad'?`會讓你的「${esc(h.m.nm)}」破功`:`符合你的「${esc(h.m.nm)}」`}</div>`).join('')}</div>`}
 function misResults(g,d){const R=g.misRes;if(!R||!Object.keys(R).length)return '';const se=!!g.round;
   return `<section class="card rs mres" style="--d:${d}s"><h2>🎯 任務結算</h2>${g.sides.map(s=>{const x=R[s];if(!x)return '';const m=misOf(x.id),P=misProg(g,s);
     return `<div class="mrrow ${x.done?'ok':'no'}"><span class="mrs">${x.done?'✓':'✗'}</span><div class="grow"><div><b style="color:${col(s)}">${esc(nm(S,s))}</b>・${m.ic} ${esc(m.nm)} <span class="mst2">${stars(x.tier)}</span></div>
@@ -1028,7 +1047,7 @@ function vSeason(){
       <section class="card rs" style="--d:1s"><details><summary>📜 每局紀錄</summary>${seasonHistory()}</details></section>
       <div class="rs" style="--d:1.1s"><button class="ghost" data-act="copyseason">📋 複製季賽結果</button>
       ${isP?`<button class="big" data-act="closeSeason" ${wait.length?'disabled':''}>${wait.length?`等 ${esc(wait.join('、'))} 看完結算…`:'回到大廳 →'}</button>`:''}</div>`}
-  const k=se.rounds.length,bb=seasonBudgets(S),c=S.cfg;
+  const k=se.rounds.length,bb=seasonBudgets(S),c=S.cfg,online=NET.mode!=='local',P=online?seasonPresence(se):null;
   const nextBud=se.sides.map(s=>{const a=bb.adj[s];return `<div class="nb"><span class="dot" style="background:${col(s)}"></span><b>${esc(nm(S,s))}</b><span class="grow"></span><b class="num">$${bb.b[s]}</b>${a?`<small class="${a<0?'dn':'up'}">${a<0?`上局冠軍 −$${-a}`:`墊底補償 +$${a}`}</small>`:''}</div>`}).join('');
   return `<div class="shero rs" style="--d:.02s"><div class="st1">🏁 季賽積分榜</div><div class="small mut">${k?`第 ${k} / ${se.n} 局結束`:`共 ${se.n} 局・還沒開打`}</div>${seasonDots(se)}</div>
     ${k?`<section class="card">${seasonRows(S,T,false)}</section>`:''}
@@ -1036,8 +1055,11 @@ function vSeason(){
     <section class="card rs" style="--d:.6s"><h2>第 ${k+1} 局預算</h2>${nextBud}
       <div class="small mut" style="margin-top:6px">${se.bal?'平衡機制：上局冠軍預算 −10%，積分墊底 +10%':'平衡機制關閉，大家預算一樣'}${c.mis?'・🎯 任務卡開啟':''}</div></section>
     ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
-    ${isP?`<div class="rs" style="--d:.7s">${wait.length?`<button class="big" disabled>等 ${esc(wait.join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">開始第 ${k+1} 局 →</button>`}
-      <button class="quit" data-act="endSeason">${ui.endSe?'再按一次：現在結束季賽並頒獎':'提前結束季賽'}</button></div>`:'<div class="note">等玩家開始下一局…</div>'}
+    ${online?`<section class="card rs pres" style="--d:.65s"><h2>誰準備好了</h2>${P.rows}<div class="small mut" style="margin-top:6px">大家都按「準備好了」就自動開始第 ${k+1} 局。</div></section>`:''}
+    ${isP?`<div class="rs" style="--d:.7s">${online?(se.sides.includes(r)?`<button class="big ${P.ready[r]?'ghost':''}" data-act="sready" data-v="${P.ready[r]?0:1}">${P.ready[r]?'取消準備':`準備好了 ✓`}</button>`:'')
+        +(P.off.length?`<button class="ghost" data-act="start">${esc(P.off.join('、'))} 離線了，不等了直接開始 →</button>`:'')
+      :wait.length?`<button class="big" disabled>等 ${esc(wait.join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">開始第 ${k+1} 局 →</button>`}
+      <button class="quit" data-act="endSeason">${ui.endSe?'再按一次：現在結束季賽並頒獎':'提前結束季賽'}</button></div>`:'<div class="note">等玩家準備好開始下一局…</div>'}
     ${k>1?`<section class="card"><details><summary>📜 每局紀錄</summary>${seasonHistory()}</details></section>`:''}`}
 function seasonText(){const se=S.season||S.lastSeason;if(!se)return '';const T=seasonTable(S);let t=`🏁 BALLER BID 季賽（${se.rounds.length}/${se.n} 局）\n`;
   T.forEach(x=>t+=`${x.rank}. ${nm(S,x.s)}　${x.pts} 分・${x.titles} 冠・系列 ${x.sw}–${x.sl}${se.mis?`・任務 ${x.mis}`:''}\n`);
@@ -1045,9 +1067,20 @@ function seasonText(){const se=S.season||S.lastSeason;if(!se)return '';const T=s
 function lastSeasonCard(){const ls=S.lastSeason;if(!ls||S.season)return '';const T=seasonTable(S),w=T.filter(x=>x.rank===1);
   return `<section class="card"><details><summary>🏁 上一季冠軍：${w.map(x=>`<b style="color:${col(x.s)}">${esc(nm(S,x.s))}</b>`).join('・')}（${ls.rounds.length} 局）</summary>${seasonRows(S,T,true)}
     <div class="awards" style="margin-top:8px">${seasonAwards(S).map(a=>`<div class="aw"><span class="aic">${a.ic}</span><div class="grow"><div class="small mut">${a.t}</div><b>${esc(a.v)}</b><div class="small mut">${esc(a.d)}</div></div></div>`).join('')}</div></details></section>`}
-function lineupMisNote(g){if(!g.mis)return '';const L=g.sides.map(s=>{const P=misProg(g,s);if(!P)return null;
+function lineupMisNote(g){if(!g.mis)return '';const L=g.sides.map(s=>{const P=misVis(g,s)&&misProg(g,s);if(!P)return null;
     if(P.m.k==='slot')return `${esc(nm(S,s))} 要把人排在 ${P.m.slot}`;if(P.m.k==='cmp'&&g.size===10)return `${esc(nm(S,s))} 的${esc(P.m.nm)}只算先發`;return null}).filter(Boolean);
   return `<div class="small" style="color:#b26a00;margin-top:2px">🎯 任務在開打那一刻判定${L.length?'：'+L.join('・'):''}</div>`}
+/* who is on the standings screen, still watching the results, ready, or offline */
+function seasonPresence(se){const on=onlineSet(),ready=S.sready||{},off=[];
+  const rows=se.sides.map(k=>{const st=S.seats[k],me=st&&st.cid===CID,live=st&&(me||on.has(st.cid)),watching=st&&S.last&&!(S.back&&S.back[st.cid]);
+    if(st&&!live)off.push(st.name);
+    const [c,t]=!st?['#bbb','空位']:!live?['#bbb','離線']:watching?['var(--acc)','還在看結算']:ready[k]?['var(--ok)','準備好了 ✓']:['#2f7cf6','在積分榜'];
+    return `<div class="prow"><span class="dot ${watching&&live?'pulse':''}" style="background:${c}"></span><b style="color:${col(k)}">${esc(nm(S,k))}</b>${me?'<small class="mut">（你）</small>':''}<span class="grow"></span><span class="small" style="color:${c};font-weight:800">${t}</span></div>`}).join('');
+  return{rows,ready,off}}
+// shown on the results screen of a season round while others have moved on
+function seasonWaitNote(){if(NET.mode==='local'||!S.season||!S.last||S.season.done)return '';const se=S.season,r=myRole(),ready=S.sready||{};
+  const L=se.sides.filter(k=>k!==r&&S.seats[k]&&S.back&&S.back[S.seats[k].cid]).map(k=>`<b style="color:${col(k)}">${esc(nm(S,k))}</b>${ready[k]?' 已準備好 ✓':' 在積分榜等你'}`);
+  return L.length?`<div class="note" style="margin-top:8px">⏳ ${L.join('・')}</div>`:''}
 
 /* ---------- matchup model ----------
  Base: OBPM+DBPM (Box Plus/Minus, Basketball-Reference), shrunk toward replacement level for small samples.
@@ -1207,7 +1240,7 @@ function commit(){
 }
 let pubChain=Promise.resolve();
 function publishState(){const snap=JSON.parse(JSON.stringify(S));pubChain=pubChain.then(async()=>{if(NET.client)NET.client.publish(topic('s'),await seal(snap),{qos:1,retain:true})}).catch(()=>{})}
-async function onMsg(t,buf){
+async function onMsg(t,buf){NET.lastRx=Date.now();
   let m;try{m=deepClean(await unseal(buf.toString()))}catch(e){return}if(!m)return;
   if(t===topic('h')){if(m.cid){const was=onlineSet().has(m.cid);NET.online.set(m.cid,Date.now());if(!was)render()}return}
   if(t===topic('a')){if(NET.mode!=='host'||!S)return;if(typeof m.cid!=='string'||typeof m.n!=='number'||!m.a)return;const cid=m.cid.slice(0,16);
@@ -1224,7 +1257,10 @@ function wire(c){
   c.on('message',(t,buf)=>{onMsg(t,buf)});
   c.on('reconnect',()=>{NET.conn=false;render()});c.on('offline',()=>{NET.conn=false;render()});
   c.on('connect',()=>{NET.conn=true;if(NET.mode==='host')publishState();render()});NET.conn=true;
-  const hb=async()=>{c.publish(topic('h'),await seal({cid:CID,name:MYNAME}));NET.online.set(CID,Date.now())};hb();
+  const hb=async()=>{c.publish(topic('h'),await seal({cid:CID,name:MYNAME}));NET.online.set(CID,Date.now())};hb();NET.hb=hb;NET.lastRx=Date.now();
+  c.on('connect',()=>{hb()});
+  // our own heartbeat echoes back every 4 s; silence for 12 s means the socket died without telling us
+  NET.timers.push(setInterval(()=>{if(document.visibilityState==='visible'&&NET.client===c&&Date.now()-(NET.lastRx||0)>12000){NET.lastRx=Date.now();NET.conn=false;render();try{c.reconnect()}catch(e){}}},3000));
   NET.timers.push(setInterval(hb,4000));
   NET.timers.push(setInterval(()=>{ // resend unacked actions; failover if the game owner vanished
     if(NET.mode==='guest'){const t=Date.now();NET.pending.forEach(async x=>{if(t-x.sent>3000){x.sent=t;c.publish(topic('a'),await seal({cid:CID,n:x.n,a:x.a}),{qos:1})}});
@@ -1264,7 +1300,9 @@ async function joinRoom(code,bi){
   NET.busy=false;render();
 }
 let wl=null;async function wakeLock(){try{if(navigator.wakeLock&&document.visibilityState==='visible')wl=await navigator.wakeLock.request('screen')}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NET.mode&&NET.mode!=='local')wakeLock()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NET.mode&&NET.mode!=='local'){wakeLock();
+  // back from the lock screen / another app: reconnect right away if the socket went quiet, then say we are here
+  if(NET.client){if(Date.now()-(NET.lastRx||0)>6000){NET.lastRx=Date.now();try{NET.client.reconnect()}catch(e){}}else if(NET.hb)NET.hb()}}});
 function setHash(){try{history.replaceState(null,'',location.pathname+location.search+'#room-'+NET.code+'-'+NET.bi)}catch(e){}}
 function inviteLink(){return location.href.split('#')[0]+'#room-'+NET.code+'-'+NET.bi}
 function leaveNet(){NET.timers.forEach(clearInterval);NET.timers=[];if(NET.client){try{NET.client.end(true)}catch(e){}}NET.client=null;
@@ -1339,7 +1377,8 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <li><b>預算</b>：每個空位至少留 $1。沒花完的錢每 $1 加 0.3 實力，最多加 2.5。</li>
   <li><b>排陣</b>：90 秒（10 人 120 秒），拖曳或點兩位球員互換。</li>
   <li><b>對戰</b>：每兩隊打七戰四勝，系列賽贏最多的奪冠。</li>
-  <li><b>🎯 任務卡</b>（選用）：開局每人 3 張選 1 張，任務公開。開打時達成就加戰力：★ +${MTIER[1].bonus}、★★ +${MTIER[2].bonus}、★★★ +${MTIER[3].bonus}。難度依這次牌堆計算，牌堆不夠的任務不會發。</li>
+  <li><b>最後一隊</b>：其他人都滿了時，剩下那隊不再競標，每張 $1 拿或跳過，最多跳 3 次，時間到自動拿下。</li>
+  <li><b>🎯 任務卡</b>（選用）：開局每人 3 張選 1 張，任務保密，結算才揭曉。開打時達成就加戰力：★ +${MTIER[1].bonus}、★★ +${MTIER[2].bonus}、★★★ +${MTIER[3].bonus}。難度依這次牌堆計算，牌堆不夠的任務不會發。</li>
   <li><b>🏁 季賽</b>（選用）：連打 3／5／7 局，冠軍 3 分、${'三人第二名 1 分、兩人輸家打滿七場 1 分'}，任務 +1（★★★ +2）。同分比冠軍數、系列賽勝負、淨勝分。可開平衡機制：上局冠軍預算 −10%、墊底 +10%。</li></ol>
   <h3>對戰怎麼算</h3><ul>
   <li><b>實力</b>：先發五人的 BPM 加總（以當年聯盟平均為基準），用 1,230 支真實球隊校正過。</li>
@@ -1413,7 +1452,7 @@ function vLobby(){
       ${c.season?`<div class="frow" style="margin-top:12px"><span class="fl">局數</span><div class="seg">${SEASON_N.map(n=>`<button class="chip ${c.season===n?'on':''}" data-act="cfg" data-k="season" data-v="${n}" ${dis}>${n} 局</button>`).join('')}</div></div>
       <button class="crow ${c.bal!==false?'on':''}" style="margin-top:10px" data-act="cfg" data-k="bal" data-v="${c.bal!==false?0:1}" ${dis}><span class="ck">${c.bal!==false?'✓':''}</span><span class="grow"><b>平衡機制</b><small>上局冠軍下一局預算 −10%，積分墊底 +10%</small></span></button>
       <div class="small mut" style="margin-top:8px">積分：冠軍 3 分${c.players===3?'、第二名 1 分':'、輸家打滿七場拿 1 分'}${c.mis?'、完成任務 +1（★★★ +2）':''}。每局換新主題${c.theme==='random'||c.pmode==='one'?'，同一季不重複':''}。</div>`:''}
-      ${c.mis&&!c.season?'<div class="small mut" style="margin-top:8px">任務公開，大家都看得到彼此的任務，可以搶人卡對手。</div>':''}</section>`;
+      ${c.mis&&!c.season?'<div class="small mut" style="margin-top:8px">任務保密，只有自己看得到，結算時才揭曉。</div>':''}</section>`;
   const cfg=play+`<section class="card"><h2>人數</h2><div class="seg">${[2,3].map(n=>`<button class="chip ${c.players===n?'on':''}" data-act="cfg" data-k="players" data-v="${n}" ${dis}>${n} 人</button>`).join('')}</div></section>
     <section class="card"><h2>陣容</h2><div class="seg">${[[5,'正規 5 人'],[10,'夢幻隊模式 10 人']].map(([n,l])=>`<button class="chip ${(c.size||5)===n?'on':''}" data-act="cfg" data-k="size" data-v="${n}" ${dis}>${l}</button>`).join('')}</div>
       <div class="small mut" style="margin-top:6px">${(c.size||5)===10?`5 先發＋5 替補，每人要標 10 位，卡池至少要 ${c.players*10} 人。建議預算 $${c.players===3?30:25} 以上。`:'5 位先發，標滿就開打。'}</div></section>
@@ -1464,9 +1503,11 @@ function bidRow(g,s,r){
   const out=full||passed||(!lead&&mx<=g.bid.amt);
   const rost=SLOTS(g).map(x=>{const q=g.rosters[s].find(y=>y.slot===x),L=isBench(x)?'替':x;return q?`<span class="f ${isBench(x)?'bench':''}" id="r-${g.gid}-${s}-${x}-${q.k}"><b>${L}</b>${esc(g.items[q.k].n.split(' ').slice(-1)[0])}</span>`:`<span class="${isBench(x)?'bench':''}"><b>${L}</b>—</span>`}).join('');
   const offl=NET.mode!=='local'&&S.seats[s]&&S.seats[s].cid!==CID&&!onlineSet().has(S.seats[s].cid);
-  const state=(offl?'📴 離線中（自動跳過）・':'')+(full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
-  const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt;
-  const ctrl=mine&&!out&&!lead?`<div class="bidin"><button class="stp" data-act="step" data-who="${s}" data-v="-1" ${can&&v>g.bid.amt+1?'':'disabled'}>−</button>
+  const state=(offl?'📴 離線中（自動跳過）・':'')+(g.solo&&g.solo.who===s&&!full?(turn?(mine?'對手都滿了：每位 $1，拿或跳過':'挑選中…'):''):full?'陣容已滿':passed?'不要了':lead?'領先中':(!lead&&mx<=g.bid.amt)?'錢不夠加價':turn?(mine?'輪到你出價':'出價中…'):'');
+  const v=amtFor(g,s),can=mine&&turn&&!out&&v<=mx&&v>g.bid.amt,solo=g.solo&&g.solo.who===s&&!full;
+  const ctrl=solo&&mine?`<div class="solo"><button class="bb go" data-act="bid" data-who="${s}" data-amt="1" ${turn?'':'disabled'}>拿下<small>$1</small></button>
+      <button class="bb pass" data-act="pass" data-who="${s}" ${turn&&g.solo.skips>0?'':'disabled'}>跳過<small>還能跳 ${g.solo.skips} 次</small></button></div>`
+    :mine&&!out&&!lead?`<div class="bidin"><button class="stp" data-act="step" data-who="${s}" data-v="-1" ${can&&v>g.bid.amt+1?'':'disabled'}>−</button>
       <input class="amt" type="number" inputmode="numeric" pattern="[0-9]*" data-in="amt" data-who="${s}" min="${g.bid.amt+1}" max="${mx}" value="${v}" ${turn?'':'disabled'} aria-label="出價金額">
       <button class="stp" data-act="step" data-who="${s}" data-v="1" ${can&&v<mx?'':'disabled'}>＋</button>
       <button class="bb go" data-act="bidv" data-who="${s}" ${can?'':'disabled'}>出價<small>$${v}</small></button></div>
@@ -1484,8 +1525,8 @@ function vAuction(){
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
   const b=g.bid;
-  const curBox=`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
-    ${g.pending||!g.turn?'':clock(g.deadline,b.who?T_BID:T_NOBID,`輪到 <b style="color:${col(g.turn)}">${esc(nm(S,g.turn))}</b>・`+(b.who?'不加價就算放棄：':'不出價就算不要：'))}</div>`;
+  const curBox=`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${g.solo&&!b.who?`<div class="mut">只剩 <b style="color:${col(g.solo.who)}">${esc(nm(S,g.solo.who))}</b> 有空位：不用競標，每位 $1<br><span class="small">跳過的牌直接流標，還能跳 ${g.solo.skips} 次；時間到自動拿下</span></div>`:!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
+    ${g.pending||!g.turn?'':clock(g.deadline,b.who?T_BID:T_NOBID,`輪到 <b style="color:${col(g.turn)}">${esc(nm(S,g.turn))}</b>・`+(g.solo&&g.turn===g.solo.who?'時間到自動拿下：':b.who?'不加價就算放棄：':'不出價就算不要：'))}</div>`;
   let sheet='';
   if(g.pending){const p=g.pending,os=openSlots(g,p.who),canPick=r==='all'||r===p.who;
     sheet=`<div class="sheet" id="sheet-${g.gid}-${g.idx}"><div class="in"><div style="font-weight:900;font-size:16px;color:${col(p.who)}">${esc(nm(S,p.who))} 以 $${p.amt} 標下</div><div style="font-size:22px;font-weight:900;margin-top:2px">${esc(pl.n)}</div>
@@ -1972,7 +2013,7 @@ function vResults(){
   <details style="margin-top:12px"><summary>🧾 競標紀錄（${g.log.length} 張）</summary><div class="log">${g.log.map((l,k)=>`<div><span>${k+1}. ${esc(l.n)}</span><span style="color:${l.who?col(l.who):'var(--mut)'}">${l.who?esc(nm(S,l.who))+' $'+l.amt:'流標'}</span></div>`).join('')}</div></details>
   ${leftover.length?`<details style="margin-top:12px"><summary>👀 主題裡沒被標走的 ${leftover.length} 位</summary><div class="small" style="margin-top:8px;color:#3d4458">${leftover.map(esc).join('、')}</div></details>`:''}</section>
   <div class="rs" style="--d:${d+0.4}s"><button class="ghost" data-act="copy">📋 複製結果（貼到群組）</button>
-  ${isP?`<button class="big" data-act="again">${g.round?(S.season&&S.season.done?'🏆 看季賽頒獎 →':'🏁 看季賽積分榜 →'):'回到大廳 →'}</button>`:`<button class="big" data-act="specback">${g.round?'看季賽積分榜 →':'回到大廳 →'}</button>`}</div>`;
+  ${g.round?seasonWaitNote():''}${isP?`<button class="big" data-act="again">${g.round?(S.season&&S.season.done?'🏆 看季賽頒獎 →':'🏁 看季賽積分榜 →'):'回到大廳 →'}</button>`:`<button class="big" data-act="specback">${g.round?'看季賽積分榜 →':'回到大廳 →'}</button>`}</div>`;
 }
 function seasonGain(g,sim){if(!g.round)return '';const se=S.season||S.lastSeason;if(!se)return '';const R=se.rounds.find(x=>x.k===g.round);if(!R)return '';
   return `<div class="sgainc rs" style="--d:1.65s"><div class="small mut">🏁 季賽 第 ${g.round}/${g.rounds} 局・本局積分</div><div class="sgain">${g.sides.map(s=>{const p=R.pts[s];return `<span style="border-color:${col(s)}"><b style="color:${col(s)}">${esc(nm(S,s))} +${p.t}</b>${p.b?` <small>${p.b===3?'冠軍':sim.order.indexOf(s)===1&&g.sides.length===3?'第二':'打滿七場'} +${p.b}</small>`:''}${p.m?` <small>🎯 +${p.m}</small>`:''}</span>`}).join('')}</div></div>`}
@@ -2009,6 +2050,8 @@ document.addEventListener('click',e=>{
     case 'copy':return withView(()=>copyText(summaryText(),'已複製 ✅'));
     case 'copyseason':return copyText(seasonText(),'已複製 ✅');
     case 'mstrip':e.preventDefault();ui.mstrip=!ui.mstrip;return render();
+    case 'peek':ui.peek=d.who;clearTimeout(ui.peekT);ui.peekT=setTimeout(()=>{ui.peek=null;render()},5000);return render();
+    case 'sready':return dispatch({a:'sready',v:d.v==='1'});
     case 'again':ui.backGid=S.last?S.last.game.gid:S.game&&S.game.gid;scrollTo(0,0);return dispatch({a:'again'});
     case 'specback':ui.backGid=S.last?S.last.game.gid:S.game&&S.game.gid;scrollTo(0,0);return render();
     case 'pbsp':case 'pbnext':case 'pbskip':return withView(()=>pbAct(a));
