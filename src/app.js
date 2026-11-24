@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24v';
+const APPV='2026.11.24w';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -197,7 +197,7 @@ function startGame(S){
   const t=now();
   S.game={gid:Math.random().toString(36).slice(2,9),theme:{id:th.id,name:th.name,tag:th.tag,cat:th.cat||'自訂',random:c.theme==='random'||!!th.random},
     pool:th.items,items:drawItems(th.items,draw,n*size/5),extra:0,idx:0,sides,size,rosters:{},spent:{},
-    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,hints:!!c.hints,ready:{},lineupEnd:0};
+    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
   sides.forEach(s=>{S.game.rosters[s]=[];S.game.spent[s]=0});S.game.base=S.game.items.length;
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false,fmt0:Math.floor(Math.random()*FMT_ROT.length)};
   const se=S.season;S.game.fmt=fmtFor(S);S.game.nom=!!c.nom;if(se){if(baseId)se.used.push(baseId);S.game.round=se.rounds.length+1;S.game.rounds=se.n}
@@ -206,7 +206,7 @@ function startGame(S){
   if(c.cards){S.game.cards=dealCards(S.game);S.game.cardEnd=t+T_CARD*(NET.mode==='local'?n:1);S.phase='cards';return true}
   prepNext(S);return true;
 }
-function beginAuction(S){const g=S.game;S.phase='auction';startCard(S)}
+function beginAuction(S){const g=S.game;S.phase='auction';if(!window.BB_FAST)g.gapEnd=now()+1300;startCard(S)}   // the first card waits for the 競標開始 title to clear
 function autoPick(g,s){const M=g.mis[s];if(M.pick!=null)return;const i=M.opts.findIndex(x=>x.tier===2);M.pick=i>=0?i:0;M.auto=1}
 function finish(S){const g=S.game;g.sides.forEach(s=>benchFix(g,s));g.misRes=misFinal(g);S.sim=simulate(S);S.phase='results';const ch=S.sim.champ;if(ch){const k=scoreKey(S,ch);const o=S.scores[k]||{n:nm(S,ch),w:0};o.n=nm(S,ch);o.w++;S.scores[k]=o}seasonRecord(S)}
 /* bidding order: 2 players alternate who opens each card (A,B,A,B…);
@@ -233,7 +233,15 @@ function nextCard(S){const g=S.game;g.gapEnd=now()+gapMs(g);g.idx++;g.bid={who:n
    next card's clock starts; actions inside the pause are ignored */
 const gapMs=g=>{if(window.BB_FAST)return 0;const v=g.reveal&&g.reveal.idx===g.idx?g.reveal:null,sold=g.log.length&&g.log[g.log.length-1].who;
   return v&&v.win&&!v.grab?3600:sold?2800:1400};   // sealed reveal (bars, then the winner) / any sale / a pass
-const t0=g=>Math.max(now(),g.gapEnd||0),inGap=g=>now()<(g.gapEnd||0)-200;
+/* reading time: after the pause, each new card is shown with its clock stopped for a few seconds (lobby: 看牌時間) so
+   people can take in the card before anyone may bid; bots wait it out too. Everyone still bidding can end it early. */
+const READ_OPTS=[0,3,5,8],readMs=g=>window.BB_FAST?0:(g.read==null?5:g.read)*1000;
+const t0=g=>Math.max(now(),g.gapEnd||0,g.readEnd||0),inGap=g=>now()<Math.max(g.gapEnd||0,g.readEnd||0)-200,inPause=g=>now()<(g.gapEnd||0)-200,
+  inRead=g=>now()<(g.readEnd||0)-200;
+function readDone(S,who,all){const g=S.game;if(S.phase!=='auction'||!inRead(g))return false;g.rd=g.rd||{};g.rd[who]=1;
+  const need=g.sides.filter(s=>!(typeof isBot==='function'&&isBot(s))&&openN(g,s)>0&&!(g.stage==='left'&&g.solo&&g.solo.who!==s));
+  if(!all&&!need.every(s=>g.rd[s]))return true;const d=Math.max(0,g.readEnd-Math.max(now(),g.gapEnd||0));
+  ['deadline','openAt'].forEach(k=>{if(g[k])g[k]-=d});g.readEnd=Math.max(now(),g.gapEnd||0);return true}
 // a won card goes straight onto the roster (see autoPlace); every card ends here or in skipCard
 function sell(S,who,amt){const g=S.game;g.turn=null;const pay=couponPay(g,who,amt);g.rosters[who].push({slot:null,k:g.idx,price:pay});g.spent[who]+=pay;autoPlace(g,who);
   g.log.push({n:cur(g).n,who,amt:pay,slot:placeNote(g,who,g.idx),...(pay<amt?{full:amt}:{})});nextCard(S)}
@@ -273,7 +281,7 @@ function apply(S,a,actor){
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
-      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
+      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.read!=null&&READ_OPTS.includes(n.read|0))c.read=n.read|0;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
       if(n.players===2||n.players===3){c.players=n.players;if(n.players===2&&S.seats.C&&NET.mode!=='local')S.seats.C=null}
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
@@ -293,6 +301,7 @@ function apply(S,a,actor){
     case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||offline()||!ALL.includes(r)||!S.season.sides.includes(r))return false;
       S.sready=S.sready||{};S.sready[r]=!!a.v;if(S.season.sides.every(x=>S.sready[x])&&!waitingFor().length)return startGame(S)||true;return true}
     case 'card':{if(!g||!g.sides.includes(who))return false;return useCard(S,who,a)}
+    case 'rdone':{if(!g||!g.sides.includes(who))return false;return readDone(S,who,r==='all'&&NET.mode==='local')}
     case 'mpick':{if(S.phase!=='mission'||!g||!g.mis||!g.sides.includes(who))return false;const M=g.mis[who],i=a.i|0;if(i<0||i>=M.opts.length)return false;
       M.pick=i;M.auto=0;if(g.sides.every(s=>g.mis[s].pick!=null))beginAuction(S);return true}
     case 'endSeason':{if(!isP||S.phase!=='season'||!S.season||S.season.done)return false;if(!S.season.rounds.length){S.season=null;S.phase='lobby';return true}seasonEnd(S);return true}
@@ -407,7 +416,17 @@ function withMins(per,inc){return per.map(x=>{let play=1,extra=0;(inc||[]).forEa
 const BO_P=0.08;
 function boCands(R,gi){const v=R.filter(p=>!p.fa).map(p=>pval(p)).sort((a,b)=>a-b),med=v[Math.floor(v.length/2)];
   const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n));return R.filter(p=>!p.fa&&pval(p)<med&&!out.has(p.n))}
-function boxFor(R,per,score,r,bo){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{pts:2.8,reb:1.3,ast:1.3}[k]||1:1;
+/* star takeovers: a star (MVP, Finals MVP, 2+ All-NBA 1st teams or 8+ All-Star games) sometimes
+   takes over a single game. Rate per star per game ~5-7%, a bit higher in his prime, lower as a rookie or late in
+   his career. That night his team gets ~4 extra points and he takes well over his usual share of the scoring.
+   Shown on the card as 爆發型. Bots value cards on the regular numbers only. */
+const TK_PTS=4;
+function tkRate(p){if(!p||p.fa)return 0;const b=bioOf(p)||{};let v=b.mvp>0?0.065:(b.all1>=2||b.as>=8||b.fmvp)?0.05:0;
+  if(!v)return 0;const ph=typeof phaseOf==='function'?phaseOf(p):null;return v*({prime:1.15,early:0.85,late:0.7,rook:0.6}[ph]||1)}
+function tkPick(R,gi,r){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n));
+  const c=R.filter(p=>!out.has(p.n)&&tkRate(p)>0);for(let i=c.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
+  for(const p of c)if(r()<tkRate(p))return p.n;return null}
+function boxFor(R,per,score,r,bo,tk){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{pts:2.8,reb:1.3,ast:1.3}[k]||1:x.p.n===tk?{pts:2.3,reb:1.15,ast:1.25}[k]||1:1;
   const w=k=>per.map(x=>{const b=st(x.p);return mf(x)*bx(x,k)*{pts:Math.pow(Math.max(2,b.pts*x.m.pts),0.65),reb:Math.max(1,b.trb*x.m.reb),ast:Math.max(.5,b.ast*x.m.ast),stl:Math.max(.2,b.stl*x.m.stl),blk:Math.max(.1,b.blk*x.m.blk),tov:Math.max(.3,b.tov*x.m.tov)}[k]*(0.75+0.5*r())});
   const tot=k=>per.reduce((t,x)=>{const b=st(x.p);return t+b[k==='reb'?'trb':k]*x.m[k]*mf(x)},0);
   const pts=alloc(score,w('pts')),reb=alloc(Math.round(clamp(tot('reb')*1.05,34,58)+gauss(r)*3),w('reb')),ast=alloc(Math.round(clamp(tot('ast'),18,32)+gauss(r)*2),w('ast'));
@@ -426,19 +445,20 @@ function simulate(S){
     const ra=pairRate(base[a],ro[a],ro[b]),rb=pairRate(base[b],ro[b],ro[a]);
     teams[a].posSum+=ra.posAdj;teams[a].posN++;teams[b].posSum+=rb.posAdj;teams[b].posN++;
     const margin=MARGIN*((ra.off+ra.def)-(rb.off+rb.def)),avg=112+0.2*((ra.off-rb.def)+(rb.off-ra.def))/2;
-    const p=Phi(margin/GSD),r=rng(hash(g.gid+a+b)),ri=rng(hash(g.gid+a+b+'inc')),rbo=rng(hash(g.gid+a+b+'bo'));let wa=0,wb=0;const games=[],inc=[],bo=[];
+    const p=Phi(margin/GSD),r=rng(hash(g.gid+a+b)),ri=rng(hash(g.gid+a+b+'inc')),rbo=rng(hash(g.gid+a+b+'bo')),rtk=rng(hash(g.gid+a+b+'tk'));let wa=0,wb=0;const games=[],inc=[],bo=[],tk=[];
     while(wa<4&&wb<4){const gi=g.size===10?incidents(ro[a],a,ri).concat(incidents(ro[b],b,ri)):[];inc.push(gi);
       const ca=gi.filter(x=>x.side===a).reduce((t,x)=>t+(x.cost||0),0),cb=gi.filter(x=>x.side===b).reduce((t,x)=>t+(x.cost||0),0),mg=margin+MARGIN*(cb-ca);
       const bg={};[a,b].forEach(s=>{if(rbo()<BO_P){const c=boCands(ro[s],gi);if(c.length)bg[s]=c[Math.floor(rbo()*c.length)].n}});bo.push(bg);
-      let sa=Math.round(avg+mg/2+gauss(r)*9)+(bg[a]?3:0),sb=Math.round(avg-mg/2+gauss(r)*9)+(bg[b]?3:0),ot=0;if(Math.abs(sa-sb)===1&&r()<0.55){sa=sb=Math.max(sa,sb)}/* NBA goes to OT ~6% of games; a raw gaussian tie alone gives ~2% */while(sa===sb){ot++;sa+=Math.round(5+r()*8);sb+=Math.round(5+r()*8)}games.push([sa,sb,ot]);sa>sb?wa++:wb++}
+      const tg={};[a,b].forEach(s=>{const n=tkPick(ro[s],gi,rtk);if(n)tg[s]=n});tk.push(tg);
+      let sa=Math.round(avg+mg/2+gauss(r)*9)+(bg[a]?3:0)+(tg[a]?TK_PTS:0),sb=Math.round(avg-mg/2+gauss(r)*9)+(bg[b]?3:0)+(tg[b]?TK_PTS:0),ot=0;if(Math.abs(sa-sb)===1&&r()<0.55){sa=sb=Math.max(sa,sb)}/* NBA goes to OT ~6% of games; a raw gaussian tie alone gives ~2% */while(sa===sb){ot++;sa+=Math.round(5+r()*8);sb+=Math.round(5+r()*8)}games.push([sa,sb,ot]);sa>sb?wa++:wb++}
     let pser=0;const C=(n,k)=>{let x=1;for(let t=1;t<=k;t++)x=x*(n-k+t)/t;return x};for(let l=0;l<=3;l++)pser+=C(3+l,l)*Math.pow(p,4)*Math.pow(1-p,l);
     const win=wa>wb?a:b,fav=p>=0.5?a:b,last=games[games.length-1];
     const li=inc[inc.length-1]||[],pa=withMins(withBench(ro[a],ra.per),li),pb=withMins(withBench(ro[b],rb.per),li);
-    const lb=bo[bo.length-1]||{},box={[a]:boxFor(pa.map(x=>x.p),pa,last[0],r,lb[a]),[b]:boxFor(pb.map(x=>x.p),pb,last[1],r,lb[b])};
+    const lb=bo[bo.length-1]||{},lt=tk[tk.length-1]||{},box={[a]:boxFor(pa.map(x=>x.p),pa,last[0],r,lb[a],lt[a]),[b]:boxFor(pb.map(x=>x.p),pb,last[1],r,lb[b],lt[b])};
     const mu=POS.map(sl=>{const x=ra.per.find(z=>z.p.slot===sl),y=rb.per.find(z=>z.p.slot===sl);if(!x||!y)return null;
       if(!x.m.why.length&&!y.m.why.length)return null;return{slot:sl,a:x.p.n,b:y.p.n,ma:x.m,mb:y.m,fa:+(x.f.off+x.f.def).toFixed(2),fb:+(y.f.off+y.f.def).toFixed(2)}}).filter(Boolean);
     teams[win].sw++;teams[a].gw+=wa;teams[a].gl+=wb;teams[b].gw+=wb;teams[b].gl+=wa;
-    series.push({a,b,wa,wb,games,inc,bo,p:+p.toFixed(3),pser:+pser.toFixed(3),win,fav,upset:win!==fav&&Math.abs(p-0.5)>0.05,box,mu,pa:+ra.posAdj.toFixed(2),pb:+rb.posAdj.toFixed(2)})}
+    series.push({a,b,wa,wb,games,inc,bo,tk,p:+p.toFixed(3),pser:+pser.toFixed(3),win,fav,upset:win!==fav&&Math.abs(p-0.5)>0.05,box,mu,pa:+ra.posAdj.toFixed(2),pb:+rb.posAdj.toFixed(2)})}
   sides.forEach(s=>{teams[s].posAdj=+(teams[s].posSum/Math.max(1,teams[s].posN)).toFixed(2)});
   const order=[...sides].sort((x,y)=>teams[y].sw-teams[x].sw||(teams[y].gw-teams[y].gl)-(teams[x].gw-teams[x].gl)||teams[y].strength-teams[x].strength);
   // MVP from champion's deciding-game boxes
@@ -667,6 +687,8 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <h3>對戰怎麼算</h3><ul>
   <li><b>傳奇組合</b>：湊齊三巨頭或王朝核心（公牛、Showtime、熱火、勇士、GDP…）另外加 0.8–2 戰力。</li>
   <li><b>爆發之夜</b>：角色球員偶爾會打出生涯代表作，那場多拿好幾分。</li>
+  <li><b>球星接管</b>：卡上標「爆發型」的球星（MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星），每場約 5–7% 機會接管比賽，那場球隊多約 4 分。巔峰期機率最高。電腦出價只看一般數據，不算這個。</li>
+  <li><b>看牌時間</b>：每張卡翻開先停幾秒（大廳可調），倒數完才能出價，電腦也得等。</li>
   <li><b>實力</b>：先發五人的 BPM 加總（以當年聯盟平均為基準），用 1,230 支真實球隊校正過。</li>
   <li><b>位置</b>：放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位；空間型長人能拉開，但籃板吃虧。</li>
   <li><b>化學</b>：真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。</li>
@@ -750,6 +772,8 @@ function vLobby(){
       <input data-in="budget" type="number" min="5" max="999" inputmode="numeric" style="width:90px" placeholder="自訂" value="${[10,15,20,25].includes(c.budget)?'':c.budget}" ${dis}></div></section>
     <section class="card"><h2>主題</h2>${themeBox}</section>
     ${L?`<section class="card"><h2>翻牌數量</h2><div class="row"><div class="stepper"><button data-act="cfg" data-k="draw" data-v="${c.draw-1}" ${dis}>−</button><div class="v">${c.draw}</div><button data-act="cfg" data-k="draw" data-v="${c.draw+1}" ${dis}>+</button></div><div class="small mut grow">張（主題共 ${L} 位）<br>每個位置保證至少 ${c.players*(c.size||5)/5} 位能打的人</div></div></section>`:''}
+    <section class="card"><h2>看牌時間</h2><div class="row wrapx">${READ_OPTS.map(x=>`<button class="chip ${(c.read==null?5:c.read)===x?'on':''}" data-act="cfg" data-k="read" data-v="${x}" ${dis}>${x?x+' 秒':'不停'}</button>`).join('')}</div>
+      <div class="small mut" style="margin-top:6px">每張卡翻開後先停幾秒讓大家看清楚，倒數完才能出價（電腦也一樣要等）。大家都按「看好了」就提早開始。</div></section>
     <section class="card"><h2>進階</h2><div class="seg">
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
       <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
@@ -826,15 +850,15 @@ function vAuction(){
       ${g.showStats?`<div class="psub">${esc(sub(pl))}</div><div class="pstats">${[['pts','PTS'],['trb','REB'],['ast','AST'],['stl','STL'],['blk','BLK']].map(([k,l])=>`<div><b>${fmt(pl[k])}</b><i>${l}</i></div>`).join('')}</div>`:''}</div>`;
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
-  const b=g.bid;
-  const curBox=g.sb?(g.tie?revealBox(g,g.idx):'')+sealedBox(g):g.price!=null?snatchBox(g):`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
+  const b=g.bid,rdg=inRead(g)&&!g.stage;
+  const curBox=rdg?readBox(g,r):g.sb?(g.tie?revealBox(g,g.idx):'')+sealedBox(g):g.price!=null?snatchBox(g):`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
     ${!g.turn?'':clock(g.deadline,b.who?T_BID:T_NOBID,`輪到 <b style="color:${col(g.turn)}">${esc(nm(S,g.turn))}</b>・`+(b.who?'不加價就算放棄：':'不出價就算不要：'),r===g.turn&&NET.mode!=='local')}</div>`;
   const ex=g.extra||0,base=g.base||g.items.length,openAll=g.sides.reduce((t,s)=>t+openN(g,s),0),left2=g.items.length-g.idx,canAdd=EXTRA_MAX-ex;
   const deckNote=pl.extra?`<div class="xnote">🔔 加牌 ${g.idx-base+1}/${ex}・流標換來的明星，${canAdd?`還能再補 ${canAdd} 張`:'這是最後幾張了'}</div>`
     :left2+canAdd<openAll+2&&left2<=openAll+1?`<div class="xnote warn">⚠️ 牌快不夠了：還剩 ${left2} 張${canAdd?`＋最多補 ${canAdd} 張`:''}，沒標到的位置會用自由球員補</div>`:'';
   return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}${fmtPill(g)}<div class="small mut">之後還有 ${remain(g)-1} 張${canAdd?`<br><small>流標可補 ${canAdd} 張</small>`:''}</div></div>${deckNote}
   <div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}<div class="stage">${card}</div>${mktStrip(g)}${legHintBox(g,pl)}${misHintBox(g,pl)}${hintBox}${curBox}
-  ${g.sides.map(s=>bidRow(g,s,r)).join('')}
+  ${g.sides.map(s=>bidRow(g,s,r,rdg)).join('')}
   ${r==='all'||ALL.includes(r)?`<button class="quit" data-act="quit">${ui.quit?'再按一次確認放棄本局':'放棄本局'}</button>`:''}`;
 }
 function vLineup(){
@@ -879,7 +903,7 @@ const KTXT={three:['{n} 底角三分，刷！','{n} 接球就投，三分入網'
   alley:['{a} 拋出空中接力，{n} 接球灌籃！'],assist:['{a} 不看人妙傳，{n} 輕鬆得分','{a} 精準長傳，{n} 快攻上籃'],
   block:['{n} 送出大火鍋！','{n} 把球搧到場邊！'],steal:['{n} 抄截，一路快攻！','{n} 預判傳球路線，抄截成功']};
 const KPTS={three:3,logo:3,and1:3,mid:2,rim:2,dunk:2,post:2,putback:2,ankle:2,alley:2,assist:2,block:0,steal:0};
-const KICO={boom:'💥',three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'💥',post:'🏀',putback:'🏀',ankle:'😵',alley:'🚀',assist:'🤝',block:'🚫',steal:'🧤',timeout:'⏸',run:'🔥',hot:'🔥',tech:'😤',ot:'⏱',clutch:'🏆',rest:'🪑',foul:'⚠️',foulout:'❌',eject:'🟥'};
+const KICO={boom:'💥',takeover:'👑',three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'💥',post:'🏀',putback:'🏀',ankle:'😵',alley:'🚀',assist:'🤝',block:'🚫',steal:'🧤',timeout:'⏸',run:'🔥',hot:'🔥',tech:'😤',ot:'⏱',clutch:'🏆',rest:'🪑',foul:'⚠️',foulout:'❌',eject:'🟥'};
 /* signature traits of well-known stars (from widely cited "signature moves" lists and highlights).
    They change how a play is shown and nudge which play type a player picks; how often they happen is still
    tied to his numbers: chase-down blocks scale with block rate, swats only replace blocks the stats produce,
@@ -951,7 +975,7 @@ function offKind(p,mates,r){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{cons
   if(passers.length&&k!=='putback'&&k!=='ankle'&&k!=='logo'&&r()<0.3){const a=PICK(passers,r);return{k:(k==='dunk'||k==='rim')&&r()<0.5?'alley':k==='three'?'three':'assist',a}}
   return{k,a:null}}
 function fill(t,p,a,r){return t.replace('{n}',callN(p,r)).replace('{a}',a?callN(a,r):'')}
-function gameEvents(z,game,boxA,boxB,R,r,inc,bo){inc=inc||[];bo=bo||{};
+function gameEvents(z,game,boxA,boxB,R,r,inc,bo,tk){inc=inc||[];bo=bo||{};tk=tk||{};
   const [sa,sb,ot]=game,[qa,qb]=game.q,P=qa.length,ev=[];
   const teams={[z.a]:{box:boxA,R:R[z.a]},[z.b]:{box:boxB,R:R[z.b]}},other=s=>s===z.a?z.b:z.a,tn=s=>nm(S,s);
   const ptsOf=(T,x)=>{const b=T.box.find(y=>y.n===x.n);return b?b.pts:2};
@@ -985,6 +1009,10 @@ function gameEvents(z,game,boxA,boxB,R,r,inc,bo){inc=inc||[];bo=bo||{};
       ev.push({q:i.q,t:i.t,clk,side:i.side,kind:'eject',p:i.n,txt:`${N(i.n)} 第二次技術犯規，被驅逐出場 🟥${sub}`})}});
   Object.entries(bo).forEach(([s,n])=>{const b=teams[s]&&teams[s].box.find(x=>x.n===n);if(!b)return;const q=Math.min(P-1,2),t=0.55+0.3*r(),mm=12*(1-t),clk=`${Math.floor(mm)}:${String(Math.floor((mm%1)*60)).padStart(2,'0')}`;
     ev.push({q,t,clk,side:s,kind:'boom',p:n,txt:`${N(n)} 打出生涯之夜，第三節就拿了 ${Math.max(12,Math.round(b.pts*0.7))} 分 🔥`})});
+  Object.entries(tk).forEach(([s,n])=>{const b=teams[s]&&teams[s].box.find(x=>x.n===n);if(!b)return;const q=Math.min(P-1,3),t=0.3+0.25*r(),mm=12*(1-t),clk=`${Math.floor(mm)}:${String(Math.floor((mm%1)*60)).padStart(2,'0')}`;
+    const p=teams[s].R.find(x=>x.n===n);ev.push({q,t,clk,side:s,kind:'takeover',p:n,sp:n,sid:p&&p.id,txt:`${N(n)} 接管比賽！球隊連續 ${3+Math.floor(r()*3)} 波進攻都交給他，全場 ${b.pts} 分`});
+    // he takes the next couple of scoring plays of his team
+    let k=0;ev.forEach(e=>{if(k<2&&e.side===s&&KPTS[e.kind]>0&&e.q===q&&e.t>t&&e.p!==n&&p){const st2=sigText(p,e.kind==='three'?'three':e.kind==='dunk'?'dunk':'mid',null,r);e.p=n;e.a=null;e.play=null;e.txt=st2.txt;delete e.sig;if(st2.sig){e.sig=st2.sig;e.sp=st2.sp;e.sid=st2.sid}e.kind=e.kind==='three'?'three':e.kind==='dunk'?'dunk':'mid';k++}})});
   ev.sort((x,y)=>(x.q+x.t)-(y.q+y.t));
   // scoring runs: three scoring plays in a row by one team
   let run=0,last=null;const runs=[];ev.forEach((e,i)=>{if(KPTS[e.kind]>0){if(e.side===last)run++;else{last=e.side;run=1}if(run===3)runs.push({q:e.q,t:Math.min(0.995,e.t+0.01),clk:e.clk,side:e.side,kind:'run',txt:`${tn(e.side)} 打出一波 ${8+Math.floor(r()*6)}–0 攻勢 🔥`})}});
@@ -1002,12 +1030,12 @@ function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)retu
     const pa0=withBench(ro[z.a],ra.per),pb0=withBench(ro[z.b],rb.per);
     const r=rng(hash(g.gid+z.a+z.b+'pb'));let wa=0,wb=0;
     z.games.forEach((gm,gi)=>{const [sa,sb,ot]=gm,last=gi===z.games.length-1,inc=(z.inc&&z.inc[gi])||[],pa=withMins(pa0,inc),pbb=withMins(pb0,inc);
-      const bg=(z.bo&&z.bo[gi])||{},bA=last?z.box[z.a]:boxFor(pa.map(x=>x.p),pa,sa,r,bg[z.a]),bB=last?z.box[z.b]:boxFor(pbb.map(x=>x.p),pbb,sb,r,bg[z.b]);
+      const bg=(z.bo&&z.bo[gi])||{},tg=(z.tk&&z.tk[gi])||{},bA=last?z.box[z.a]:boxFor(pa.map(x=>x.p),pa,sa,r,bg[z.a],tg[z.a]),bB=last?z.box[z.b]:boxFor(pbb.map(x=>x.p),pbb,sb,r,bg[z.b],tg[z.b]);
       const game=[sa,sb,ot];game.q=periods(sa,sb,ot,r);
-      const ev=gameEvents(z,game,bA,bB,{[z.a]:pa.map(x=>x.p),[z.b]:pbb.map(x=>x.p)},r,inc,bg);
+      const ev=gameEvents(z,game,bA,bB,{[z.a]:pa.map(x=>x.p),[z.b]:pbb.map(x=>x.p)},r,inc,bg,tg);
       sa>sb?wa++:wb++;
       const all=bA.map(x=>({...x,s:z.a})).concat(bB.map(x=>({...x,s:z.b})));const pog=all.sort((x,y)=>(y.pts+1.2*y.reb+1.5*y.ast+2*y.stl+2*y.blk)-(x.pts+1.2*x.reb+1.5*x.ast+2*x.stl+2*x.blk))[0];
-      list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB,inc,bo:bg})})});
+      list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB,inc,bo:bg,tk:tg})})});
   pbCache={gid:g.gid+sim.champ,d:list};return list}
 const PB_Q=6000,PB_HOLD=2600,PB_SEG=1150,PB_POST=550;
 function pbDur(G){return G.q[0].length*PB_Q+PB_HOLD}
@@ -1046,7 +1074,7 @@ setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.
  post entry for bigs), then the shot. Steals turn into fast breaks the other way. Teams switch ends at halftime. */
 const CW=360,CH=200,HX={L:22,R:338},HY=100;
 const SET=[[118,100],[88,30],[88,170],[42,52],[20,140]];
-const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest','boom']);
+const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest','boom','takeover']);
 function teamCol(s){const v=getComputedStyle(document.documentElement).getPropertyValue({A:'--a',B:'--b',C:'--c3'}[s]||'--a').trim();return v||'#2f7cf6'}
 function court(ctx){ctx.fillStyle='#f3e3c6';ctx.fillRect(0,0,CW,CH);ctx.strokeStyle='rgba(120,80,30,.45)';ctx.lineWidth=1.2;
   ctx.strokeRect(4,4,CW-8,CH-8);ctx.beginPath();ctx.moveTo(CW/2,4);ctx.lineTo(CW/2,CH-4);ctx.stroke();ctx.beginPath();ctx.arc(CW/2,HY,22,0,7);ctx.stroke();
@@ -1090,6 +1118,16 @@ function endLayout(E,z,ro,prevL){if(!E||DEAD.has(E.kind))return prevL;
   const off=E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side,def=off===z.a?z.b:z.a,right=attacksRight(z,off,E.q),P={};
   if(E.kind==='steal'){const run=!right;ro[E.side].forEach((p,i)=>{P[E.side+i]=at(run,i===0?14:40+i*12,HY+(i-2)*24)});ro[off].forEach((p,i)=>{P[off+i]=at(run,60+i*14,HY+(i-2)*30)});return P}
   ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx*0.6,lerp(HY,y,0.7))});ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
+/* playback sound: each highlight makes its sound at the moment it lands on court (the ball through the net, the hand on
+   the ball), not when its line appears in the feed. Jumps in the clock (seeking, a new game) make no sound, and at high
+   speed the per-sound minimum gaps in sfx() keep it from turning into noise. */
+const PB_SND={three:'swish',logo:'swish',dunk:'dunk',alley:'dunk',rim:'net',mid:'net',post:'net',putback:'net',and1:'net',ankle:'net',assist:'net',
+  block:'block',steal:'steal',clutch:'clutch',takeover:'ooh',boom:'ooh',run:'ooh',foul:'whistle',tech:'whistle',eject:'whistle',foulout:'whistle',timeout:'whistle',ot:'horn'};
+let pbSnd={k:null,e:0};
+function pbSound(G,ev,e,done){const k=G.si+'-'+G.gi;if(pbSnd.k!==k||e<pbSnd.e||e-pbSnd.e>1200||done){pbSnd={k,e};return}const e0=pbSnd.e;pbSnd.e=e;
+  ev.forEach((x,i)=>{const nm=PB_SND[x.kind];if(!nm)return;let T=x.T;const s0=i>0?ev[i-1].T+PB_POST:0;
+    if(x.kind==='steal')T=s0+0.5*(x.T-s0);else if(x.kind==='block')T=s0+0.9*(x.T-s0);else if(DEAD.has(x.kind))T=x.T-400;
+    if(T>e0&&T<=e)sfx(nm)})}
 function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getElementById('court');if(!cv||!S||document.hidden)return;
   withView(()=>{if(S.phase!=='results'||!ui.pb)return;const st=pbState();if(!st)return;const {G,e,done}=st,z=G.z;
   let ctx=null;try{ctx=cv.getContext('2d')}catch(_){}if(!ctx)return;const k=cv.width/CW;pbAdvance();
@@ -1099,7 +1137,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
   let ci=ev.findIndex(x=>x.T+PB_POST>e);if(ci<0)ci=ev.length;
   const ro=lineupAt(G,z,full,ev,Math.min(ci,ev.length-1),e);
   let L=tipoff(z,ro);for(let i=0;i<ci;i++)L=endLayout(ev[i],z,ro,L);
-  const E=done?null:ev[ci],s0=ci>0?ev[ci-1].T+PB_POST:0;
+  const E=done?null:ev[ci],s0=ci>0?ev[ci-1].T+PB_POST:0;pbSound(G,ev,e,done);
   let P={...L},ball=null,flash=null,hl=null,banner=null,fallen=null;
   const idx=(s,n)=>{const i=ro[s].findIndex(p=>p.n===n);return i>=0?i:(hash(String(n))%5)};
   if(E&&!DEAD.has(E.kind)){
@@ -1196,7 +1234,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
         if(u>0.9||pu){const v=pu||0;ball=[P[off+si][0]+(right?-1:1)*v*60,P[off+si][1]+v*44,8*(1-v)];flash=['🚫 火鍋！',Math.max(seg(u,0.9,1)*0.3,v)]}}
       else{hl=off+si;if(pu){ball=[H[0],HY+pu*4,0];flash=[`${KICO[E.kind]||'🏀'} +${KPTS[E.kind]||2}`,pu]}}
     }}
-  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',boom:'生涯之夜！',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
+  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',boom:'生涯之夜！',takeover:'接管比賽！',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
   if(E&&E.kind==='clutch'&&e>E.T)banner=['🏆 致勝球！',cl01((e-E.T)/PB_POST)];
   // camera: zoom in on the action during key moments
   const wa=warpAt(G,e),ww=wa.w;let zf=1,fx=CW/2,fy=HY;
@@ -1227,8 +1265,16 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
   if(ww&&ww.lab&&!done){ctx.save();ctx.globalAlpha=0.6+0.4*Math.abs(Math.sin(Date.now()/300));ctx.font='900 11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
     ctx.lineWidth=3;ctx.strokeStyle='rgba(20,26,46,.85)';ctx.strokeText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.fillStyle='#ffcf33';ctx.fillText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.restore()}
   })}
-function drawBall(ctx,x,y,h){ctx.beginPath();ctx.arc(x,y+h*0.25+2,3.2,0,7);ctx.fillStyle='rgba(0,0,0,.18)';ctx.fill();
-  ctx.beginPath();ctx.arc(x,y-h,3.6+h*0.08,0,7);ctx.fillStyle='#f07a1e';ctx.fill();ctx.strokeStyle='#7a3a0c';ctx.lineWidth=.8;ctx.stroke()}
+/* the ball: orange leather with a light spot, and the black seams of a basketball (one straight seam each way and
+   two curved ones), turning as it travels so a dribble or a pass reads as a spinning ball */
+function drawBall(ctx,x,y,h){const R=4.8+h*0.09,cy=y-h;ctx.beginPath();ctx.ellipse(x,y+h*0.25+2,Math.max(2.2,4-h*0.05),Math.max(1.2,2-h*0.03),0,0,7);ctx.fillStyle=`rgba(0,0,0,${Math.max(.08,.2-h*.004)})`;ctx.fill();
+  ctx.save();ctx.translate(x,cy);ctx.rotate((x*0.11+y*0.07+h*0.2)%(Math.PI*2));
+  const gr=ctx.createRadialGradient(-R*0.35,-R*0.4,R*0.15,0,0,R);gr.addColorStop(0,'#ffb067');gr.addColorStop(0.55,'#ef7a22');gr.addColorStop(1,'#c4561a');
+  ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fillStyle=gr;ctx.fill();ctx.save();ctx.clip();
+  ctx.strokeStyle='#3a1a08';ctx.lineWidth=Math.max(.55,R*0.12);ctx.lineCap='round';ctx.beginPath();
+  ctx.moveTo(-R,0);ctx.lineTo(R,0);ctx.moveTo(0,-R);ctx.lineTo(0,R);
+  ctx.moveTo(-R*0.62,-R*0.82);ctx.quadraticCurveTo(-R*0.12,0,-R*0.62,R*0.82);ctx.moveTo(R*0.62,-R*0.82);ctx.quadraticCurveTo(R*0.12,0,R*0.62,R*0.82);ctx.stroke();ctx.restore();
+  ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.strokeStyle='#6a2e08';ctx.lineWidth=.8;ctx.stroke();ctx.restore()}
 function pop(ctx,x,y,txt,u,size){const sc=u<.25?u/.25*1.2:1.2-(u-.25)*.27;ctx.save();ctx.globalAlpha=u>.8?(1-u)/.2:1;ctx.translate(x,y-u*8);ctx.scale(sc,sc);
   ctx.font=`900 ${size||16}px system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.strokeText(txt,0,0);ctx.fillStyle='#1c2333';ctx.fillText(txt,0,0);ctx.restore()}
 requestAnimationFrame(courtFrame);
@@ -1260,10 +1306,11 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
     <div class="pbc"><button class="ghost" data-act="pbsp">⏩ ${ui.pb.sp}x</button>
       <button class="big" data-act="pbnext">${done?(isLast?'看最終結算 →':'下一場 →'):'⏭ 跳過這場'}</button></div>
     <div class="small mut" style="text-align:center;margin-top:6px">第 ${gNo} / ${L.length} 場</div></div>`}
-function boLine(z,k){if(!z.bo||!z.bo.some(x=>x&&Object.keys(x).length))return '';let L=[];try{L=pbData().filter(G=>G.si===k)}catch(e){}
-  const items=[];z.bo.forEach((bg,gi)=>Object.entries(bg||{}).forEach(([s,n])=>{const G=L.find(x=>x.gi===gi),b=G&&(s===z.a?G.bA:G.bB).find(x=>x.n===n);
-    items.push(`<span style="color:${col(s)}">💥 G${gi+1} ${esc(String(n).split(' ').slice(-1)[0])}${b?` ${b.pts} 分`:''}</span>`)}));
-  return `<div class="small" style="margin-top:4px">爆發之夜：${items.join('・')}</div>`}
+function boLine(z,k){const has=A=>A&&A.some(x=>x&&Object.keys(x).length);if(!has(z.bo)&&!has(z.tk))return '';let L=[];try{L=pbData().filter(G=>G.si===k)}catch(e){}
+  const row=(A,lab)=>{if(!has(A))return '';const items=[];A.forEach((bg,gi)=>Object.entries(bg||{}).forEach(([s,n])=>{const G=L.find(x=>x.gi===gi),b=G&&(s===z.a?G.bA:G.bB).find(x=>x.n===n);
+    items.push(`<span style="color:${col(s)}">G${gi+1} ${esc(String(n).split(' ').slice(-1)[0])}${b?` ${b.pts} 分`:''}</span>`)}));
+    return `<div class="small" style="margin-top:4px">${lab}：${items.join('・')}</div>`};
+  return row(z.tk,'球星接管')+row(z.bo,'爆發之夜')}
 function vResults(){
   const g=S.game,sim=S.sim,r=myRole();if(!sim)return `<div class="center mut" style="margin-top:60px"><span class="spin"></span> 模擬中…</div>`;
   if(!ui.pbDone.has(g.gid))return vPlayback();
@@ -1409,6 +1456,7 @@ document.addEventListener('click',e=>{
     case 'sstep':{const g=S.game,lo=g.tie?g.tie.amt:0,k='s'+g.idx+d.who,cur0=ui.amt[k]!=null?ui.amt[k]:(+(document.querySelector(`[data-in="samt"][data-who="${d.who}"]`)||{}).value||0);ui.amt[k]=clamp(cur0+(+d.v),lo,maxBid(g,d.who));return render()}
     case 'sbid':{const g=S.game,k='s'+g.idx+d.who,el=document.querySelector(`[data-in="samt"][data-who="${d.who}"]`);let v=+d.amt;if(el&&!t.classList.contains('pass'))v=parseInt(el.value,10);
       const lo=g.tie?g.tie.amt:0,mx=maxBid(g,d.who);if(isNaN(v)||v<lo)return toast(`至少 $${lo}`);if(v>mx)return toast(`你最多只能出 $${mx}（要留錢補滿陣容）`);return dispatch({a:'sbid',who:d.who,amt:v,idx:g.idx})}
+    case 'rdone':{const g=S.game,me=myRole();return dispatch({a:'rdone',who:me==='all'||!g.sides.includes(me)?g.sides[0]:me})}
     case 'grab':sfx('grab');return dispatch({a:'grab',who:d.who,idx:S.game.idx,p:dutchAt(S.game,now())});
     case 'spass':return dispatch({a:'spass',who:d.who,idx:S.game.idx});
     case 'brole':return dispatch({a:'brole',who:d.who,slot:d.v,role:d.role});

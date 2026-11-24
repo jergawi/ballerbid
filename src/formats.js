@@ -38,10 +38,11 @@ function leftPick(S,j){const g=S.game;if(j<g.idx||j>=g.items.length||g.items[j].
 // sign nobody else: drop the rest of the deck, free agents fill the open spots
 function leftNone(S){const g=S.game;g.items.length=g.idx;g.idx--;g.stage=null;nextCard(S);return true}
 // called by startCard after the usual reset; returns true when the format took over the card
-function fmtStart(S){const g=S.game;g.sb=null;g.grab=null;g.price=null;g.openAt=null;g.tie=null;g.stage=null;
+function fmtStart(S){const g=S.game;g.sb=null;g.grab=null;g.price=null;g.openAt=null;g.tie=null;g.stage=null;g.readEnd=0;g.rd={};
   if(g.solo){g.stage='left';g.leftEnd=t0(g)+T_LEFT;g.turn=null;return true}   // the last team picks from what is left
   if(g.nominated){g.nominated=false;g.order=[g.nomBy].concat(g.order.filter(s=>s!==g.nomBy))}   // the nominator acts first
   else if(g.nom&&remain(g)>=2){const by=g.order.find(s=>openN(g,s)>0);if(by){g.stage='nom';g.nomBy=by;g.nomEnd=t0(g)+T_NOM;g.turn=null;return true}}
+  g.rd={};g.readEnd=Math.max(now(),g.gapEnd||0)+readMs(g);   // reading time for the card that is now up (not for the nomination market)
   const f=fmtOf(g);
   if(f==='sealed'){g.sb={};g.deadline=t0(g)+T_SEAL;g.turn=null;return true}
   if(f==='snatch'){const cap=Math.max(1,...bidders(g).map(s=>maxBid(g,s))),avg=(g.budget||10)/(g.size||5);

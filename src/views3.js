@@ -94,3 +94,11 @@ function soldBanner(g,H){const l=H.l,p=g.items[H.k],d=Math.max(300,H.until-H.at)
   if(!l.who)return `<div class="soldb pass" style="--d:${d}ms"><div class="sd1">流標</div><div class="sd2">沒有人要 ${esc(last)}</div><div class="sdbar"><i></i></div></div>`;
   return `<div class="soldb" style="--c:${col(l.who)};--d:${d}ms"><div class="sd1">成交</div>
     <div class="sd2"><b>${esc(nm(S,l.who))}</b> 標下 ${esc(last)}</div><div class="sd3"><b class="sdp">$${l.amt}</b>${l.full?`<s>$${l.full}</s><small>打折券</small>`:''}${l.slot?`<span>${esc(l.slot)}</span>`:''}</div><div class="sdbar"><i></i></div></div>`}
+
+/* reading time box: the clock is stopped while everyone takes in the new card */
+function readBox(g,r){const left=Math.max(0,(g.readEnd||0)-now()),need=g.sides.filter(s=>!isBot(s)&&openN(g,s)>0),loc=r==='all'&&NET.mode==='local';
+  const me=loc?g.sides[0]:r,mine=loc||need.includes(r),done=!loc&&g.rd&&g.rd[me],n=need.filter(s=>g.rd&&g.rd[s]).length;
+  clearTimeout(ui.readT);ui.readT=setTimeout(()=>render(),left+80);
+  return `<div class="cur readb"><div class="rdh">看牌時間</div>${clock(g.readEnd,readMs(g),'倒數完才能出價・',false)}
+    ${need.length>1&&!loc?`<div class="small mut">${n}/${need.length} 人看好了</div>`:''}
+    ${mine?`<button class="ghost rdbtn" data-act="rdone" ${done?'disabled':''}>${done?'等其他人看完…':'看好了，開始'}</button>`:''}</div>`}

@@ -152,7 +152,7 @@ function botNeed(s){const g=S.game;if(!g||!g.sides.includes(s))return null;
   if(g.sb){const el=g.tie?g.tie.sides:bidders(g);return el.includes(s)&&g.sb[s]==null?k+'s'+(g.tie?'t':'')+ck:null}
   if(g.price!=null)return !g.grab&&!g.pass[s]&&bidders(g).includes(s)?k+'g'+ck:null;
   return g.turn===s?k+g.bid.amt+':'+g.bid.who+ck:null}
-function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-x)*R(),t0=Math.max(now(),g.gapEnd||0);
+function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-x)*R(),t0=Math.max(now(),g.gapEnd||0,g.readEnd||0);
   if(window.BB_FAST)return now();
   switch(a.a){
     case 'mpick':return t0+rr([2500,5000]);

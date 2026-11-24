@@ -603,3 +603,9 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 @keyframes dstep{0%{transform:translateY(-10px) scale(1.12);opacity:.4}100%{transform:none;opacity:1}}
 .cur.snatch.live{border-color:var(--acc)}
 .ptag{transition:none}
+
+/* reading time */
+.cur.readb{display:flex;flex-direction:column;align-items:stretch;gap:6px;border-style:dashed;border-color:#c9d2e6;background:#f7f9fd}
+.readb .rdh{font-weight:900;font-size:15px;letter-spacing:.04em;color:#3a4560}
+.readb .rdbtn{margin-top:2px;padding:9px 12px;font-size:15px}
+.phb .ph.tk{letter-spacing:.06em}

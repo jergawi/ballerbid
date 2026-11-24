@@ -91,8 +91,33 @@ const SND={
   cheer:(c,t)=>crowd(c,t,{dur:2.8,peak:0.17,voices:7,claps:30}),
   applause:(c,t)=>crowd(c,t,{dur:1.9,peak:0.05,voices:0,claps:34}),
   champ:(c,t)=>{[523,659,784,1046].forEach((f,i)=>voice(c,t+i*0.11,{type:'triangle',f,dur:i===3?0.55:0.2,peak:0.13}));voice(c,t+0.33,{f:523,dur:0.6,peak:0.07})},
-  error:(c,t)=>voice(c,t,{type:'triangle',f:jit(300,.02),f2:240,dur:0.12,peak:0.09})};
-const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90};
+  error:(c,t)=>voice(c,t,{type:'triangle',f:jit(300,.02),f2:240,dur:0.12,peak:0.09}),
+  /* ---- game playback ----
+     Built the way procedural-audio work builds impacts: a noise source shaped by filters for air and net, and a few
+     damped sine modes at non-integer ratios for metal (that inharmonic spread is what makes a rim sound like steel). */
+  // a three that touches nothing but net: a short falling "shh" of nylon plus the snap of the net, very little low end
+  swish:(c,t)=>{burst(c,t,{f:jit(5200,.06),f2:2300,q:0.8,dur:0.24,peak:0.13});burst(c,t+0.015,{f:jit(7600,.05),q:1.2,dur:0.09,peak:0.06});
+    burst(c,t+0.09,{f:jit(3000,.06),f2:1800,q:1,dur:0.14,peak:0.04});voice(c,t,{f:jit(170,.05),f2:110,dur:0.07,peak:0.035})},
+  // any other make: the same net, softer and shorter
+  net:(c,t)=>{burst(c,t,{f:jit(4200,.08),f2:2200,q:0.9,dur:0.16,peak:0.075});burst(c,t+0.06,{f:jit(2600,.06),q:1,dur:0.08,peak:0.025})},
+  // dunk: a body thump, the rim ringing (steel modes) and the stanchion rattling for a moment, then a short roar
+  dunk:(c,t)=>{voice(c,t,{f:jit(120,.05),f2:44,dur:0.26,peak:0.32});burst(c,t,{f:jit(380,.06),q:0.8,dur:0.07,peak:0.22});burst(c,t+0.004,{f:jit(2600,.05),q:2,dur:0.03,peak:0.08});
+    const f0=jit(395,.04);[[1,0.055,0.9],[2.32,0.04,0.65],[3.87,0.03,0.45],[5.61,0.02,0.3],[7.42,0.012,0.2]].forEach(([r,p,d])=>voice(c,t+0.003,{f:f0*r,dur:d,peak:p,a:0.002}));
+    for(let i=0;i<7;i++)burst(c,t+0.03+i*0.034,{f:jit(260,.12),q:2.2,dur:0.045,peak:0.09*Math.pow(0.7,i)});
+    crowd(c,t+0.12,{dur:1.3,peak:0.06,voices:3,claps:6})},
+  // block: a hand slapping the ball (a dull pop with some slap on top) and a crowd "ooh"
+  block:(c,t)=>{voice(c,t,{f:jit(200,.05),f2:85,dur:0.1,peak:0.22});burst(c,t,{f:jit(1300,.08),q:1,dur:0.045,peak:0.15});crowd(c,t+0.1,{dur:1,peak:0.045,voices:3,claps:0})},
+  // steal: two short sneaker squeaks
+  steal:(c,t)=>{[0,0.07].forEach((d,i)=>{voice(c,t+d,{type:'triangle',f:jit(2000+i*250,.04),f2:2600+i*200,dur:0.055,peak:0.04});burst(c,t+d,{f:2400,q:6,dur:0.04,peak:0.025})})},
+  // referee whistle: a pea whistle, a high tone with the fast flutter of the pea
+  whistle:(c,t)=>{const o=c.createOscillator(),lfo=c.createOscillator(),lg=c.createGain(),g=c.createGain(),am=c.createGain();o.type='sine';o.frequency.value=jit(3050,.02);
+    lfo.frequency.value=34;lg.gain.value=0.45;am.gain.value=0.55;lfo.connect(lg);lg.connect(am.gain);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.05,t+0.02);g.gain.setValueAtTime(0.05,t+0.28);g.gain.exponentialRampToValueAtTime(0.0001,t+0.36);
+    o.connect(am);am.connect(g);g.connect(SFX.out);o.start(t);lfo.start(t);o.stop(t+0.4);lfo.stop(t+0.4);o.onended=()=>{o.disconnect();lfo.disconnect();lg.disconnect();am.disconnect();g.disconnect()}},
+  // a crowd swell for big moments inside a game (a run, a takeover, a career night)
+  ooh:(c,t)=>crowd(c,t,{dur:1.7,peak:0.075,voices:4,claps:8}),
+  clutch:(c,t)=>{SND.swish(c,t);crowd(c,t+0.1,{dur:2,peak:0.12,voices:6,claps:20})}};
+const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90,swish:140,net:140,dunk:350,block:300,steal:250,whistle:400,ooh:1500,clutch:1500};
 // gesture: called inside a tap, so a context that is still resuming may queue the sound (it plays as soon as it resumes)
 function sfx(name,delay,gesture,arg){if(!SFX.lv||!SND[name])return;sfxInit();const c=SFX.ctx;if(!c)return;if(c.state!=='running'){c.resume().catch(()=>{});if(!gesture)return}
   const n=performance.now();if(n-(SFX.last[name]||0)<(SFX_GAP[name]||120))return;SFX.last[name]=n;try{SND[name](c,c.currentTime+0.01+(delay||0),arg)}catch(e){}}

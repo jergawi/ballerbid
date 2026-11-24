@@ -24,7 +24,7 @@ function prepNext(S){const g=S.game,c=S.cfg,n=g.sides.length;
   if(c.mis&&!g.mis){const M=dealMissions(g,rng(hash(g.gid+'mis')));if(g.sides.every(s=>M[s].opts.length)){g.mis=M;g.misEnd=now()+T_MIS*(NET.mode==='local'?n:1);S.phase='mission';return}}
   beginAuction(S)}
 // can this side use the swap right now: a real card is up and nobody has committed money to it
-function canSwap(g,s){if(!hasCard(g,s,'swap')||S.phase!=='auction'||inGap(g)||g.stage||g.solo||remain(g)<2||cur(g).fa)return false;
+function canSwap(g,s){if(!hasCard(g,s,'swap')||S.phase!=='auction'||inPause(g)||g.stage||g.solo||remain(g)<2||cur(g).fa)return false;
   if(g.sb)return !g.tie;if(g.price!=null)return !g.grab;return !g.bid.who}
 const cardEv=(g,who,id,x)=>{g.ev={n:((g.ev&&g.ev.n)||0)+1,who,id,at:now(),...x}};
 function useCard(S,who,a){const g=S.game;if(!g||!g.cards||!g.cards[who])return false;const C=g.cards[who],id=a.id;
@@ -34,7 +34,7 @@ function useCard(S,who,a){const g=S.game;if(!g||!g.cards||!g.cards[who])return f
   switch(id){
     case 'swap':{if(!canSwap(g,who))return false;const p=g.items.splice(g.idx,1)[0];g.items.push(p);C.used.swap=true;cardEv(g,who,id,{n2:p.n});startCard(S);return true}
     case 'coupon':{C.armed=!C.armed;if(C.armed)cardEv(g,who,id,{});return true}
-    case 'scout':{if(inGap(g))return false;const R=g.sides.filter(t=>t!==who);const t=R.length===1?R[0]:R.includes(a.t)?a.t:null;if(g.mis&&!t)return false;
+    case 'scout':{if(inPause(g))return false;const R=g.sides.filter(t=>t!==who);const t=R.length===1?R[0]:R.includes(a.t)?a.t:null;if(g.mis&&!t)return false;
       const next=g.items.slice(g.idx+1).filter(p=>!p.fa).slice(0,3).map(p=>({n:p.n,pos:canPlay(p)}));
       const M=t&&g.mis&&g.mis[t],mis=M&&M.pick!=null?M.opts[M.pick]:null;
       C.scout={next,t,mis,at:g.idx};C.used.scout=true;cardEv(g,who,id,{});return true}}

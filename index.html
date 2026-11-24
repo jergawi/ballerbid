@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-BUVAx2nIM2Wz1+PlB5wFvvlfmSHRG+BZ9ghg0F84pEM=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-kVV3OY4eAoCYvKDfXML5Q98s7iVYhhgKLmBDZqgovT8=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -615,6 +615,12 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .cur.snatch.live{border-color:var(--acc)}
 .ptag{transition:none}
 
+/* reading time */
+.cur.readb{display:flex;flex-direction:column;align-items:stretch;gap:6px;border-style:dashed;border-color:#c9d2e6;background:#f7f9fd}
+.readb .rdh{font-weight:900;font-size:15px;letter-spacing:.04em;color:#3a4560}
+.readb .rdbtn{margin-top:2px;padding:9px 12px;font-size:15px}
+.phb .ph.tk{letter-spacing:.06em}
+
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
 <script src="https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js" integrity="sha384-ilRYg/zm2XqUafLvBoGVk40UfNRnvUkYMy+e/JPo4YgsFR6X9Q3jYEkqFQXquX4r" crossorigin="anonymous" async></script>
@@ -643,7 +649,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.24v';
+const APPV='2026.11.24w';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -826,7 +832,7 @@ function startGame(S){
   const t=now();
   S.game={gid:Math.random().toString(36).slice(2,9),theme:{id:th.id,name:th.name,tag:th.tag,cat:th.cat||'自訂',random:c.theme==='random'||!!th.random},
     pool:th.items,items:drawItems(th.items,draw,n*size/5),extra:0,idx:0,sides,size,rosters:{},spent:{},
-    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,hints:!!c.hints,ready:{},lineupEnd:0};
+    bid:{who:null,amt:0},deadline:t+T_NOBID,pass:{},log:[],budget:c.budget,showStats:!!c.showStats,showYr:c.showYr!==false,read:READ_OPTS.includes(c.read)?c.read:5,hints:!!c.hints,ready:{},lineupEnd:0};
   sides.forEach(s=>{S.game.rosters[s]=[];S.game.spent[s]=0});S.game.base=S.game.items.length;
   if(c.season&&!S.season)S.season={sid:Math.random().toString(36).slice(2,8),n:c.season,bal:c.bal!==false,mis:!!c.mis,sides:sides.slice(),rounds:[],used:[],done:false,fmt0:Math.floor(Math.random()*FMT_ROT.length)};
   const se=S.season;S.game.fmt=fmtFor(S);S.game.nom=!!c.nom;if(se){if(baseId)se.used.push(baseId);S.game.round=se.rounds.length+1;S.game.rounds=se.n}
@@ -835,7 +841,7 @@ function startGame(S){
   if(c.cards){S.game.cards=dealCards(S.game);S.game.cardEnd=t+T_CARD*(NET.mode==='local'?n:1);S.phase='cards';return true}
   prepNext(S);return true;
 }
-function beginAuction(S){const g=S.game;S.phase='auction';startCard(S)}
+function beginAuction(S){const g=S.game;S.phase='auction';if(!window.BB_FAST)g.gapEnd=now()+1300;startCard(S)}   // the first card waits for the 競標開始 title to clear
 function autoPick(g,s){const M=g.mis[s];if(M.pick!=null)return;const i=M.opts.findIndex(x=>x.tier===2);M.pick=i>=0?i:0;M.auto=1}
 function finish(S){const g=S.game;g.sides.forEach(s=>benchFix(g,s));g.misRes=misFinal(g);S.sim=simulate(S);S.phase='results';const ch=S.sim.champ;if(ch){const k=scoreKey(S,ch);const o=S.scores[k]||{n:nm(S,ch),w:0};o.n=nm(S,ch);o.w++;S.scores[k]=o}seasonRecord(S)}
 /* bidding order: 2 players alternate who opens each card (A,B,A,B…);
@@ -862,7 +868,15 @@ function nextCard(S){const g=S.game;g.gapEnd=now()+gapMs(g);g.idx++;g.bid={who:n
    next card's clock starts; actions inside the pause are ignored */
 const gapMs=g=>{if(window.BB_FAST)return 0;const v=g.reveal&&g.reveal.idx===g.idx?g.reveal:null,sold=g.log.length&&g.log[g.log.length-1].who;
   return v&&v.win&&!v.grab?3600:sold?2800:1400};   // sealed reveal (bars, then the winner) / any sale / a pass
-const t0=g=>Math.max(now(),g.gapEnd||0),inGap=g=>now()<(g.gapEnd||0)-200;
+/* reading time: after the pause, each new card is shown with its clock stopped for a few seconds (lobby: 看牌時間) so
+   people can take in the card before anyone may bid; bots wait it out too. Everyone still bidding can end it early. */
+const READ_OPTS=[0,3,5,8],readMs=g=>window.BB_FAST?0:(g.read==null?5:g.read)*1000;
+const t0=g=>Math.max(now(),g.gapEnd||0,g.readEnd||0),inGap=g=>now()<Math.max(g.gapEnd||0,g.readEnd||0)-200,inPause=g=>now()<(g.gapEnd||0)-200,
+  inRead=g=>now()<(g.readEnd||0)-200;
+function readDone(S,who,all){const g=S.game;if(S.phase!=='auction'||!inRead(g))return false;g.rd=g.rd||{};g.rd[who]=1;
+  const need=g.sides.filter(s=>!(typeof isBot==='function'&&isBot(s))&&openN(g,s)>0&&!(g.stage==='left'&&g.solo&&g.solo.who!==s));
+  if(!all&&!need.every(s=>g.rd[s]))return true;const d=Math.max(0,g.readEnd-Math.max(now(),g.gapEnd||0));
+  ['deadline','openAt'].forEach(k=>{if(g[k])g[k]-=d});g.readEnd=Math.max(now(),g.gapEnd||0);return true}
 // a won card goes straight onto the roster (see autoPlace); every card ends here or in skipCard
 function sell(S,who,amt){const g=S.game;g.turn=null;const pay=couponPay(g,who,amt);g.rosters[who].push({slot:null,k:g.idx,price:pay});g.spent[who]+=pay;autoPlace(g,who);
   g.log.push({n:cur(g).n,who,amt:pay,slot:placeNote(g,who,g.idx),...(pay<amt?{full:amt}:{})});nextCard(S)}
@@ -902,7 +916,7 @@ function apply(S,a,actor){
     case 'names':{if(!offline()||S.season)return false;ALL.forEach(s=>{if(a[s]!=null&&!(S.bots&&S.bots[s]))S.names[s]=clean(a[s])||('玩家 '+s)});return true}
     case 'cfg':{if(!isP||S.phase!=='lobby'||!a.cfg||S.season)return false;const c=S.cfg,n=a.cfg;
       if(n.fmt!=null&&(own(FMTS,n.fmt)||n.fmt==='rotate'))c.fmt=n.fmt;if(n.nom!=null)c.nom=!!n.nom;
-      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
+      if(n.mis!=null)c.mis=!!n.mis;if(n.showYr!=null)c.showYr=!!n.showYr;if(n.read!=null&&READ_OPTS.includes(n.read|0))c.read=n.read|0;if(n.cards!=null)c.cards=!!n.cards;if(n.season!=null)c.season=SEASON_N.includes(n.season)?n.season:0;if(n.bal!=null)c.bal=!!n.bal;
       if(n.players===2||n.players===3){c.players=n.players;if(n.players===2&&S.seats.C&&NET.mode!=='local')S.seats.C=null}
       if(n.budget!=null)c.budget=clamp(n.budget|0,5,999);
       if(typeof n.theme==='string'&&(['random','custom','pick'].includes(n.theme)||THEMES.some(t=>t.id===n.theme)))c.theme=n.theme;
@@ -922,6 +936,7 @@ function apply(S,a,actor){
     case 'sready':{if(S.phase!=='season'||!S.season||S.season.done||offline()||!ALL.includes(r)||!S.season.sides.includes(r))return false;
       S.sready=S.sready||{};S.sready[r]=!!a.v;if(S.season.sides.every(x=>S.sready[x])&&!waitingFor().length)return startGame(S)||true;return true}
     case 'card':{if(!g||!g.sides.includes(who))return false;return useCard(S,who,a)}
+    case 'rdone':{if(!g||!g.sides.includes(who))return false;return readDone(S,who,r==='all'&&NET.mode==='local')}
     case 'mpick':{if(S.phase!=='mission'||!g||!g.mis||!g.sides.includes(who))return false;const M=g.mis[who],i=a.i|0;if(i<0||i>=M.opts.length)return false;
       M.pick=i;M.auto=0;if(g.sides.every(s=>g.mis[s].pick!=null))beginAuction(S);return true}
     case 'endSeason':{if(!isP||S.phase!=='season'||!S.season||S.season.done)return false;if(!S.season.rounds.length){S.season=null;S.phase='lobby';return true}seasonEnd(S);return true}
@@ -1346,8 +1361,8 @@ function phaseOf(p){if(!p||p.fa||!p.y0||!p.y1)return null;if(PHC.has(p))return P
     else r='late'}
   PHC.set(p,r);return r}
 const yrLab=p=>!p||p.fa||!p.y0?'':p.y0===p.y1?`'${String(p.y0).slice(2)}`:`'${String(p.y0).slice(2)}–'${String(p.y1).slice(2)}`;
-function phaseBadge(p,g,small){const k=phaseOf(p),yr=g&&g.showYr&&yrLab(p);if(!k&&!yr)return '';const P=k&&PHASE[k];
-  return `<div class="phb ${small?'sm':''}">${P?`<span class="ph" style="--c:${P.c}">${P.nm}</span>`:''}${yr?`<span class="yr">${yr}</span>`:''}</div>`}
+function phaseBadge(p,g,small){const k=phaseOf(p),yr=g&&g.showYr&&yrLab(p),tk=typeof tkRate==='function'&&tkRate(p)>0;if(!k&&!yr&&!tk)return '';const P=k&&PHASE[k];
+  return `<div class="phb ${small?'sm':''}">${P?`<span class="ph" style="--c:${P.c}">${P.nm}</span>`:''}${tk?`<span class="ph tk" style="--c:#b0186a" title="這張卡偶爾會單場接管比賽">爆發型</span>`:''}${yr?`<span class="yr">${yr}</span>`:''}</div>`}
 /* what the badge tells a reader, in rating points: the typical gap between a card of that phase and the player's best
    stretch, measured over every card in the game. Bots use it, since people can see the badge too. */
 let PH_D=null;
@@ -1473,10 +1488,11 @@ function leftPick(S,j){const g=S.game;if(j<g.idx||j>=g.items.length||g.items[j].
 // sign nobody else: drop the rest of the deck, free agents fill the open spots
 function leftNone(S){const g=S.game;g.items.length=g.idx;g.idx--;g.stage=null;nextCard(S);return true}
 // called by startCard after the usual reset; returns true when the format took over the card
-function fmtStart(S){const g=S.game;g.sb=null;g.grab=null;g.price=null;g.openAt=null;g.tie=null;g.stage=null;
+function fmtStart(S){const g=S.game;g.sb=null;g.grab=null;g.price=null;g.openAt=null;g.tie=null;g.stage=null;g.readEnd=0;g.rd={};
   if(g.solo){g.stage='left';g.leftEnd=t0(g)+T_LEFT;g.turn=null;return true}   // the last team picks from what is left
   if(g.nominated){g.nominated=false;g.order=[g.nomBy].concat(g.order.filter(s=>s!==g.nomBy))}   // the nominator acts first
   else if(g.nom&&remain(g)>=2){const by=g.order.find(s=>openN(g,s)>0);if(by){g.stage='nom';g.nomBy=by;g.nomEnd=t0(g)+T_NOM;g.turn=null;return true}}
+  g.rd={};g.readEnd=Math.max(now(),g.gapEnd||0)+readMs(g);   // reading time for the card that is now up (not for the nomination market)
   const f=fmtOf(g);
   if(f==='sealed'){g.sb={};g.deadline=t0(g)+T_SEAL;g.turn=null;return true}
   if(f==='snatch'){const cap=Math.max(1,...bidders(g).map(s=>maxBid(g,s))),avg=(g.budget||10)/(g.size||5);
@@ -1556,7 +1572,7 @@ function prepNext(S){const g=S.game,c=S.cfg,n=g.sides.length;
   if(c.mis&&!g.mis){const M=dealMissions(g,rng(hash(g.gid+'mis')));if(g.sides.every(s=>M[s].opts.length)){g.mis=M;g.misEnd=now()+T_MIS*(NET.mode==='local'?n:1);S.phase='mission';return}}
   beginAuction(S)}
 // can this side use the swap right now: a real card is up and nobody has committed money to it
-function canSwap(g,s){if(!hasCard(g,s,'swap')||S.phase!=='auction'||inGap(g)||g.stage||g.solo||remain(g)<2||cur(g).fa)return false;
+function canSwap(g,s){if(!hasCard(g,s,'swap')||S.phase!=='auction'||inPause(g)||g.stage||g.solo||remain(g)<2||cur(g).fa)return false;
   if(g.sb)return !g.tie;if(g.price!=null)return !g.grab;return !g.bid.who}
 const cardEv=(g,who,id,x)=>{g.ev={n:((g.ev&&g.ev.n)||0)+1,who,id,at:now(),...x}};
 function useCard(S,who,a){const g=S.game;if(!g||!g.cards||!g.cards[who])return false;const C=g.cards[who],id=a.id;
@@ -1566,7 +1582,7 @@ function useCard(S,who,a){const g=S.game;if(!g||!g.cards||!g.cards[who])return f
   switch(id){
     case 'swap':{if(!canSwap(g,who))return false;const p=g.items.splice(g.idx,1)[0];g.items.push(p);C.used.swap=true;cardEv(g,who,id,{n2:p.n});startCard(S);return true}
     case 'coupon':{C.armed=!C.armed;if(C.armed)cardEv(g,who,id,{});return true}
-    case 'scout':{if(inGap(g))return false;const R=g.sides.filter(t=>t!==who);const t=R.length===1?R[0]:R.includes(a.t)?a.t:null;if(g.mis&&!t)return false;
+    case 'scout':{if(inPause(g))return false;const R=g.sides.filter(t=>t!==who);const t=R.length===1?R[0]:R.includes(a.t)?a.t:null;if(g.mis&&!t)return false;
       const next=g.items.slice(g.idx+1).filter(p=>!p.fa).slice(0,3).map(p=>({n:p.n,pos:canPlay(p)}));
       const M=t&&g.mis&&g.mis[t],mis=M&&M.pick!=null?M.opts[M.pick]:null;
       C.scout={next,t,mis,at:g.idx};C.used.scout=true;cardEv(g,who,id,{});return true}}
@@ -1775,7 +1791,7 @@ function botNeed(s){const g=S.game;if(!g||!g.sides.includes(s))return null;
   if(g.sb){const el=g.tie?g.tie.sides:bidders(g);return el.includes(s)&&g.sb[s]==null?k+'s'+(g.tie?'t':'')+ck:null}
   if(g.price!=null)return !g.grab&&!g.pass[s]&&bidders(g).includes(s)?k+'g'+ck:null;
   return g.turn===s?k+g.bid.amt+':'+g.bid.who+ck:null}
-function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-x)*R(),t0=Math.max(now(),g.gapEnd||0);
+function botWait(s,a){const g=S.game,lv=botLv(s),R=Math.random,rr=([x,y])=>x+(y-x)*R(),t0=Math.max(now(),g.gapEnd||0,g.readEnd||0);
   if(window.BB_FAST)return now();
   switch(a.a){
     case 'mpick':return t0+rr([2500,5000]);
@@ -1898,8 +1914,33 @@ const SND={
   cheer:(c,t)=>crowd(c,t,{dur:2.8,peak:0.17,voices:7,claps:30}),
   applause:(c,t)=>crowd(c,t,{dur:1.9,peak:0.05,voices:0,claps:34}),
   champ:(c,t)=>{[523,659,784,1046].forEach((f,i)=>voice(c,t+i*0.11,{type:'triangle',f,dur:i===3?0.55:0.2,peak:0.13}));voice(c,t+0.33,{f:523,dur:0.6,peak:0.07})},
-  error:(c,t)=>voice(c,t,{type:'triangle',f:jit(300,.02),f2:240,dur:0.12,peak:0.09})};
-const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90};
+  error:(c,t)=>voice(c,t,{type:'triangle',f:jit(300,.02),f2:240,dur:0.12,peak:0.09}),
+  /* ---- game playback ----
+     Built the way procedural-audio work builds impacts: a noise source shaped by filters for air and net, and a few
+     damped sine modes at non-integer ratios for metal (that inharmonic spread is what makes a rim sound like steel). */
+  // a three that touches nothing but net: a short falling "shh" of nylon plus the snap of the net, very little low end
+  swish:(c,t)=>{burst(c,t,{f:jit(5200,.06),f2:2300,q:0.8,dur:0.24,peak:0.13});burst(c,t+0.015,{f:jit(7600,.05),q:1.2,dur:0.09,peak:0.06});
+    burst(c,t+0.09,{f:jit(3000,.06),f2:1800,q:1,dur:0.14,peak:0.04});voice(c,t,{f:jit(170,.05),f2:110,dur:0.07,peak:0.035})},
+  // any other make: the same net, softer and shorter
+  net:(c,t)=>{burst(c,t,{f:jit(4200,.08),f2:2200,q:0.9,dur:0.16,peak:0.075});burst(c,t+0.06,{f:jit(2600,.06),q:1,dur:0.08,peak:0.025})},
+  // dunk: a body thump, the rim ringing (steel modes) and the stanchion rattling for a moment, then a short roar
+  dunk:(c,t)=>{voice(c,t,{f:jit(120,.05),f2:44,dur:0.26,peak:0.32});burst(c,t,{f:jit(380,.06),q:0.8,dur:0.07,peak:0.22});burst(c,t+0.004,{f:jit(2600,.05),q:2,dur:0.03,peak:0.08});
+    const f0=jit(395,.04);[[1,0.055,0.9],[2.32,0.04,0.65],[3.87,0.03,0.45],[5.61,0.02,0.3],[7.42,0.012,0.2]].forEach(([r,p,d])=>voice(c,t+0.003,{f:f0*r,dur:d,peak:p,a:0.002}));
+    for(let i=0;i<7;i++)burst(c,t+0.03+i*0.034,{f:jit(260,.12),q:2.2,dur:0.045,peak:0.09*Math.pow(0.7,i)});
+    crowd(c,t+0.12,{dur:1.3,peak:0.06,voices:3,claps:6})},
+  // block: a hand slapping the ball (a dull pop with some slap on top) and a crowd "ooh"
+  block:(c,t)=>{voice(c,t,{f:jit(200,.05),f2:85,dur:0.1,peak:0.22});burst(c,t,{f:jit(1300,.08),q:1,dur:0.045,peak:0.15});crowd(c,t+0.1,{dur:1,peak:0.045,voices:3,claps:0})},
+  // steal: two short sneaker squeaks
+  steal:(c,t)=>{[0,0.07].forEach((d,i)=>{voice(c,t+d,{type:'triangle',f:jit(2000+i*250,.04),f2:2600+i*200,dur:0.055,peak:0.04});burst(c,t+d,{f:2400,q:6,dur:0.04,peak:0.025})})},
+  // referee whistle: a pea whistle, a high tone with the fast flutter of the pea
+  whistle:(c,t)=>{const o=c.createOscillator(),lfo=c.createOscillator(),lg=c.createGain(),g=c.createGain(),am=c.createGain();o.type='sine';o.frequency.value=jit(3050,.02);
+    lfo.frequency.value=34;lg.gain.value=0.45;am.gain.value=0.55;lfo.connect(lg);lg.connect(am.gain);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.05,t+0.02);g.gain.setValueAtTime(0.05,t+0.28);g.gain.exponentialRampToValueAtTime(0.0001,t+0.36);
+    o.connect(am);am.connect(g);g.connect(SFX.out);o.start(t);lfo.start(t);o.stop(t+0.4);lfo.stop(t+0.4);o.onended=()=>{o.disconnect();lfo.disconnect();lg.disconnect();am.disconnect();g.disconnect()}},
+  // a crowd swell for big moments inside a game (a run, a takeover, a career night)
+  ooh:(c,t)=>crowd(c,t,{dur:1.7,peak:0.075,voices:4,claps:8}),
+  clutch:(c,t)=>{SND.swish(c,t);crowd(c,t+0.1,{dur:2,peak:0.12,voices:6,claps:20})}};
+const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90,swish:140,net:140,dunk:350,block:300,steal:250,whistle:400,ooh:1500,clutch:1500};
 // gesture: called inside a tap, so a context that is still resuming may queue the sound (it plays as soon as it resumes)
 function sfx(name,delay,gesture,arg){if(!SFX.lv||!SND[name])return;sfxInit();const c=SFX.ctx;if(!c)return;if(c.state!=='running'){c.resume().catch(()=>{});if(!gesture)return}
   const n=performance.now();if(n-(SFX.last[name]||0)<(SFX_GAP[name]||120))return;SFX.last[name]=n;try{SND[name](c,c.currentTime+0.01+(delay||0),arg)}catch(e){}}
@@ -2006,6 +2047,14 @@ function soldBanner(g,H){const l=H.l,p=g.items[H.k],d=Math.max(300,H.until-H.at)
   return `<div class="soldb" style="--c:${col(l.who)};--d:${d}ms"><div class="sd1">成交</div>
     <div class="sd2"><b>${esc(nm(S,l.who))}</b> 標下 ${esc(last)}</div><div class="sd3"><b class="sdp">$${l.amt}</b>${l.full?`<s>$${l.full}</s><small>打折券</small>`:''}${l.slot?`<span>${esc(l.slot)}</span>`:''}</div><div class="sdbar"><i></i></div></div>`}
 
+/* reading time box: the clock is stopped while everyone takes in the new card */
+function readBox(g,r){const left=Math.max(0,(g.readEnd||0)-now()),need=g.sides.filter(s=>!isBot(s)&&openN(g,s)>0),loc=r==='all'&&NET.mode==='local';
+  const me=loc?g.sides[0]:r,mine=loc||need.includes(r),done=!loc&&g.rd&&g.rd[me],n=need.filter(s=>g.rd&&g.rd[s]).length;
+  clearTimeout(ui.readT);ui.readT=setTimeout(()=>render(),left+80);
+  return `<div class="cur readb"><div class="rdh">看牌時間</div>${clock(g.readEnd,readMs(g),'倒數完才能出價・',false)}
+    ${need.length>1&&!loc?`<div class="small mut">${n}/${need.length} 人看好了</div>`:''}
+    ${mine?`<button class="ghost rdbtn" data-act="rdone" ${done?'disabled':''}>${done?'等其他人看完…':'看好了，開始'}</button>`:''}</div>`}
+
 /* ---------- matchup model ----------
  Base: OBPM+DBPM (Box Plus/Minus, Basketball-Reference), shrunk toward replacement level for small samples.
  Calibration (1985-2025, 1,230 real team-seasons): the top-5 BPM sum explains SRS with R²=0.73 at 0.79 pts per BPM;
@@ -2090,7 +2139,17 @@ function withMins(per,inc){return per.map(x=>{let play=1,extra=0;(inc||[]).forEa
 const BO_P=0.08;
 function boCands(R,gi){const v=R.filter(p=>!p.fa).map(p=>pval(p)).sort((a,b)=>a-b),med=v[Math.floor(v.length/2)];
   const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n));return R.filter(p=>!p.fa&&pval(p)<med&&!out.has(p.n))}
-function boxFor(R,per,score,r,bo){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{pts:2.8,reb:1.3,ast:1.3}[k]||1:1;
+/* star takeovers: a star (MVP, Finals MVP, 2+ All-NBA 1st teams or 8+ All-Star games) sometimes
+   takes over a single game. Rate per star per game ~5-7%, a bit higher in his prime, lower as a rookie or late in
+   his career. That night his team gets ~4 extra points and he takes well over his usual share of the scoring.
+   Shown on the card as 爆發型. Bots value cards on the regular numbers only. */
+const TK_PTS=4;
+function tkRate(p){if(!p||p.fa)return 0;const b=bioOf(p)||{};let v=b.mvp>0?0.065:(b.all1>=2||b.as>=8||b.fmvp)?0.05:0;
+  if(!v)return 0;const ph=typeof phaseOf==='function'?phaseOf(p):null;return v*({prime:1.15,early:0.85,late:0.7,rook:0.6}[ph]||1)}
+function tkPick(R,gi,r){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n));
+  const c=R.filter(p=>!out.has(p.n)&&tkRate(p)>0);for(let i=c.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
+  for(const p of c)if(r()<tkRate(p))return p.n;return null}
+function boxFor(R,per,score,r,bo,tk){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{pts:2.8,reb:1.3,ast:1.3}[k]||1:x.p.n===tk?{pts:2.3,reb:1.15,ast:1.25}[k]||1:1;
   const w=k=>per.map(x=>{const b=st(x.p);return mf(x)*bx(x,k)*{pts:Math.pow(Math.max(2,b.pts*x.m.pts),0.65),reb:Math.max(1,b.trb*x.m.reb),ast:Math.max(.5,b.ast*x.m.ast),stl:Math.max(.2,b.stl*x.m.stl),blk:Math.max(.1,b.blk*x.m.blk),tov:Math.max(.3,b.tov*x.m.tov)}[k]*(0.75+0.5*r())});
   const tot=k=>per.reduce((t,x)=>{const b=st(x.p);return t+b[k==='reb'?'trb':k]*x.m[k]*mf(x)},0);
   const pts=alloc(score,w('pts')),reb=alloc(Math.round(clamp(tot('reb')*1.05,34,58)+gauss(r)*3),w('reb')),ast=alloc(Math.round(clamp(tot('ast'),18,32)+gauss(r)*2),w('ast'));
@@ -2109,19 +2168,20 @@ function simulate(S){
     const ra=pairRate(base[a],ro[a],ro[b]),rb=pairRate(base[b],ro[b],ro[a]);
     teams[a].posSum+=ra.posAdj;teams[a].posN++;teams[b].posSum+=rb.posAdj;teams[b].posN++;
     const margin=MARGIN*((ra.off+ra.def)-(rb.off+rb.def)),avg=112+0.2*((ra.off-rb.def)+(rb.off-ra.def))/2;
-    const p=Phi(margin/GSD),r=rng(hash(g.gid+a+b)),ri=rng(hash(g.gid+a+b+'inc')),rbo=rng(hash(g.gid+a+b+'bo'));let wa=0,wb=0;const games=[],inc=[],bo=[];
+    const p=Phi(margin/GSD),r=rng(hash(g.gid+a+b)),ri=rng(hash(g.gid+a+b+'inc')),rbo=rng(hash(g.gid+a+b+'bo')),rtk=rng(hash(g.gid+a+b+'tk'));let wa=0,wb=0;const games=[],inc=[],bo=[],tk=[];
     while(wa<4&&wb<4){const gi=g.size===10?incidents(ro[a],a,ri).concat(incidents(ro[b],b,ri)):[];inc.push(gi);
       const ca=gi.filter(x=>x.side===a).reduce((t,x)=>t+(x.cost||0),0),cb=gi.filter(x=>x.side===b).reduce((t,x)=>t+(x.cost||0),0),mg=margin+MARGIN*(cb-ca);
       const bg={};[a,b].forEach(s=>{if(rbo()<BO_P){const c=boCands(ro[s],gi);if(c.length)bg[s]=c[Math.floor(rbo()*c.length)].n}});bo.push(bg);
-      let sa=Math.round(avg+mg/2+gauss(r)*9)+(bg[a]?3:0),sb=Math.round(avg-mg/2+gauss(r)*9)+(bg[b]?3:0),ot=0;if(Math.abs(sa-sb)===1&&r()<0.55){sa=sb=Math.max(sa,sb)}/* NBA goes to OT ~6% of games; a raw gaussian tie alone gives ~2% */while(sa===sb){ot++;sa+=Math.round(5+r()*8);sb+=Math.round(5+r()*8)}games.push([sa,sb,ot]);sa>sb?wa++:wb++}
+      const tg={};[a,b].forEach(s=>{const n=tkPick(ro[s],gi,rtk);if(n)tg[s]=n});tk.push(tg);
+      let sa=Math.round(avg+mg/2+gauss(r)*9)+(bg[a]?3:0)+(tg[a]?TK_PTS:0),sb=Math.round(avg-mg/2+gauss(r)*9)+(bg[b]?3:0)+(tg[b]?TK_PTS:0),ot=0;if(Math.abs(sa-sb)===1&&r()<0.55){sa=sb=Math.max(sa,sb)}/* NBA goes to OT ~6% of games; a raw gaussian tie alone gives ~2% */while(sa===sb){ot++;sa+=Math.round(5+r()*8);sb+=Math.round(5+r()*8)}games.push([sa,sb,ot]);sa>sb?wa++:wb++}
     let pser=0;const C=(n,k)=>{let x=1;for(let t=1;t<=k;t++)x=x*(n-k+t)/t;return x};for(let l=0;l<=3;l++)pser+=C(3+l,l)*Math.pow(p,4)*Math.pow(1-p,l);
     const win=wa>wb?a:b,fav=p>=0.5?a:b,last=games[games.length-1];
     const li=inc[inc.length-1]||[],pa=withMins(withBench(ro[a],ra.per),li),pb=withMins(withBench(ro[b],rb.per),li);
-    const lb=bo[bo.length-1]||{},box={[a]:boxFor(pa.map(x=>x.p),pa,last[0],r,lb[a]),[b]:boxFor(pb.map(x=>x.p),pb,last[1],r,lb[b])};
+    const lb=bo[bo.length-1]||{},lt=tk[tk.length-1]||{},box={[a]:boxFor(pa.map(x=>x.p),pa,last[0],r,lb[a],lt[a]),[b]:boxFor(pb.map(x=>x.p),pb,last[1],r,lb[b],lt[b])};
     const mu=POS.map(sl=>{const x=ra.per.find(z=>z.p.slot===sl),y=rb.per.find(z=>z.p.slot===sl);if(!x||!y)return null;
       if(!x.m.why.length&&!y.m.why.length)return null;return{slot:sl,a:x.p.n,b:y.p.n,ma:x.m,mb:y.m,fa:+(x.f.off+x.f.def).toFixed(2),fb:+(y.f.off+y.f.def).toFixed(2)}}).filter(Boolean);
     teams[win].sw++;teams[a].gw+=wa;teams[a].gl+=wb;teams[b].gw+=wb;teams[b].gl+=wa;
-    series.push({a,b,wa,wb,games,inc,bo,p:+p.toFixed(3),pser:+pser.toFixed(3),win,fav,upset:win!==fav&&Math.abs(p-0.5)>0.05,box,mu,pa:+ra.posAdj.toFixed(2),pb:+rb.posAdj.toFixed(2)})}
+    series.push({a,b,wa,wb,games,inc,bo,tk,p:+p.toFixed(3),pser:+pser.toFixed(3),win,fav,upset:win!==fav&&Math.abs(p-0.5)>0.05,box,mu,pa:+ra.posAdj.toFixed(2),pb:+rb.posAdj.toFixed(2)})}
   sides.forEach(s=>{teams[s].posAdj=+(teams[s].posSum/Math.max(1,teams[s].posN)).toFixed(2)});
   const order=[...sides].sort((x,y)=>teams[y].sw-teams[x].sw||(teams[y].gw-teams[y].gl)-(teams[x].gw-teams[x].gl)||teams[y].strength-teams[x].strength);
   // MVP from champion's deciding-game boxes
@@ -2350,6 +2410,8 @@ function rulesCard(){return `<section class="card rules"><details><summary>📖 
   <h3>對戰怎麼算</h3><ul>
   <li><b>傳奇組合</b>：湊齊三巨頭或王朝核心（公牛、Showtime、熱火、勇士、GDP…）另外加 0.8–2 戰力。</li>
   <li><b>爆發之夜</b>：角色球員偶爾會打出生涯代表作，那場多拿好幾分。</li>
+  <li><b>球星接管</b>：卡上標「爆發型」的球星（MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星），每場約 5–7% 機會接管比賽，那場球隊多約 4 分。巔峰期機率最高。電腦出價只看一般數據，不算這個。</li>
+  <li><b>看牌時間</b>：每張卡翻開先停幾秒（大廳可調），倒數完才能出價，電腦也得等。</li>
   <li><b>實力</b>：先發五人的 BPM 加總（以當年聯盟平均為基準），用 1,230 支真實球隊校正過。</li>
   <li><b>位置</b>：放到不熟的位置會打折。同位置一對一：小個子有速度，大個子有籃板和低位；空間型長人能拉開，但籃板吃虧。</li>
   <li><b>化學</b>：真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。</li>
@@ -2433,6 +2495,8 @@ function vLobby(){
       <input data-in="budget" type="number" min="5" max="999" inputmode="numeric" style="width:90px" placeholder="自訂" value="${[10,15,20,25].includes(c.budget)?'':c.budget}" ${dis}></div></section>
     <section class="card"><h2>主題</h2>${themeBox}</section>
     ${L?`<section class="card"><h2>翻牌數量</h2><div class="row"><div class="stepper"><button data-act="cfg" data-k="draw" data-v="${c.draw-1}" ${dis}>−</button><div class="v">${c.draw}</div><button data-act="cfg" data-k="draw" data-v="${c.draw+1}" ${dis}>+</button></div><div class="small mut grow">張（主題共 ${L} 位）<br>每個位置保證至少 ${c.players*(c.size||5)/5} 位能打的人</div></div></section>`:''}
+    <section class="card"><h2>看牌時間</h2><div class="row wrapx">${READ_OPTS.map(x=>`<button class="chip ${(c.read==null?5:c.read)===x?'on':''}" data-act="cfg" data-k="read" data-v="${x}" ${dis}>${x?x+' 秒':'不停'}</button>`).join('')}</div>
+      <div class="small mut" style="margin-top:6px">每張卡翻開後先停幾秒讓大家看清楚，倒數完才能出價（電腦也一樣要等）。大家都按「看好了」就提早開始。</div></section>
     <section class="card"><h2>進階</h2><div class="seg">
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
       <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
@@ -2509,15 +2573,15 @@ function vAuction(){
       ${g.showStats?`<div class="psub">${esc(sub(pl))}</div><div class="pstats">${[['pts','PTS'],['trb','REB'],['ast','AST'],['stl','STL'],['blk','BLK']].map(([k,l])=>`<div><b>${fmt(pl[k])}</b><i>${l}</i></div>`).join('')}</div>`:''}</div>`;
   const hints=g.hints?chemHints(g,pl):[];
   const hintBox=hints.length?`<div class="chemh">${hints.map(h=>`<div style="color:${col(h.s)}">${esc(h.t)}</div>`).join('')}</div>`:'';
-  const b=g.bid;
-  const curBox=g.sb?(g.tie?revealBox(g,g.idx):'')+sealedBox(g):g.price!=null?snatchBox(g):`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
+  const b=g.bid,rdg=inRead(g)&&!g.stage;
+  const curBox=rdg?readBox(g,r):g.sb?(g.tie?revealBox(g,g.idx):'')+sealedBox(g):g.price!=null?snatchBox(g):`<div class="cur" style="${b.who?`border-color:${col(b.who)}`:''}"><div class="line">${!b.who?`<div class="mut">等待出價（最低 $1）</div>`:`<div class="amt" id="amt-${g.gid}-${g.idx}-${b.amt}-${b.who}" style="color:${col(b.who)}">$${b.amt}</div><div class="who">${esc(nm(S,b.who))}<br><span class="small mut">目前最高</span></div>`}</div>
     ${!g.turn?'':clock(g.deadline,b.who?T_BID:T_NOBID,`輪到 <b style="color:${col(g.turn)}">${esc(nm(S,g.turn))}</b>・`+(b.who?'不加價就算放棄：':'不出價就算不要：'),r===g.turn&&NET.mode!=='local')}</div>`;
   const ex=g.extra||0,base=g.base||g.items.length,openAll=g.sides.reduce((t,s)=>t+openN(g,s),0),left2=g.items.length-g.idx,canAdd=EXTRA_MAX-ex;
   const deckNote=pl.extra?`<div class="xnote">🔔 加牌 ${g.idx-base+1}/${ex}・流標換來的明星，${canAdd?`還能再補 ${canAdd} 張`:'這是最後幾張了'}</div>`
     :left2+canAdd<openAll+2&&left2<=openAll+1?`<div class="xnote warn">⚠️ 牌快不夠了：還剩 ${left2} 張${canAdd?`＋最多補 ${canAdd} 張`:''}，沒標到的位置會用自由球員補</div>`:'';
   return `<div class="top"><div class="prog">第<b>${g.idx+1}</b>/ ${g.items.length} 張</div>${roundPill(g)}${fmtPill(g)}<div class="small mut">之後還有 ${remain(g)-1} 張${canAdd?`<br><small>流標可補 ${canAdd} 張</small>`:''}</div></div>${deckNote}
   <div class="bar"><i style="width:${pct}%"></i></div>${misStrip(g)}<div class="stage">${card}</div>${mktStrip(g)}${legHintBox(g,pl)}${misHintBox(g,pl)}${hintBox}${curBox}
-  ${g.sides.map(s=>bidRow(g,s,r)).join('')}
+  ${g.sides.map(s=>bidRow(g,s,r,rdg)).join('')}
   ${r==='all'||ALL.includes(r)?`<button class="quit" data-act="quit">${ui.quit?'再按一次確認放棄本局':'放棄本局'}</button>`:''}`;
 }
 function vLineup(){
@@ -2562,7 +2626,7 @@ const KTXT={three:['{n} 底角三分，刷！','{n} 接球就投，三分入網'
   alley:['{a} 拋出空中接力，{n} 接球灌籃！'],assist:['{a} 不看人妙傳，{n} 輕鬆得分','{a} 精準長傳，{n} 快攻上籃'],
   block:['{n} 送出大火鍋！','{n} 把球搧到場邊！'],steal:['{n} 抄截，一路快攻！','{n} 預判傳球路線，抄截成功']};
 const KPTS={three:3,logo:3,and1:3,mid:2,rim:2,dunk:2,post:2,putback:2,ankle:2,alley:2,assist:2,block:0,steal:0};
-const KICO={boom:'💥',three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'💥',post:'🏀',putback:'🏀',ankle:'😵',alley:'🚀',assist:'🤝',block:'🚫',steal:'🧤',timeout:'⏸',run:'🔥',hot:'🔥',tech:'😤',ot:'⏱',clutch:'🏆',rest:'🪑',foul:'⚠️',foulout:'❌',eject:'🟥'};
+const KICO={boom:'💥',takeover:'👑',three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'💥',post:'🏀',putback:'🏀',ankle:'😵',alley:'🚀',assist:'🤝',block:'🚫',steal:'🧤',timeout:'⏸',run:'🔥',hot:'🔥',tech:'😤',ot:'⏱',clutch:'🏆',rest:'🪑',foul:'⚠️',foulout:'❌',eject:'🟥'};
 /* signature traits of well-known stars (from widely cited "signature moves" lists and highlights).
    They change how a play is shown and nudge which play type a player picks; how often they happen is still
    tied to his numbers: chase-down blocks scale with block rate, swats only replace blocks the stats produce,
@@ -2634,7 +2698,7 @@ function offKind(p,mates,r){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{cons
   if(passers.length&&k!=='putback'&&k!=='ankle'&&k!=='logo'&&r()<0.3){const a=PICK(passers,r);return{k:(k==='dunk'||k==='rim')&&r()<0.5?'alley':k==='three'?'three':'assist',a}}
   return{k,a:null}}
 function fill(t,p,a,r){return t.replace('{n}',callN(p,r)).replace('{a}',a?callN(a,r):'')}
-function gameEvents(z,game,boxA,boxB,R,r,inc,bo){inc=inc||[];bo=bo||{};
+function gameEvents(z,game,boxA,boxB,R,r,inc,bo,tk){inc=inc||[];bo=bo||{};tk=tk||{};
   const [sa,sb,ot]=game,[qa,qb]=game.q,P=qa.length,ev=[];
   const teams={[z.a]:{box:boxA,R:R[z.a]},[z.b]:{box:boxB,R:R[z.b]}},other=s=>s===z.a?z.b:z.a,tn=s=>nm(S,s);
   const ptsOf=(T,x)=>{const b=T.box.find(y=>y.n===x.n);return b?b.pts:2};
@@ -2668,6 +2732,10 @@ function gameEvents(z,game,boxA,boxB,R,r,inc,bo){inc=inc||[];bo=bo||{};
       ev.push({q:i.q,t:i.t,clk,side:i.side,kind:'eject',p:i.n,txt:`${N(i.n)} 第二次技術犯規，被驅逐出場 🟥${sub}`})}});
   Object.entries(bo).forEach(([s,n])=>{const b=teams[s]&&teams[s].box.find(x=>x.n===n);if(!b)return;const q=Math.min(P-1,2),t=0.55+0.3*r(),mm=12*(1-t),clk=`${Math.floor(mm)}:${String(Math.floor((mm%1)*60)).padStart(2,'0')}`;
     ev.push({q,t,clk,side:s,kind:'boom',p:n,txt:`${N(n)} 打出生涯之夜，第三節就拿了 ${Math.max(12,Math.round(b.pts*0.7))} 分 🔥`})});
+  Object.entries(tk).forEach(([s,n])=>{const b=teams[s]&&teams[s].box.find(x=>x.n===n);if(!b)return;const q=Math.min(P-1,3),t=0.3+0.25*r(),mm=12*(1-t),clk=`${Math.floor(mm)}:${String(Math.floor((mm%1)*60)).padStart(2,'0')}`;
+    const p=teams[s].R.find(x=>x.n===n);ev.push({q,t,clk,side:s,kind:'takeover',p:n,sp:n,sid:p&&p.id,txt:`${N(n)} 接管比賽！球隊連續 ${3+Math.floor(r()*3)} 波進攻都交給他，全場 ${b.pts} 分`});
+    // he takes the next couple of scoring plays of his team
+    let k=0;ev.forEach(e=>{if(k<2&&e.side===s&&KPTS[e.kind]>0&&e.q===q&&e.t>t&&e.p!==n&&p){const st2=sigText(p,e.kind==='three'?'three':e.kind==='dunk'?'dunk':'mid',null,r);e.p=n;e.a=null;e.play=null;e.txt=st2.txt;delete e.sig;if(st2.sig){e.sig=st2.sig;e.sp=st2.sp;e.sid=st2.sid}e.kind=e.kind==='three'?'three':e.kind==='dunk'?'dunk':'mid';k++}})});
   ev.sort((x,y)=>(x.q+x.t)-(y.q+y.t));
   // scoring runs: three scoring plays in a row by one team
   let run=0,last=null;const runs=[];ev.forEach((e,i)=>{if(KPTS[e.kind]>0){if(e.side===last)run++;else{last=e.side;run=1}if(run===3)runs.push({q:e.q,t:Math.min(0.995,e.t+0.01),clk:e.clk,side:e.side,kind:'run',txt:`${tn(e.side)} 打出一波 ${8+Math.floor(r()*6)}–0 攻勢 🔥`})}});
@@ -2685,12 +2753,12 @@ function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)retu
     const pa0=withBench(ro[z.a],ra.per),pb0=withBench(ro[z.b],rb.per);
     const r=rng(hash(g.gid+z.a+z.b+'pb'));let wa=0,wb=0;
     z.games.forEach((gm,gi)=>{const [sa,sb,ot]=gm,last=gi===z.games.length-1,inc=(z.inc&&z.inc[gi])||[],pa=withMins(pa0,inc),pbb=withMins(pb0,inc);
-      const bg=(z.bo&&z.bo[gi])||{},bA=last?z.box[z.a]:boxFor(pa.map(x=>x.p),pa,sa,r,bg[z.a]),bB=last?z.box[z.b]:boxFor(pbb.map(x=>x.p),pbb,sb,r,bg[z.b]);
+      const bg=(z.bo&&z.bo[gi])||{},tg=(z.tk&&z.tk[gi])||{},bA=last?z.box[z.a]:boxFor(pa.map(x=>x.p),pa,sa,r,bg[z.a],tg[z.a]),bB=last?z.box[z.b]:boxFor(pbb.map(x=>x.p),pbb,sb,r,bg[z.b],tg[z.b]);
       const game=[sa,sb,ot];game.q=periods(sa,sb,ot,r);
-      const ev=gameEvents(z,game,bA,bB,{[z.a]:pa.map(x=>x.p),[z.b]:pbb.map(x=>x.p)},r,inc,bg);
+      const ev=gameEvents(z,game,bA,bB,{[z.a]:pa.map(x=>x.p),[z.b]:pbb.map(x=>x.p)},r,inc,bg,tg);
       sa>sb?wa++:wb++;
       const all=bA.map(x=>({...x,s:z.a})).concat(bB.map(x=>({...x,s:z.b})));const pog=all.sort((x,y)=>(y.pts+1.2*y.reb+1.5*y.ast+2*y.stl+2*y.blk)-(x.pts+1.2*x.reb+1.5*x.ast+2*x.stl+2*x.blk))[0];
-      list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB,inc,bo:bg})})});
+      list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB,inc,bo:bg,tk:tg})})});
   pbCache={gid:g.gid+sim.champ,d:list};return list}
 const PB_Q=6000,PB_HOLD=2600,PB_SEG=1150,PB_POST=550;
 function pbDur(G){return G.q[0].length*PB_Q+PB_HOLD}
@@ -2729,7 +2797,7 @@ setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.
  post entry for bigs), then the shot. Steals turn into fast breaks the other way. Teams switch ends at halftime. */
 const CW=360,CH=200,HX={L:22,R:338},HY=100;
 const SET=[[118,100],[88,30],[88,170],[42,52],[20,140]];
-const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest','boom']);
+const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest','boom','takeover']);
 function teamCol(s){const v=getComputedStyle(document.documentElement).getPropertyValue({A:'--a',B:'--b',C:'--c3'}[s]||'--a').trim();return v||'#2f7cf6'}
 function court(ctx){ctx.fillStyle='#f3e3c6';ctx.fillRect(0,0,CW,CH);ctx.strokeStyle='rgba(120,80,30,.45)';ctx.lineWidth=1.2;
   ctx.strokeRect(4,4,CW-8,CH-8);ctx.beginPath();ctx.moveTo(CW/2,4);ctx.lineTo(CW/2,CH-4);ctx.stroke();ctx.beginPath();ctx.arc(CW/2,HY,22,0,7);ctx.stroke();
@@ -2773,6 +2841,16 @@ function endLayout(E,z,ro,prevL){if(!E||DEAD.has(E.kind))return prevL;
   const off=E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side,def=off===z.a?z.b:z.a,right=attacksRight(z,off,E.q),P={};
   if(E.kind==='steal'){const run=!right;ro[E.side].forEach((p,i)=>{P[E.side+i]=at(run,i===0?14:40+i*12,HY+(i-2)*24)});ro[off].forEach((p,i)=>{P[off+i]=at(run,60+i*14,HY+(i-2)*30)});return P}
   ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx*0.6,lerp(HY,y,0.7))});ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
+/* playback sound: each highlight makes its sound at the moment it lands on court (the ball through the net, the hand on
+   the ball), not when its line appears in the feed. Jumps in the clock (seeking, a new game) make no sound, and at high
+   speed the per-sound minimum gaps in sfx() keep it from turning into noise. */
+const PB_SND={three:'swish',logo:'swish',dunk:'dunk',alley:'dunk',rim:'net',mid:'net',post:'net',putback:'net',and1:'net',ankle:'net',assist:'net',
+  block:'block',steal:'steal',clutch:'clutch',takeover:'ooh',boom:'ooh',run:'ooh',foul:'whistle',tech:'whistle',eject:'whistle',foulout:'whistle',timeout:'whistle',ot:'horn'};
+let pbSnd={k:null,e:0};
+function pbSound(G,ev,e,done){const k=G.si+'-'+G.gi;if(pbSnd.k!==k||e<pbSnd.e||e-pbSnd.e>1200||done){pbSnd={k,e};return}const e0=pbSnd.e;pbSnd.e=e;
+  ev.forEach((x,i)=>{const nm=PB_SND[x.kind];if(!nm)return;let T=x.T;const s0=i>0?ev[i-1].T+PB_POST:0;
+    if(x.kind==='steal')T=s0+0.5*(x.T-s0);else if(x.kind==='block')T=s0+0.9*(x.T-s0);else if(DEAD.has(x.kind))T=x.T-400;
+    if(T>e0&&T<=e)sfx(nm)})}
 function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getElementById('court');if(!cv||!S||document.hidden)return;
   withView(()=>{if(S.phase!=='results'||!ui.pb)return;const st=pbState();if(!st)return;const {G,e,done}=st,z=G.z;
   let ctx=null;try{ctx=cv.getContext('2d')}catch(_){}if(!ctx)return;const k=cv.width/CW;pbAdvance();
@@ -2782,7 +2860,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
   let ci=ev.findIndex(x=>x.T+PB_POST>e);if(ci<0)ci=ev.length;
   const ro=lineupAt(G,z,full,ev,Math.min(ci,ev.length-1),e);
   let L=tipoff(z,ro);for(let i=0;i<ci;i++)L=endLayout(ev[i],z,ro,L);
-  const E=done?null:ev[ci],s0=ci>0?ev[ci-1].T+PB_POST:0;
+  const E=done?null:ev[ci],s0=ci>0?ev[ci-1].T+PB_POST:0;pbSound(G,ev,e,done);
   let P={...L},ball=null,flash=null,hl=null,banner=null,fallen=null;
   const idx=(s,n)=>{const i=ro[s].findIndex(p=>p.n===n);return i>=0?i:(hash(String(n))%5)};
   if(E&&!DEAD.has(E.kind)){
@@ -2879,7 +2957,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
         if(u>0.9||pu){const v=pu||0;ball=[P[off+si][0]+(right?-1:1)*v*60,P[off+si][1]+v*44,8*(1-v)];flash=['🚫 火鍋！',Math.max(seg(u,0.9,1)*0.3,v)]}}
       else{hl=off+si;if(pu){ball=[H[0],HY+pu*4,0];flash=[`${KICO[E.kind]||'🏀'} +${KPTS[E.kind]||2}`,pu]}}
     }}
-  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',boom:'生涯之夜！',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
+  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',boom:'生涯之夜！',takeover:'接管比賽！',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
   if(E&&E.kind==='clutch'&&e>E.T)banner=['🏆 致勝球！',cl01((e-E.T)/PB_POST)];
   // camera: zoom in on the action during key moments
   const wa=warpAt(G,e),ww=wa.w;let zf=1,fx=CW/2,fy=HY;
@@ -2910,8 +2988,16 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
   if(ww&&ww.lab&&!done){ctx.save();ctx.globalAlpha=0.6+0.4*Math.abs(Math.sin(Date.now()/300));ctx.font='900 11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
     ctx.lineWidth=3;ctx.strokeStyle='rgba(20,26,46,.85)';ctx.strokeText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.fillStyle='#ffcf33';ctx.fillText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.restore()}
   })}
-function drawBall(ctx,x,y,h){ctx.beginPath();ctx.arc(x,y+h*0.25+2,3.2,0,7);ctx.fillStyle='rgba(0,0,0,.18)';ctx.fill();
-  ctx.beginPath();ctx.arc(x,y-h,3.6+h*0.08,0,7);ctx.fillStyle='#f07a1e';ctx.fill();ctx.strokeStyle='#7a3a0c';ctx.lineWidth=.8;ctx.stroke()}
+/* the ball: orange leather with a light spot, and the black seams of a basketball (one straight seam each way and
+   two curved ones), turning as it travels so a dribble or a pass reads as a spinning ball */
+function drawBall(ctx,x,y,h){const R=4.8+h*0.09,cy=y-h;ctx.beginPath();ctx.ellipse(x,y+h*0.25+2,Math.max(2.2,4-h*0.05),Math.max(1.2,2-h*0.03),0,0,7);ctx.fillStyle=`rgba(0,0,0,${Math.max(.08,.2-h*.004)})`;ctx.fill();
+  ctx.save();ctx.translate(x,cy);ctx.rotate((x*0.11+y*0.07+h*0.2)%(Math.PI*2));
+  const gr=ctx.createRadialGradient(-R*0.35,-R*0.4,R*0.15,0,0,R);gr.addColorStop(0,'#ffb067');gr.addColorStop(0.55,'#ef7a22');gr.addColorStop(1,'#c4561a');
+  ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fillStyle=gr;ctx.fill();ctx.save();ctx.clip();
+  ctx.strokeStyle='#3a1a08';ctx.lineWidth=Math.max(.55,R*0.12);ctx.lineCap='round';ctx.beginPath();
+  ctx.moveTo(-R,0);ctx.lineTo(R,0);ctx.moveTo(0,-R);ctx.lineTo(0,R);
+  ctx.moveTo(-R*0.62,-R*0.82);ctx.quadraticCurveTo(-R*0.12,0,-R*0.62,R*0.82);ctx.moveTo(R*0.62,-R*0.82);ctx.quadraticCurveTo(R*0.12,0,R*0.62,R*0.82);ctx.stroke();ctx.restore();
+  ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.strokeStyle='#6a2e08';ctx.lineWidth=.8;ctx.stroke();ctx.restore()}
 function pop(ctx,x,y,txt,u,size){const sc=u<.25?u/.25*1.2:1.2-(u-.25)*.27;ctx.save();ctx.globalAlpha=u>.8?(1-u)/.2:1;ctx.translate(x,y-u*8);ctx.scale(sc,sc);
   ctx.font=`900 ${size||16}px system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.strokeText(txt,0,0);ctx.fillStyle='#1c2333';ctx.fillText(txt,0,0);ctx.restore()}
 requestAnimationFrame(courtFrame);
@@ -2943,10 +3029,11 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
     <div class="pbc"><button class="ghost" data-act="pbsp">⏩ ${ui.pb.sp}x</button>
       <button class="big" data-act="pbnext">${done?(isLast?'看最終結算 →':'下一場 →'):'⏭ 跳過這場'}</button></div>
     <div class="small mut" style="text-align:center;margin-top:6px">第 ${gNo} / ${L.length} 場</div></div>`}
-function boLine(z,k){if(!z.bo||!z.bo.some(x=>x&&Object.keys(x).length))return '';let L=[];try{L=pbData().filter(G=>G.si===k)}catch(e){}
-  const items=[];z.bo.forEach((bg,gi)=>Object.entries(bg||{}).forEach(([s,n])=>{const G=L.find(x=>x.gi===gi),b=G&&(s===z.a?G.bA:G.bB).find(x=>x.n===n);
-    items.push(`<span style="color:${col(s)}">💥 G${gi+1} ${esc(String(n).split(' ').slice(-1)[0])}${b?` ${b.pts} 分`:''}</span>`)}));
-  return `<div class="small" style="margin-top:4px">爆發之夜：${items.join('・')}</div>`}
+function boLine(z,k){const has=A=>A&&A.some(x=>x&&Object.keys(x).length);if(!has(z.bo)&&!has(z.tk))return '';let L=[];try{L=pbData().filter(G=>G.si===k)}catch(e){}
+  const row=(A,lab)=>{if(!has(A))return '';const items=[];A.forEach((bg,gi)=>Object.entries(bg||{}).forEach(([s,n])=>{const G=L.find(x=>x.gi===gi),b=G&&(s===z.a?G.bA:G.bB).find(x=>x.n===n);
+    items.push(`<span style="color:${col(s)}">G${gi+1} ${esc(String(n).split(' ').slice(-1)[0])}${b?` ${b.pts} 分`:''}</span>`)}));
+    return `<div class="small" style="margin-top:4px">${lab}：${items.join('・')}</div>`};
+  return row(z.tk,'球星接管')+row(z.bo,'爆發之夜')}
 function vResults(){
   const g=S.game,sim=S.sim,r=myRole();if(!sim)return `<div class="center mut" style="margin-top:60px"><span class="spin"></span> 模擬中…</div>`;
   if(!ui.pbDone.has(g.gid))return vPlayback();
@@ -3092,6 +3179,7 @@ document.addEventListener('click',e=>{
     case 'sstep':{const g=S.game,lo=g.tie?g.tie.amt:0,k='s'+g.idx+d.who,cur0=ui.amt[k]!=null?ui.amt[k]:(+(document.querySelector(`[data-in="samt"][data-who="${d.who}"]`)||{}).value||0);ui.amt[k]=clamp(cur0+(+d.v),lo,maxBid(g,d.who));return render()}
     case 'sbid':{const g=S.game,k='s'+g.idx+d.who,el=document.querySelector(`[data-in="samt"][data-who="${d.who}"]`);let v=+d.amt;if(el&&!t.classList.contains('pass'))v=parseInt(el.value,10);
       const lo=g.tie?g.tie.amt:0,mx=maxBid(g,d.who);if(isNaN(v)||v<lo)return toast(`至少 $${lo}`);if(v>mx)return toast(`你最多只能出 $${mx}（要留錢補滿陣容）`);return dispatch({a:'sbid',who:d.who,amt:v,idx:g.idx})}
+    case 'rdone':{const g=S.game,me=myRole();return dispatch({a:'rdone',who:me==='all'||!g.sides.includes(me)?g.sides[0]:me})}
     case 'grab':sfx('grab');return dispatch({a:'grab',who:d.who,idx:S.game.idx,p:dutchAt(S.game,now())});
     case 'spass':return dispatch({a:'spass',who:d.who,idx:S.game.idx});
     case 'brole':return dispatch({a:'brole',who:d.who,slot:d.v,role:d.role});
