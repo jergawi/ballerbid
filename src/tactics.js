@@ -69,12 +69,16 @@ function tacOf(g,s){const t=g.tac&&g.tac[s],F=tacFit(rosterOf(g,s));return{o:t&&
 function botTac(g,s){const lv=(S.bots&&S.bots[s]&&S.bots[s].lv)||S.botLv||'normal',F=tacFit(rosterOf(g,s)),r=rng(hash(g.gid+s+'tac'));
   if(lv==='easy'){const pk=o=>{const k=Object.keys(o).sort((a,b)=>o[b]-o[a]).slice(0,3);return k[Math.floor(r()*k.length)]};return{o:pk(F.O),d:pk(F.D)}}
   if(lv!=='hard')return{o:bestOf(F.O),d:bestOf(F.D)};
-  // rivals' lineups are hidden until tip-off, so a hard bot guesses them: the five best cards on their roster by the
-  // public 攻守貢獻, lined up by size. It never reads their actual lineup or their tactic choice.
-  const guess=R=>R.filter(p=>!p.fa).sort((a,b)=>pubVal(b)-pubVal(a)).slice(0,5).sort((a,b)=>peOf(a)-peOf(b)).map((p,j)=>({...p,slot:POS[j]}));
-  const opp=g.sides.filter(x=>x!==s).map(x=>{const f=tacFit(guess(rosterOf(g,x)));return{o:bestOf(f.O),d:bestOf(f.D),f}});
+  const opp=g.sides.filter(x=>x!==s).map(x=>tacScout(g,x));
   const so={},sd={};TO_K.forEach(o=>so[o]=FIT_O*F.O[o]+tMean(opp.map(q=>CNT_K*TAC_M[o][q.d]*(0.5+0.5*F.O[o])*(0.5+0.5*q.f.D[q.d]))));
   TD_K.forEach(d=>sd[d]=FIT_D*F.D[d]-tMean(opp.map(q=>CNT_K*TAC_M[q.o][d]*(0.5+0.5*q.f.O[q.o])*(0.5+0.5*F.D[d]))));return{o:bestOf(so),d:bestOf(sd)}}
+/* scouting a rival: lineups stay hidden until tip-off, so this guesses one from public facts only (the five best
+   cards on the roster by 攻守貢獻, lined up by size) and rates the schemes for it. The hard bot plans against exactly
+   this, and the lineup screen shows the same scouting line to people, so nobody knows more than anyone else. */
+function tacScout(g,x){const R=rosterOf(g,x).filter(p=>!p.fa).sort((a,b)=>pubVal(b)-pubVal(a)).slice(0,5).sort((a,b)=>peOf(a)-peOf(b)).map((p,j)=>({...p,slot:POS[j]}));
+  const f=tacFit(R);return{o:bestOf(f.O),d:bestOf(f.D),f}}
+function scoutLine(g,x){const sc=tacScout(g,x),o2=Object.keys(sc.f.O).sort((a,b)=>sc.f.O[b]-sc.f.O[a]).slice(0,2);
+  return `<div class="small mut" style="margin-top:4px">球探推測：進攻可能打 ${o2.map(k=>TAC_O[k].nm).join(' 或 ')}，防守可能用 ${TAC_D[sc.d].nm}</div>`}
 // the fixed part of a team's tactic edge (fit + star system), and the counter of its offense against a defense
 function tacBase(T){let v=FIT_O*(T.F.O[T.o]-0.45)+FIT_D*(T.F.D[T.d]-0.45),helio=0;
   if(T.o==='helio')helio=HELIO_K*clamp(T.F.starGap/6,0,1)*T.F.O.helio;return{fit:+(v).toFixed(2),helio:+helio.toFixed(2)}}

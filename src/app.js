@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25f';
+const APPV='2026.11.25g';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -896,7 +896,7 @@ function vLineup(){
   const g=S.game,r=myRole();
   const panel=s=>{const mine=r==='all'||r===s,R=rosterOf(g,s),rd=g.ready[s];
     if(!mine)return `<section class="card"><div class="row"><b style="color:${col(s)}">${esc(nm(S,s))}</b><span class="grow"></span><span class="small ${rd?'':'mut'}">${rd?'✅ 已準備':'<span class="spin"></span> 排陣中…'}</span></div>
-      <div class="small mut" style="margin-top:6px">${R.map(p=>esc(p.n)).join('、')}</div><div class="small mut" style="margin-top:4px">位置安排開打時才公開。</div></section>`;
+      <div class="small mut" style="margin-top:6px">${R.map(p=>esc(p.n)).join('、')}</div>${scoutLine(g,s)}<div class="small mut" style="margin-top:4px">位置和戰術開打時才公開。</div></section>`;
     const plate=p=>{const pi=posInfo(p,p.slot),sel=ui.sel&&ui.sel.who===s&&ui.sel.slot===p.slot,b=isBench(p.slot),nk=nickOf(p);
       return `<div class="plate ${s} ${sel?'sel':''} ${b?'bench':''} ${rd?'locked':''}" data-act="${rd?'':'lu'}" data-who="${s}" data-v="${p.slot}" data-drag="${rd?'':s}">
         <span class="ps">${b?BROLE[p.role||'G'].sh:p.slot}</span><span class="pn"><b>${esc(String(p.n).toUpperCase())}</b>${b?roleChip(g,s,p,rd):''}<small>${nk?`“${esc(nk)}”・`:''}能打 ${canPlay(p).join(' ')||'—'}${pi.tier>0&&!b?` <i class="tag t${pi.tier}">${pi.lab}</i>`:''}</small><span class="pst">${p.fa?'自由球員（替補程度）':`<b>${fmt(p.pts)}</b> 分 <b>${fmt(p.trb)}</b> 板 <b>${fmt(p.ast)}</b> 助 <b>${fmt(p.stl)}</b> 抄 <b>${fmt(p.blk)}</b> 帽`}<i>$${p.price||0}</i></span></span><span class="grip" aria-hidden="true">⠿</span></div>`};
