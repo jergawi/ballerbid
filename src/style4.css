@@ -636,3 +636,15 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .rq{list-style:none;counter-reset:q;padding:0!important;margin:0}.rq li{counter-increment:q;display:grid;grid-template-columns:28px 52px 1fr;align-items:start;gap:6px;padding:8px 0;border-top:1px dashed #e3e7f0;font-size:13.5px;line-height:1.55;margin:0!important}
 .rq li:first-child{border-top:0}.rq li::before{content:counter(q);width:22px;height:22px;border-radius:50%;background:#1b2233;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:1px}
 .rtip{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff5ea;color:#5a3a12;font-size:13.5px;line-height:1.55}
+/* 戰術 picker (inside the dark lineup board) */
+.tacbox{margin-top:14px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.18)}
+.tacbox .tacsub{font-weight:600;font-size:11px;color:#9aa6c4;margin-left:6px;letter-spacing:0}
+.tacrow{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:start;margin-top:8px}
+.tacrow .tl{font-size:13px;font-weight:800;color:#cfd6ea;padding-top:8px}
+.tcs{display:flex;flex-wrap:wrap;gap:6px}
+.tc{position:relative;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#e8ecf7;border-radius:10px;padding:7px 9px 6px;font:inherit;font-size:13.5px;font-weight:700;display:inline-flex;align-items:baseline;gap:5px}
+.tc i{font-style:normal;font-size:11px;font-weight:800;color:#9fb0d6}
+.tc em{font-style:normal;font-size:10px;font-weight:800;color:#1b2233;background:#ffd970;border-radius:6px;padding:1px 4px;margin-left:2px}
+.tc.on{background:#fff;color:#1b2233;border-color:#fff}.tc.on i{color:#2f6fd6}
+.tc:disabled{opacity:.6}
+.tacd{font-size:12.5px;line-height:1.55;color:#cfd6ea;margin:6px 0 0 46px}.tacd b{color:#fff}.tacd .mut,.tacd.mut{color:#9aa6c4}

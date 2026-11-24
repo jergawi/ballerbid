@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-ZmaBZ8iKUBUvPNFk/89hHLzLnFkJJkclIKzpfrheD6Y=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-gWSPdhWkhlGO3ytzhhYKzHPYPgxZxJMIuYSzxFYmwKg=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -647,6 +647,18 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .rq{list-style:none;counter-reset:q;padding:0!important;margin:0}.rq li{counter-increment:q;display:grid;grid-template-columns:28px 52px 1fr;align-items:start;gap:6px;padding:8px 0;border-top:1px dashed #e3e7f0;font-size:13.5px;line-height:1.55;margin:0!important}
 .rq li:first-child{border-top:0}.rq li::before{content:counter(q);width:22px;height:22px;border-radius:50%;background:#1b2233;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:1px}
 .rtip{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff5ea;color:#5a3a12;font-size:13.5px;line-height:1.55}
+/* 戰術 picker (inside the dark lineup board) */
+.tacbox{margin-top:14px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.18)}
+.tacbox .tacsub{font-weight:600;font-size:11px;color:#9aa6c4;margin-left:6px;letter-spacing:0}
+.tacrow{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:start;margin-top:8px}
+.tacrow .tl{font-size:13px;font-weight:800;color:#cfd6ea;padding-top:8px}
+.tcs{display:flex;flex-wrap:wrap;gap:6px}
+.tc{position:relative;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#e8ecf7;border-radius:10px;padding:7px 9px 6px;font:inherit;font-size:13.5px;font-weight:700;display:inline-flex;align-items:baseline;gap:5px}
+.tc i{font-style:normal;font-size:11px;font-weight:800;color:#9fb0d6}
+.tc em{font-style:normal;font-size:10px;font-weight:800;color:#1b2233;background:#ffd970;border-radius:6px;padding:1px 4px;margin-left:2px}
+.tc.on{background:#fff;color:#1b2233;border-color:#fff}.tc.on i{color:#2f6fd6}
+.tc:disabled{opacity:.6}
+.tacd{font-size:12.5px;line-height:1.55;color:#cfd6ea;margin:6px 0 0 46px}.tacd b{color:#fff}.tacd .mut,.tacd.mut{color:#9aa6c4}
 
 </style>
 <script>(function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?module.exports=factory():typeof define==="function"&&define.amd?define(factory):(global=global||self,global.morphdom=factory())})(this,function(){"use strict";var DOCUMENT_FRAGMENT_NODE=11;function morphAttrs(fromNode,toNode){var toNodeAttrs=toNode.attributes;var attr;var attrName;var attrNamespaceURI;var attrValue;var fromValue;if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE||fromNode.nodeType===DOCUMENT_FRAGMENT_NODE){return}for(var i=toNodeAttrs.length-1;i>=0;i--){attr=toNodeAttrs[i];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;attrValue=attr.value;if(attrNamespaceURI){attrName=attr.localName||attrName;fromValue=fromNode.getAttributeNS(attrNamespaceURI,attrName);if(fromValue!==attrValue){if(attr.prefix==="xmlns"){attrName=attr.name}fromNode.setAttributeNS(attrNamespaceURI,attrName,attrValue)}}else{fromValue=fromNode.getAttribute(attrName);if(fromValue!==attrValue){fromNode.setAttribute(attrName,attrValue)}}}var fromNodeAttrs=fromNode.attributes;for(var d=fromNodeAttrs.length-1;d>=0;d--){attr=fromNodeAttrs[d];attrName=attr.name;attrNamespaceURI=attr.namespaceURI;if(attrNamespaceURI){attrName=attr.localName||attrName;if(!toNode.hasAttributeNS(attrNamespaceURI,attrName)){fromNode.removeAttributeNS(attrNamespaceURI,attrName)}}else{if(!toNode.hasAttribute(attrName)){fromNode.removeAttribute(attrName)}}}}var range;var NS_XHTML="http://www.w3.org/1999/xhtml";var doc=typeof document==="undefined"?undefined:document;var HAS_TEMPLATE_SUPPORT=!!doc&&"content"in doc.createElement("template");var HAS_RANGE_SUPPORT=!!doc&&doc.createRange&&"createContextualFragment"in doc.createRange();function createFragmentFromTemplate(str){var template=doc.createElement("template");template.innerHTML=str;return template.content.childNodes[0]}function createFragmentFromRange(str){if(!range){range=doc.createRange();range.selectNode(doc.body)}var fragment=range.createContextualFragment(str);return fragment.childNodes[0]}function createFragmentFromWrap(str){var fragment=doc.createElement("body");fragment.innerHTML=str;return fragment.childNodes[0]}function toElement(str){str=str.trim();if(HAS_TEMPLATE_SUPPORT){return createFragmentFromTemplate(str)}else if(HAS_RANGE_SUPPORT){return createFragmentFromRange(str)}return createFragmentFromWrap(str)}function compareNodeNames(fromEl,toEl){var fromNodeName=fromEl.nodeName;var toNodeName=toEl.nodeName;var fromCodeStart,toCodeStart;if(fromNodeName===toNodeName){return true}fromCodeStart=fromNodeName.charCodeAt(0);toCodeStart=toNodeName.charCodeAt(0);if(fromCodeStart<=90&&toCodeStart>=97){return fromNodeName===toNodeName.toUpperCase()}else if(toCodeStart<=90&&fromCodeStart>=97){return toNodeName===fromNodeName.toUpperCase()}else{return false}}function createElementNS(name,namespaceURI){return!namespaceURI||namespaceURI===NS_XHTML?doc.createElement(name):doc.createElementNS(namespaceURI,name)}function moveChildren(fromEl,toEl){var curChild=fromEl.firstChild;while(curChild){var nextChild=curChild.nextSibling;toEl.appendChild(curChild);curChild=nextChild}return toEl}function syncBooleanAttrProp(fromEl,toEl,name){if(fromEl[name]!==toEl[name]){fromEl[name]=toEl[name];if(fromEl[name]){fromEl.setAttribute(name,"")}else{fromEl.removeAttribute(name)}}}var specialElHandlers={OPTION:function(fromEl,toEl){var parentNode=fromEl.parentNode;if(parentNode){var parentName=parentNode.nodeName.toUpperCase();if(parentName==="OPTGROUP"){parentNode=parentNode.parentNode;parentName=parentNode&&parentNode.nodeName.toUpperCase()}if(parentName==="SELECT"&&!parentNode.hasAttribute("multiple")){if(fromEl.hasAttribute("selected")&&!toEl.selected){fromEl.setAttribute("selected","selected");fromEl.removeAttribute("selected")}parentNode.selectedIndex=-1}}syncBooleanAttrProp(fromEl,toEl,"selected")},INPUT:function(fromEl,toEl){syncBooleanAttrProp(fromEl,toEl,"checked");syncBooleanAttrProp(fromEl,toEl,"disabled");if(fromEl.value!==toEl.value){fromEl.value=toEl.value}if(!toEl.hasAttribute("value")){fromEl.removeAttribute("value")}},TEXTAREA:function(fromEl,toEl){var newValue=toEl.value;if(fromEl.value!==newValue){fromEl.value=newValue}var firstChild=fromEl.firstChild;if(firstChild){var oldValue=firstChild.nodeValue;if(oldValue==newValue||!newValue&&oldValue==fromEl.placeholder){return}firstChild.nodeValue=newValue}},SELECT:function(fromEl,toEl){if(!toEl.hasAttribute("multiple")){var selectedIndex=-1;var i=0;var curChild=fromEl.firstChild;var optgroup;var nodeName;while(curChild){nodeName=curChild.nodeName&&curChild.nodeName.toUpperCase();if(nodeName==="OPTGROUP"){optgroup=curChild;curChild=optgroup.firstChild;if(!curChild){curChild=optgroup.nextSibling;optgroup=null}}else{if(nodeName==="OPTION"){if(curChild.hasAttribute("selected")){selectedIndex=i;break}i++}curChild=curChild.nextSibling;if(!curChild&&optgroup){curChild=optgroup.nextSibling;optgroup=null}}}fromEl.selectedIndex=selectedIndex}}};var ELEMENT_NODE=1;var DOCUMENT_FRAGMENT_NODE$1=11;var TEXT_NODE=3;var COMMENT_NODE=8;function noop(){}function defaultGetNodeKey(node){if(node){return node.getAttribute&&node.getAttribute("id")||node.id}}function morphdomFactory(morphAttrs){return function morphdom(fromNode,toNode,options){if(!options){options={}}if(typeof toNode==="string"){if(fromNode.nodeName==="#document"||fromNode.nodeName==="HTML"){var toNodeHtml=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeHtml}else if(fromNode.nodeName==="BODY"){var toNodeBody=toNode;toNode=doc.createElement("html");toNode.innerHTML=toNodeBody;var bodyElement=toNode.querySelector("body");if(bodyElement){toNode=bodyElement}}else{toNode=toElement(toNode)}}else if(toNode.nodeType===DOCUMENT_FRAGMENT_NODE$1){toNode=toNode.firstElementChild}var getNodeKey=options.getNodeKey||defaultGetNodeKey;var onBeforeNodeAdded=options.onBeforeNodeAdded||noop;var onNodeAdded=options.onNodeAdded||noop;var onBeforeElUpdated=options.onBeforeElUpdated||noop;var onElUpdated=options.onElUpdated||noop;var onBeforeNodeDiscarded=options.onBeforeNodeDiscarded||noop;var onNodeDiscarded=options.onNodeDiscarded||noop;var onBeforeElChildrenUpdated=options.onBeforeElChildrenUpdated||noop;var skipFromChildren=options.skipFromChildren||noop;var addChild=options.addChild||function(parent,child){return parent.appendChild(child)};var childrenOnly=options.childrenOnly===true;var fromNodesLookup=Object.create(null);var keyedRemovalList=[];function addKeyedRemoval(key){keyedRemovalList.push(key)}function walkDiscardedChildNodes(node,skipKeyedNodes){if(node.nodeType===ELEMENT_NODE){var curChild=node.firstChild;while(curChild){var key=undefined;if(skipKeyedNodes&&(key=getNodeKey(curChild))){addKeyedRemoval(key)}else{onNodeDiscarded(curChild);if(curChild.firstChild){walkDiscardedChildNodes(curChild,skipKeyedNodes)}}curChild=curChild.nextSibling}}}function removeNode(node,parentNode,skipKeyedNodes){if(onBeforeNodeDiscarded(node)===false){return}if(parentNode){parentNode.removeChild(node)}onNodeDiscarded(node);walkDiscardedChildNodes(node,skipKeyedNodes)}function indexTree(node){if(node.nodeType===ELEMENT_NODE||node.nodeType===DOCUMENT_FRAGMENT_NODE$1){var curChild=node.firstChild;while(curChild){var key=getNodeKey(curChild);if(key){fromNodesLookup[key]=curChild}indexTree(curChild);curChild=curChild.nextSibling}}}indexTree(fromNode);function handleNodeAdded(el){onNodeAdded(el);var curChild=el.firstChild;while(curChild){var nextSibling=curChild.nextSibling;var key=getNodeKey(curChild);if(key){var unmatchedFromEl=fromNodesLookup[key];if(unmatchedFromEl&&compareNodeNames(curChild,unmatchedFromEl)){curChild.parentNode.replaceChild(unmatchedFromEl,curChild);morphEl(unmatchedFromEl,curChild)}else{handleNodeAdded(curChild)}}else{handleNodeAdded(curChild)}curChild=nextSibling}}function cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey){while(curFromNodeChild){var fromNextSibling=curFromNodeChild.nextSibling;if(curFromNodeKey=getNodeKey(curFromNodeChild)){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}}function morphEl(fromEl,toEl,childrenOnly){var toElKey=getNodeKey(toEl);if(toElKey){delete fromNodesLookup[toElKey]}if(!childrenOnly){var beforeUpdateResult=onBeforeElUpdated(fromEl,toEl);if(beforeUpdateResult===false){return}else if(beforeUpdateResult instanceof HTMLElement){fromEl=beforeUpdateResult;indexTree(fromEl)}morphAttrs(fromEl,toEl);onElUpdated(fromEl);if(onBeforeElChildrenUpdated(fromEl,toEl)===false){return}}if(fromEl.nodeName!=="TEXTAREA"){morphChildren(fromEl,toEl)}else{specialElHandlers.TEXTAREA(fromEl,toEl)}}function morphChildren(fromEl,toEl){var skipFrom=skipFromChildren(fromEl,toEl);var curToNodeChild=toEl.firstChild;var curFromNodeChild=fromEl.firstChild;var curToNodeKey;var curFromNodeKey;var fromNextSibling;var toNextSibling;var matchingFromEl;outer:while(curToNodeChild){toNextSibling=curToNodeChild.nextSibling;curToNodeKey=getNodeKey(curToNodeChild);while(!skipFrom&&curFromNodeChild){fromNextSibling=curFromNodeChild.nextSibling;if(curToNodeChild.isSameNode&&curToNodeChild.isSameNode(curFromNodeChild)){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}curFromNodeKey=getNodeKey(curFromNodeChild);var curFromNodeType=curFromNodeChild.nodeType;var isCompatible=undefined;if(curFromNodeType===curToNodeChild.nodeType){if(curFromNodeType===ELEMENT_NODE){if(curToNodeKey){if(curToNodeKey!==curFromNodeKey){if(matchingFromEl=fromNodesLookup[curToNodeKey]){if(fromNextSibling===matchingFromEl){isCompatible=false}else{fromEl.insertBefore(matchingFromEl,curFromNodeChild);if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=matchingFromEl;curFromNodeKey=getNodeKey(curFromNodeChild)}}else{isCompatible=false}}}else if(curFromNodeKey){isCompatible=false}isCompatible=isCompatible!==false&&compareNodeNames(curFromNodeChild,curToNodeChild);if(isCompatible){morphEl(curFromNodeChild,curToNodeChild)}}else if(curFromNodeType===TEXT_NODE||curFromNodeType==COMMENT_NODE){isCompatible=true;if(curFromNodeChild.nodeValue!==curToNodeChild.nodeValue){curFromNodeChild.nodeValue=curToNodeChild.nodeValue}}}if(isCompatible){curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling;continue outer}if(curFromNodeKey){addKeyedRemoval(curFromNodeKey)}else{removeNode(curFromNodeChild,fromEl,true)}curFromNodeChild=fromNextSibling}if(curToNodeKey&&(matchingFromEl=fromNodesLookup[curToNodeKey])&&compareNodeNames(matchingFromEl,curToNodeChild)){if(!skipFrom){addChild(fromEl,matchingFromEl)}morphEl(matchingFromEl,curToNodeChild)}else{var onBeforeNodeAddedResult=onBeforeNodeAdded(curToNodeChild);if(onBeforeNodeAddedResult!==false){if(onBeforeNodeAddedResult){curToNodeChild=onBeforeNodeAddedResult}if(curToNodeChild.actualize){curToNodeChild=curToNodeChild.actualize(fromEl.ownerDocument||doc)}addChild(fromEl,curToNodeChild);handleNodeAdded(curToNodeChild)}}curToNodeChild=toNextSibling;curFromNodeChild=fromNextSibling}cleanupFromEl(fromEl,curFromNodeChild,curFromNodeKey);var specialElHandler=specialElHandlers[fromEl.nodeName];if(specialElHandler){specialElHandler(fromEl,toEl)}}var morphedNode=fromNode;var morphedNodeType=morphedNode.nodeType;var toNodeType=toNode.nodeType;if(!childrenOnly){if(morphedNodeType===ELEMENT_NODE){if(toNodeType===ELEMENT_NODE){if(!compareNodeNames(fromNode,toNode)){onNodeDiscarded(fromNode);morphedNode=moveChildren(fromNode,createElementNS(toNode.nodeName,toNode.namespaceURI))}}else{morphedNode=toNode}}else if(morphedNodeType===TEXT_NODE||morphedNodeType===COMMENT_NODE){if(toNodeType===morphedNodeType){if(morphedNode.nodeValue!==toNode.nodeValue){morphedNode.nodeValue=toNode.nodeValue}return morphedNode}else{morphedNode=toNode}}}if(morphedNode===toNode){onNodeDiscarded(fromNode)}else{if(toNode.isSameNode&&toNode.isSameNode(morphedNode)){return}morphEl(morphedNode,toNode,childrenOnly);if(keyedRemovalList){for(var i=0,len=keyedRemovalList.length;i<len;i++){var elToRemove=fromNodesLookup[keyedRemovalList[i]];if(elToRemove){removeNode(elToRemove,elToRemove.parentNode,false)}}}}if(!childrenOnly&&morphedNode!==fromNode&&fromNode.parentNode){if(morphedNode.actualize){morphedNode=morphedNode.actualize(fromNode.ownerDocument||doc)}fromNode.parentNode.replaceChild(morphedNode,fromNode)}return morphedNode}}var morphdom=morphdomFactory(morphAttrs);return morphdom});</script>
@@ -676,7 +688,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25d';
+const APPV='2026.11.25e';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -977,6 +989,8 @@ function apply(S,a,actor){
     case 'pass':{if(S.phase!=='auction'||inGap(g)||!g.sides.includes(who)||g.bid.who===who||g.pass[who]||fmtBusy(g))return false;
       if(a.idx!=null&&a.idx!==g.idx)return false;
       g.pass[who]=true;if(g.turn===who||!g.turn)advance(S);return true}
+    case 'tac':{if(S.phase!=='lineup'||!g.sides.includes(who)||g.ready[who])return false;const k=a.k,v=a.v;if(!(k==='o'&&TAC_O[v])&&!(k==='d'&&TAC_D[v]))return false;
+      g.tac=g.tac||{};const cur=tacOf(g,who);g.tac[who]={o:cur.o,d:cur.d,[k]:v};return true}
     case 'swap':{if(S.phase!=='lineup'||!g.sides.includes(who)||g.ready[who])return false;
       const R=g.rosters[who],x=R.find(q=>q.slot===a.x),y=R.find(q=>q.slot===a.y);if(!x||!y||x===y)return false;[x.slot,y.slot]=[y.slot,x.slot];[x.role,y.role]=[y.role,x.role];return true}
     case 'brole':{if(S.phase!=='lineup'||!g.sides.includes(who)||g.ready[who]||!own(BROLE,a.role))return false;const R=g.rosters[who],e=R.find(q=>q.slot===a.slot&&isBench(q.slot));if(!e)return false;
@@ -2120,6 +2134,107 @@ async function logExport(){const L=logAll();if(!L.length){toast('還沒有紀錄
   const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('已下載 '+name)}
 function logBtn(){const n=logAll().length;return `<button class="ghost" data-act="logexp">匯出遊戲紀錄（${n} 局，給 Claude 分析）</button>`}
 
+/* ---------- 戰術 (team tactics) ----------
+   Each team picks one offense and one defense in the lineup phase. Talent (BPM) stays the base; a tactic adds a small,
+   uncertain edge on top:
+   - fit: how well the five starters suit the scheme (a five-out offense with non-shooters is worse than none);
+   - counters: some offenses tend to do well or badly against some defenses (switching smothers pick-and-roll but
+     hands post scorers mismatches; zone and drop pack the paint but give up threes; blitzing a star forces the ball
+     to his teammates, which ball-movement teams punish). These are tendencies, not rules: the size depends on how
+     well both sides fit their schemes, every game draws its own execution, and a team that loses a game adjusts;
+   - variance: three-point-heavy offenses and gambling defenses widen a team's range of scores, fast pace narrows it
+     (more possessions, the better team shows through). A weaker team can take on risk on purpose;
+   - 核心擋拆 (heliocentric): one creating star with shooters around him plays above the sum of the parts, and that
+     star gets more chances to take a game over.
+   Magnitudes: fit about -1..+1.5 rating points, the star system up to +1.2, a counter up to about +-1.3, against
+   typical team ratings of 15-30, so tactics swing close matchups but do not overturn a clear talent gap. */
+const TAC_O={
+  five:{nm:'五外拉開',d:'五個人都能站外線，拉開空間找三分和切入',need:'射手，尤其是會投的長人'},
+  helio:{nm:'核心擋拆',d:'球交給一位持球核心，其他人拉開等球',need:'一位會組織的球星＋射手，球權不要太分散'},
+  post:{nm:'內線強攻',d:'球往禁區送，低位單打、搶進攻籃板',need:'低位得分手、籃板好的長人'},
+  run:{nm:'跑轟快攻',d:'搶斷、搶到籃板就全速推進',need:'抄截高手、會傳球的後衛'},
+  motion:{nm:'傳導進攻',d:'不停傳球跑位，人人都可能出手',need:'三位以上會傳球的人'}};
+const TAC_D={
+  switch:{nm:'全員換防',d:'遇到掩護就換人，不讓擋拆成形',need:'能守多個位置的人'},
+  drop:{nm:'護框收縮',d:'長人守在籃下，放對手投中距離',need:'護框長人'},
+  zone:{nm:'區域聯防',d:'各守一區塞住禁區，藏住弱防守者',need:'護框長人＋外圍有人能抄'},
+  blitz:{nm:'包夾壓迫',d:'包夾持球者，逼他把球交出去',need:'抄截高手、防守好的人'}};
+const TO_K=Object.keys(TAC_O),TD_K=Object.keys(TAC_D);
+// offense advantage before centering (+ = the offense tends to do well). Double-centered below so neither an offense
+// nor a defense is better in general; only the pairing matters.
+const TAC_RAW={five:{switch:-0.5,drop:1,zone:1,blitz:0},helio:{switch:-1,drop:0.5,zone:-0.5,blitz:-1},post:{switch:1,drop:-1,zone:-1,blitz:0.5},
+  run:{switch:0,drop:0.5,zone:0.5,blitz:-0.5},motion:{switch:0,drop:0,zone:1,blitz:1}};
+const TAC_M=(()=>{const M={};const rm={},cm={};let all=0;TO_K.forEach(o=>{rm[o]=TD_K.reduce((t,d)=>t+TAC_RAW[o][d],0)/TD_K.length});
+  TD_K.forEach(d=>{cm[d]=TO_K.reduce((t,o)=>t+TAC_RAW[o][d],0)/TO_K.length});TO_K.forEach(o=>TD_K.forEach(d=>all+=TAC_RAW[o][d]));all/=TO_K.length*TD_K.length;
+  TO_K.forEach(o=>{M[o]={};TD_K.forEach(d=>M[o][d]=+(TAC_RAW[o][d]-rm[o]-cm[d]+all).toFixed(3))});return M})();
+const TAC_VAR_O={five:0.14,helio:0.06,post:0,run:-0.07,motion:-0.04},TAC_VAR_D={switch:0,drop:0,zone:0.06,blitz:0.08};
+const FIT_O=2.4,FIT_D=1.6,HELIO_K=1.2,CNT_K=1.3,TK_HELIO=1.6;
+
+// player traits used by the schemes (0..1)
+const tShoot=p=>{const f=String((bioOf(p)||{}).sk||'');return Math.max(spc(p),f.includes('3')?0.7:0,f.includes('m')?0.35:0)};
+const tRim=p=>clamp((num(p.blkp,1)-1.5)/3.5,0,1),tStl=p=>clamp((num(p.stlp,1.5)-1.3)/1.5,0,1),tPass=p=>clamp((num(p.astp,12)-8)/24,0,1);
+const tDef=p=>clamp((num(p.dbpm,0)+1)/4,0,1),tVers=p=>{const n=canPlay(p).length;return n>=3?1:n===2?0.5:0};
+const tMean=a=>a.length?a.reduce((t,x)=>t+x,0)/a.length:0,tTop=(a,n)=>a.slice().sort((x,y)=>y-x).slice(0,n);
+function helioStar(R){let best=null,bv=-1;R.forEach(p=>{const v=crea(p)*Math.max(0.5,pval(p));if(v>bv){bv=v;best=p}});return best}
+function tacRaw(Rall){const R=starters(Rall),bigs=R.filter(p=>p.slot==='PF'||p.slot==='C');
+  const sh=R.map(tShoot),star=helioStar(R),oth=R.filter(p=>p!==star),us=tTop(oth.map(p=>num(p.usg,18)),1)[0]||18;
+  const O={five:0.6*tMean(sh)+0.4*tMean(bigs.map(tShoot)),
+    helio:star?0.45*crea(star)*clamp(pval(star)/7,0,1)+0.35*tMean(oth.map(tShoot))+0.2*(1-clamp((us-22)/10,0,1)):0,
+    post:0.4*Math.max(0,...R.map(postS))+0.3*tMean(bigs.map(rebS))+0.3*Math.min(1,R.filter(p=>peOf(p)>=4).length/2),
+    run:0.35*tMean(tTop(R.map(tStl),3))+0.35*Math.max(0,...R.filter(p=>p.slot==='PG'||p.slot==='SG').map(tPass))+0.3*R.filter(p=>peOf(p)<=3.5).length/5,
+    motion:0.6*Math.min(1,R.filter(p=>tPass(p)>=0.3).length/3)+0.4*(1-clamp((Math.max(...R.map(p=>num(p.usg,18)))-tMean(R.map(p=>num(p.usg,18))))/14,0,1))};
+  const D={switch:tMean(R.map(tVers)),drop:0.7*Math.max(0,...bigs.map(tRim))+0.3*tMean(R.map(tDef)),
+    zone:0.5*Math.max(0,...R.map(tRim))+0.25*tMean(R.map(tStl))+0.25*tMean(R.map(tDef)),blitz:0.6*tMean(tTop(R.map(tStl),3))+0.4*tMean(R.map(tDef))};
+  Object.keys(O).forEach(k=>O[k]=clamp(O[k],0,1));Object.keys(D).forEach(k=>D[k]=clamp(D[k],0,1));
+  return{O,D,star:star&&star.n,starGap:star?pval(star)-tMean(oth.map(pval)):0}}
+/* the raw scores above live on different scales (most lineups have two bigs, few have five shooters), so each is
+   turned into a percentile against 600 random five-man lineups drawn from the whole card pool: "契合 80" means this
+   lineup suits the scheme better than 80% of random lineups. Built once, from a fixed seed, the same on every device. */
+let TAC_CAL=null;
+function tacCal(){if(TAC_CAL)return TAC_CAL;const pool=[];const seen=new Set();THEMES.forEach(t=>t.items.forEach(p=>{if(!p.fa&&!seen.has(p.id+p.y0)){seen.add(p.id+p.y0);pool.push(p)}}));
+  const r=rng(hash('tac-cal-v1')),O={},D={};TO_K.forEach(k=>O[k]=[]);TD_K.forEach(k=>D[k]=[]);
+  for(let i=0;i<600&&pool.length>=5;i++){const pick=[];while(pick.length<5){const p=pool[Math.floor(r()*pool.length)];if(!pick.includes(p))pick.push(p)}
+    const L=pick.slice().sort((a,b)=>peOf(a)-peOf(b)).map((p,j)=>({...p,slot:POS[j]})),f=tacRaw(L);TO_K.forEach(k=>O[k].push(f.O[k]));TD_K.forEach(k=>D[k].push(f.D[k]))}
+  Object.values(O).concat(Object.values(D)).forEach(a=>a.sort((x,y)=>x-y));return TAC_CAL={O,D}}
+const pctIn=(a,v)=>{if(!a.length)return v;let lo=0,hi=a.length;while(lo<hi){const m=(lo+hi)>>1;if(a[m]<v)lo=m+1;else hi=m}let e=lo;while(e<a.length&&a[e]===v)e++;return clamp(((lo+e)/2)/a.length,0,1)};
+function tacFit(R){const f=tacRaw(R),C=tacCal(),O={},D={};TO_K.forEach(k=>O[k]=pctIn(C.O[k],f.O[k]));TD_K.forEach(k=>D[k]=pctIn(C.D[k],f.D[k]));return{...f,O,D}}
+const bestOf=o=>Object.keys(o).reduce((a,b)=>o[b]>o[a]?b:a);
+function tacOf(g,s){const t=g.tac&&g.tac[s],F=tacFit(rosterOf(g,s));return{o:t&&TAC_O[t.o]?t.o:bestOf(F.O),d:t&&TAC_D[t.d]?t.d:bestOf(F.D),F,auto:!t}}
+/* bots: easy picks among its three best fits at random, normal takes its best fit, hard also looks at what the
+   other teams are likely to run (their best fits) and adds the expected counter */
+function botTac(g,s){const lv=(S.bots&&S.bots[s]&&S.bots[s].lv)||S.botLv||'normal',F=tacFit(rosterOf(g,s)),r=rng(hash(g.gid+s+'tac'));
+  if(lv==='easy'){const pk=o=>{const k=Object.keys(o).sort((a,b)=>o[b]-o[a]).slice(0,3);return k[Math.floor(r()*k.length)]};return{o:pk(F.O),d:pk(F.D)}}
+  if(lv!=='hard')return{o:bestOf(F.O),d:bestOf(F.D)};
+  const opp=g.sides.filter(x=>x!==s).map(x=>{const f=tacFit(rosterOf(g,x));return{o:bestOf(f.O),d:bestOf(f.D),f}});
+  const so={},sd={};TO_K.forEach(o=>so[o]=FIT_O*F.O[o]+tMean(opp.map(q=>CNT_K*TAC_M[o][q.d]*(0.5+0.5*F.O[o])*(0.5+0.5*q.f.D[q.d]))));
+  TD_K.forEach(d=>sd[d]=FIT_D*F.D[d]-tMean(opp.map(q=>CNT_K*TAC_M[q.o][d]*(0.5+0.5*q.f.O[q.o])*(0.5+0.5*F.D[d]))));return{o:bestOf(so),d:bestOf(sd)}}
+// the fixed part of a team's tactic edge (fit + star system), and the counter of its offense against a defense
+function tacBase(T){let v=FIT_O*(T.F.O[T.o]-0.45)+FIT_D*(T.F.D[T.d]-0.45),helio=0;
+  if(T.o==='helio')helio=HELIO_K*clamp(T.F.starGap/6,0,1)*T.F.O.helio;return{fit:+(v).toFixed(2),helio:+helio.toFixed(2)}}
+const tacCounter=(A,B)=>CNT_K*TAC_M[A.o][B.d]*(0.5+0.5*A.F.O[A.o])*(0.5+0.5*B.F.D[B.d]);
+function tacResolve(g){g.tacR={};g.sides.forEach(s=>{const t=tacOf(g,s);if(t.auto&&typeof isBot==='function'&&isBot(s)){const b=botTac(g,s);t.o=b.o;t.d=b.d}
+  g.tacR[s]={o:t.o,d:t.d,F:t.F,auto:t.auto,...tacBase(t)}})}
+// short soft hints for the picker: what an offense / a defense usually does well or badly against
+function tacHint(kind,k){if(kind==='o'){const row=TAC_M[k],good=TD_K.filter(d=>row[d]>=0.35).map(d=>TAC_D[d].nm),bad=TD_K.filter(d=>row[d]<=-0.35).map(d=>TAC_D[d].nm);
+    return (good.length?`通常好打：${good.join('、')}`:'')+(good.length&&bad.length?'；':'')+(bad.length?`容易卡住：${bad.join('、')}`:'')}
+  const good=TO_K.filter(o=>TAC_M[o][k]<=-0.35).map(o=>TAC_O[o].nm),bad=TO_K.filter(o=>TAC_M[o][k]>=0.35).map(o=>TAC_O[o].nm);
+  return (good.length?`通常守得住：${good.join('、')}`:'')+(good.length&&bad.length?'；':'')+(bad.length?`比較怕：${bad.join('、')}`:'')}
+function tacPanel(g,s,rd){const t=tacOf(g,s),bo=bestOf(t.F.O),bd=bestOf(t.F.D),pc=x=>Math.round(x*100);
+  const chip=(kind,k,nm,fit,best,on)=>`<button class="tc ${on?'on':''}" data-act="tac" data-who="${s}" data-k="${kind}" data-v="${k}" ${rd?'disabled':''}>${nm}<i>${pc(fit)}</i>${best?'<em>推薦</em>':''}</button>`;
+  const O=TAC_O[t.o],D=TAC_D[t.d];
+  return `<div class="tacbox"><div class="blab">戰術 <span class="tacsub">數字是陣容契合度</span></div>
+    <div class="tacrow"><span class="tl">進攻</span><div class="tcs">${TO_K.map(k=>chip('o',k,TAC_O[k].nm,t.F.O[k],k===bo,k===t.o)).join('')}</div></div>
+    <div class="tacd"><b>${O.nm}</b>：${O.d}。需要${O.need}。<span class="mut">${tacHint('o',t.o)}</span></div>
+    <div class="tacrow"><span class="tl">防守</span><div class="tcs">${TD_K.map(k=>chip('d',k,TAC_D[k].nm,t.F.D[k],k===bd,k===t.d)).join('')}</div></div>
+    <div class="tacd"><b>${D.nm}</b>：${D.d}。需要${D.need}。<span class="mut">${tacHint('d',t.d)}</span></div>
+    ${t.o==='helio'&&t.F.star?`<div class="tacd">核心：<b>${esc(t.F.star)}</b>。他越比隊友強、隊友越會投，這套越好用，他接管比賽的機會也變多。</div>`:''}
+    <div class="tacd mut">克制只是傾向：每場執行好壞不同，輸球的一方也會調整。對手選什麼要開打才知道。</div></div>`}
+// one line per series for the results
+function tacLine(z){if(!z.tac)return '';const A=z.tac[z.a],B=z.tac[z.b],nmA=esc(nm(S,z.a)),nmB=esc(nm(S,z.b));
+  const ca=tacCounter(A,B),cb=tacCounter(B,A),edge=x=>x>=0.35?'佔上風':x<=-0.35?'被限制':'互有來回';
+  return `<div class="small" style="margin-top:4px;line-height:1.6">戰術：<span style="color:${col(z.a)}">${nmA}</span> ${TAC_O[A.o].nm}／${TAC_D[A.d].nm} vs <span style="color:${col(z.b)}">${nmB}</span> ${TAC_O[B.o].nm}／${TAC_D[B.d].nm}<br>
+    <span class="mut">${nmA}的進攻${edge(ca)}，${nmB}的進攻${edge(cb)}</span></div>`}
+
 /* ---------- matchup model ----------
  Base: OBPM+DBPM (Box Plus/Minus, Basketball-Reference), shrunk toward replacement level for small samples.
  Calibration (1985-2025, 1,230 real team-seasons): the top-5 BPM sum explains SRS with R²=0.73 at 0.79 pts per BPM;
@@ -2213,9 +2328,9 @@ function boCands(R,gi){const v=R.filter(p=>!p.fa).map(p=>pval(p)).sort((a,b)=>a-
 const TK_PTS=4;
 function tkRate(p){if(!p||p.fa)return 0;const b=bioOf(p)||{};let v=b.mvp>0?0.065:(b.all1>=2||b.as>=8||b.fmvp)?0.05:0;
   if(!v)return 0;const ph=typeof phaseOf==='function'?phaseOf(p):null;return v*({prime:1.15,early:0.85,late:0.7,rook:0.6}[ph]||1)}
-function tkPick(R,gi,r){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n));
+function tkPick(R,gi,r,mul){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n)),rt=p=>tkRate(p)*((mul&&mul[p.n])||1);
   const c=R.filter(p=>!out.has(p.n)&&tkRate(p)>0);for(let i=c.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
-  for(const p of c)if(r()<tkRate(p))return p.n;return null}
+  for(const p of c)if(r()<rt(p))return p.n;return null}
 function boxFor(R,per,score,r,bo,tk){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.play==null?1:x.play)+(x.extra||0),bx=(x,k)=>x.p.n===bo?{reb:1.3,ast:1.3}[k]||1:x.p.n===tk?{reb:1.15,ast:1.25}[k]||1:1;
   const w=k=>per.map(x=>{const b=st(x.p);return mf(x)*bx(x,k)*{pts:Math.pow(Math.max(2,b.pts*x.m.pts),0.65),reb:Math.max(1,b.trb*x.m.reb),ast:Math.max(.5,b.ast*x.m.ast),stl:Math.max(.2,b.stl*x.m.stl),blk:Math.max(.1,b.blk*x.m.blk),tov:Math.max(.3,b.tov*x.m.tov)}[k]*(0.75+0.5*r())});
   const tot=k=>per.reduce((t,x)=>{const b=st(x.p);return t+b[k==='reb'?'trb':k]*x.m[k]*mf(x)},0);
@@ -2232,23 +2347,29 @@ function boxFor(R,per,score,r,bo,tk){const mf=x=>(x.bench?(x.bw||0.35):1)*(x.pla
   return R.map((p,i)=>{const m=per[i].m;return{n:p.n,slot:p.slot,pts:pts[i],reb:reb[i],ast:ast[i],stl:stl[i],blk:blk[i],tov:tov[i],
     m:{pts:+m.pts.toFixed(2),reb:+m.reb.toFixed(2),ast:+m.ast.toFixed(2),tov:+m.tov.toFixed(2),stl:+m.stl.toFixed(2),blk:+m.blk.toFixed(2)}}})}
 function simulate(S){
-  const g=S.game,sides=g.sides,ro={},base={},teams={};
+  const g=S.game,sides=g.sides,ro={},base={},teams={};tacResolve(g);const TR=g.tacR;
   sides.forEach(s=>{ro[s]=rosterOf(g,s);base[s]=baseRate(ro[s],g,left(g,s))});
   sides.forEach(s=>{const sv=base[s].net+pairRate(base[s],ro[s],null).posAdj;const pct=percentile(g,ro[s],sv);
     const mb=(g.misRes&&g.misRes[s]&&g.misRes[s].bonus)||0;base[s].misAdj=mb;base[s].off+=mb/2;base[s].def+=mb/2;base[s].net+=mb;
     const hc=homeAdj(g,s);base[s].hcAdj=hc;base[s].off+=hc/2;base[s].def+=hc/2;base[s].net+=hc;
-    teams[s]={strength:+(sv+mb+hc).toFixed(2),pct,grade:grade(pct),base:Object.fromEntries(['O','D','U','usgAdj','tmAdj','lgAdj','swAdj','fdAdj','savAdj','benchAdj','misAdj','hcAdj','net'].map(k=>[k,+(base[s][k]||0).toFixed(2)])),chem:base[s].ch,sw:0,gw:0,gl:0,posSum:0,posN:0}});
+    teams[s]={strength:+(sv+mb+hc).toFixed(2),pct,grade:grade(pct),base:Object.fromEntries(['O','D','U','usgAdj','tmAdj','lgAdj','swAdj','fdAdj','savAdj','benchAdj','misAdj','hcAdj','net'].map(k=>[k,+(base[s][k]||0).toFixed(2)])),chem:base[s].ch,sw:0,gw:0,gl:0,posSum:0,posN:0,tacAdj:+(TR[s].fit+TR[s].helio).toFixed(2),tac:{o:TR[s].o,d:TR[s].d}}});
   const series=[];
   for(let i=0;i<sides.length;i++)for(let j=i+1;j<sides.length;j++){const a=sides[i],b=sides[j];
     const ra=pairRate(base[a],ro[a],ro[b]),rb=pairRate(base[b],ro[b],ro[a]);
     teams[a].posSum+=ra.posAdj;teams[a].posN++;teams[b].posSum+=rb.posAdj;teams[b].posN++;
+    // tactics: fixed edge (fit + star system) plus each offense's counter against the other's defense; every game
+    // draws its own execution (0.6-1.4) and a coach whose team lost a game takes 20% off the winner's counter edge
+    const TA=TR[a],TB=TR[b],ea=TA.fit+TA.helio,eb=TB.fit+TB.helio,ca=tacCounter(TA,TB),cb=tacCounter(TB,TA),rtac=rng(hash(g.gid+a+b+'tac'));let adjA=1,adjB=1;
+    const sdA=9*(1+TAC_VAR_O[TA.o]+TAC_VAR_D[TB.d]),sdB=9*(1+TAC_VAR_O[TB.o]+TAC_VAR_D[TA.d]),gsd=Math.hypot(sdA,sdB);
+    const mulA=TA.o==='helio'&&TA.F.star?{[TA.F.star]:TK_HELIO}:null,mulB=TB.o==='helio'&&TB.F.star?{[TB.F.star]:TK_HELIO}:null,tg2=[];
     const margin=MARGIN*((ra.off+ra.def)-(rb.off+rb.def)),avg=112+0.2*((ra.off-rb.def)+(rb.off-ra.def))/2;
-    const p=Phi(margin/GSD),r=rng(hash(g.gid+a+b)),ri=rng(hash(g.gid+a+b+'inc')),rbo=rng(hash(g.gid+a+b+'bo')),rtk=rng(hash(g.gid+a+b+'tk'));let wa=0,wb=0;const games=[],inc=[],bo=[],tk=[];
+    const p=Phi((margin+MARGIN*((ea+ca)-(eb+cb)))/gsd),r=rng(hash(g.gid+a+b)),ri=rng(hash(g.gid+a+b+'inc')),rbo=rng(hash(g.gid+a+b+'bo')),rtk=rng(hash(g.gid+a+b+'tk'));let wa=0,wb=0;const games=[],inc=[],bo=[],tk=[];
     while(wa<4&&wb<4){const gi=g.size===10?incidents(ro[a],a,ri).concat(incidents(ro[b],b,ri)):[];inc.push(gi);
-      const ca=gi.filter(x=>x.side===a).reduce((t,x)=>t+(x.cost||0),0),cb=gi.filter(x=>x.side===b).reduce((t,x)=>t+(x.cost||0),0),mg=margin+MARGIN*(cb-ca);
+      const xa=0.6+0.8*rtac(),xb=0.6+0.8*rtac(),ta=xa*(ea+ca*adjA),tb=xb*(eb+cb*adjB);tg2.push({ta:+ta.toFixed(2),tb:+tb.toFixed(2),ca:+(xa*ca*adjA).toFixed(2),cb:+(xb*cb*adjB).toFixed(2)});
+      const ia=gi.filter(x=>x.side===a).reduce((t,x)=>t+(x.cost||0),0),ib=gi.filter(x=>x.side===b).reduce((t,x)=>t+(x.cost||0),0),mg=margin+MARGIN*(ib-ia)+MARGIN*(ta-tb);
       const bg={};[a,b].forEach(s=>{if(rbo()<BO_P){const c=boCands(ro[s],gi);if(c.length)bg[s]=c[Math.floor(rbo()*c.length)].n}});bo.push(bg);
-      const tg={};[a,b].forEach(s=>{const n=tkPick(ro[s],gi,rtk);if(n)tg[s]=n});tk.push(tg);
-      let sa=Math.round(avg+mg/2+gauss(r)*9)+(bg[a]?3:0)+(tg[a]?TK_PTS:0),sb=Math.round(avg-mg/2+gauss(r)*9)+(bg[b]?3:0)+(tg[b]?TK_PTS:0),ot=0;if(Math.abs(sa-sb)===1&&r()<0.55){sa=sb=Math.max(sa,sb)}/* NBA goes to OT ~6% of games; a raw gaussian tie alone gives ~2% */while(sa===sb){ot++;sa+=Math.round(5+r()*8);sb+=Math.round(5+r()*8)}games.push([sa,sb,ot]);sa>sb?wa++:wb++}
+      const tg={};[a,b].forEach(s=>{const n=tkPick(ro[s],gi,rtk,s===a?mulA:mulB);if(n)tg[s]=n});tk.push(tg);
+      let sa=Math.round(avg+mg/2+gauss(r)*sdA)+(bg[a]?3:0)+(tg[a]?TK_PTS:0),sb=Math.round(avg-mg/2+gauss(r)*sdB)+(bg[b]?3:0)+(tg[b]?TK_PTS:0),ot=0;if(Math.abs(sa-sb)===1&&r()<0.55){sa=sb=Math.max(sa,sb)}/* NBA goes to OT ~6% of games; a raw gaussian tie alone gives ~2% */while(sa===sb){ot++;sa+=Math.round(5+r()*8);sb+=Math.round(5+r()*8)}games.push([sa,sb,ot]);if(sa>sb){wa++;if(ca>0)adjA*=0.8}else{wb++;if(cb>0)adjB*=0.8}}
     let pser=0;const C=(n,k)=>{let x=1;for(let t=1;t<=k;t++)x=x*(n-k+t)/t;return x};for(let l=0;l<=3;l++)pser+=C(3+l,l)*Math.pow(p,4)*Math.pow(1-p,l);
     const win=wa>wb?a:b,fav=p>=0.5?a:b,last=games[games.length-1];
     const li=inc[inc.length-1]||[],pa=withMins(withBench(ro[a],ra.per),li),pb=withMins(withBench(ro[b],rb.per),li);
@@ -2256,7 +2377,8 @@ function simulate(S){
     const mu=POS.map(sl=>{const x=ra.per.find(z=>z.p.slot===sl),y=rb.per.find(z=>z.p.slot===sl);if(!x||!y)return null;
       if(!x.m.why.length&&!y.m.why.length)return null;return{slot:sl,a:x.p.n,b:y.p.n,ma:x.m,mb:y.m,fa:+(x.f.off+x.f.def).toFixed(2),fb:+(y.f.off+y.f.def).toFixed(2)}}).filter(Boolean);
     teams[win].sw++;teams[a].gw+=wa;teams[a].gl+=wb;teams[b].gw+=wb;teams[b].gl+=wa;
-    series.push({a,b,wa,wb,games,inc,bo,tk,p:+p.toFixed(3),pser:+pser.toFixed(3),win,fav,upset:win!==fav&&Math.abs(p-0.5)>0.05,box,mu,pa:+ra.posAdj.toFixed(2),pb:+rb.posAdj.toFixed(2)})}
+    const r2o=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,+v.toFixed(2)])),tacS=s=>({o:TR[s].o,d:TR[s].d,F:{O:r2o(TR[s].F.O),D:r2o(TR[s].F.D),star:TR[s].F.star,starGap:+TR[s].F.starGap.toFixed(2)},fit:TR[s].fit,helio:TR[s].helio});
+    series.push({a,b,wa,wb,games,inc,bo,tk,tac:{[a]:tacS(a),[b]:tacS(b)},tg:tg2,p:+p.toFixed(3),pser:+pser.toFixed(3),win,fav,upset:win!==fav&&Math.abs(p-0.5)>0.05,box,mu,pa:+ra.posAdj.toFixed(2),pb:+rb.posAdj.toFixed(2)})}
   sides.forEach(s=>{teams[s].posAdj=+(teams[s].posSum/Math.max(1,teams[s].posN)).toFixed(2)});
   const order=[...sides].sort((x,y)=>teams[y].sw-teams[x].sw||(teams[y].gw-teams[y].gl)-(teams[x].gw-teams[x].gl)||teams[y].strength-teams[x].strength);
   // MVP from champion's deciding-game boxes
@@ -2486,6 +2608,7 @@ function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</spa
     +R('球權重疊','太多需要球的得分手同時上場會互相卡，扣分。')
     +R('化學','真實當過隊友加分、五人都能換防加分、有紀錄的隊內不合扣分。三巨頭或王朝核心另加 0.8–2。')
     +R('省錢','沒花完的錢每 $1 加 0.3，最多 2.5。')
+    +R('戰術','排陣時選進攻和防守。陣容越適合加越多（選不適合的會扣分）；有些戰術通常剋某些戰術，但每場執行不同，輸球方也會調整。核心擋拆讓「一位球星＋射手」發揮得比數字更好。三分多的打法變數大，跑轟讓強隊更穩。')
     +R('單場變數','球星接管（球隊那場多約 4 分）、角色球員爆發之夜，加上每場約 ±13 分的運氣，所以系列賽會爆冷。');
   if(t==='more')return R('挑戰電腦','跟 1～2 位 AI 總管對戰，風格隨機。簡單會亂出價；普通看陣容缺什麼；困難還會做任務、精算暗標。電腦看不到你的任務和暗標。')
     +R('能力卡','（選用）開局 4 選 2，每張用一次：換一張、打折券（85 折）、主場優勢（+1）、球探報告。')
@@ -2496,7 +2619,7 @@ function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</spa
     +R('版本・數據',`${APPV}・Basketball-Reference`);
   return `<ol class="rq"><li><b>出價</b>輪到你就喊價或按「不要」，其他人都不要時，最高價得標。</li>
     <li><b>預算</b>每個空位至少留 $1，沒花完的錢會小加分。</li>
-    <li><b>排陣</b>把球員放到他會打的位置，替補也要分好角色。</li>
+    <li><b>排陣</b>把球員放到他會打的位置，再選一套進攻和防守戰術。</li>
     <li><b>對戰</b>每兩隊打七戰四勝，系列賽贏最多的奪冠。</li></ol>
     <div class="rtip">看卡只要記一件事：<b>攻守貢獻</b>越高越能贏球，得分高不等於貢獻高。</div>`}
 function rulesCard(){const open=!!ui.rulesOpen,t=ui.rtab||'quick';
@@ -2682,6 +2805,7 @@ function vLineup(){
     return `<section class="board2 ${s}"><div class="bh"><span class="bt" style="color:${col(s)}">${esc(nm(S,s))}</span><span class="small" style="color:#aab4cc">剩 $${left(g,s)}</span></div>${misChip(g,s)}
       <div class="bsub">${rd?'已鎖定，等其他人…':(ui.sel&&ui.sel.who===s?'再點一位球員跟他交換':'拖曳 ⠿ 或點兩位球員互換'+(g.size===10?'（先發和替補也能互換）':''))}</div>
       <div class="blab">先發</div>${st.map(plate).join('')}${bn.length?`${benchSummary(g,s)}${bn.map(plate).join('')}`:''}
+      ${tacPanel(g,s,rd)}
       <button class="${rd?'ghost':'big'}" style="margin-top:12px" data-act="ready" data-who="${s}" data-v="${rd?0:1}" ${!rd&&!benchOK(g,s)?'disabled':''}>${rd?'取消準備':'準備好了 ✓'}</button></section>`};
   return `<div class="center" style="margin-top:14px">${roundPill(g)}<div style="font-size:36px">📋</div><div style="font-weight:900;font-size:20px">賽前排陣</div>${lineupMisNote(g)}
     <div class="small mut" style="max-width:420px;margin:4px auto 0">同位置的球員會一對一。小個子打大位置靠速度、但籃板吃虧；大個子靠籃板和低位。對手的排法開打才公開。</div>
@@ -2712,7 +2836,7 @@ const KTXT={three:['{n} 底角三分，刷！','{n} 接球就投，三分入網'
   alley:['{a} 拋出空中接力，{n} 接球灌籃！'],assist:['{a} 不看人妙傳，{n} 輕鬆得分','{a} 精準長傳，{n} 快攻上籃'],
   block:['{n} 送出大火鍋！','{n} 把球搧到場邊！'],steal:['{n} 抄截，一路快攻！','{n} 預判傳球路線，抄截成功']};
 const KPTS={three:3,logo:3,and1:3,mid:2,rim:2,dunk:2,post:2,putback:2,ankle:2,alley:2,assist:2,block:0,steal:0};
-const KICO={boom:'💥',takeover:'👑',three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'💥',post:'🏀',putback:'🏀',ankle:'😵',alley:'🚀',assist:'🤝',block:'🚫',steal:'🧤',timeout:'⏸',run:'🔥',hot:'🔥',tech:'😤',ot:'⏱',clutch:'🏆',rest:'🪑',foul:'⚠️',foulout:'❌',eject:'🟥'};
+const KICO={boom:'💥',takeover:'👑',tac:'📋',three:'🎯',logo:'🎯',mid:'🏀',rim:'🏀',and1:'💪',dunk:'💥',post:'🏀',putback:'🏀',ankle:'😵',alley:'🚀',assist:'🤝',block:'🚫',steal:'🧤',timeout:'⏸',run:'🔥',hot:'🔥',tech:'😤',ot:'⏱',clutch:'🏆',rest:'🪑',foul:'⚠️',foulout:'❌',eject:'🟥'};
 /* signature traits of well-known stars (from widely cited "signature moves" lists and highlights).
    They change how a play is shown and nudge which play type a player picks; how often they happen is still
    tied to his numbers: chase-down blocks scale with block rate, swats only replace blocks the stats produce,
@@ -2774,17 +2898,19 @@ const SIGICO={jamesle01:'👑',wadedw01:'⚡',pippesc01:'🦇',wembavi01:'👽',
  leonaka01:'🤖',allenra02:'🍬',millere01:'🔪',horryro01:'🎯',irvinky01:'🪄',duranke01:'💀',westbru01:'🏎️',thompkl01:'🔥',butleji01:'😤',rodmade01:'🪱'};
 const SIGMOVE={olajuha01:'spin',abdulka01:'hook',johnsma02:'hook',nowitdi01:'fade',jordami01:'fade',bryanko01:'fade',jokicni01:'fade',hardeja01:'step',
  iversal01:'cross',irvinky01:'cross',ginobma01:'euro',antetgi01:'euro',duncati01:'bank',mutomdi01:'wag',lillada01:'deep',curryst01:'deep'};
-function offKind(p,mates,r){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{const i=c.indexOf(k);if(i>=0)w[i]+=x;else{c.push(k);w.push(x)}};
+function offKind(p,mates,r,tac){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{const i=c.indexOf(k);if(i>=0)w[i]+=x;else{c.push(k);w.push(x)}};
   add(st.big?'post':'rim',2);if(st.three)add('three',st.big?2:4);if(st.mid)add('mid',3);add('mid',1);
   if(st.rim)add('and1',1.2);if(st.big||st.rim)add('dunk',st.big?2:1.2);if(st.big)add('putback',1);if(st.guard)add('ankle',0.35);
   if(st.three&&st.star)add('logo',0.15);
   if(TOMA.has(p.id)){const i=c.indexOf('dunk');if(i>=0)w[i]*=2;else add('dunk',1.5)}
   const g=sigOf(p);if(g&&g.k)Object.keys(g.k).forEach(k=>{const i=c.indexOf(k);if(i>=0)w[i]*=3;else if(k==='logo'&&st.three)add('logo',0.7)});
+  // the team's offense shapes the shot diet: five-out lives at the arc, inside-out in the paint, the break at the rim
+  const TW={five:{three:1.8,logo:1.5,post:0.5},post:{post:2,putback:2,three:0.6},run:{dunk:1.6,rim:1.4,and1:1.2}}[tac];if(TW)c.forEach((x,i)=>{if(TW[x])w[i]*=TW[x]});
   const k=pickW(c,w,r),passers=mates.filter(q=>q!==p&&styleOf(q).pass);
-  if(passers.length&&k!=='putback'&&k!=='ankle'&&k!=='logo'&&r()<0.3){const a=PICK(passers,r);return{k:(k==='dunk'||k==='rim')&&r()<0.5?'alley':k==='three'?'three':'assist',a}}
+  if(passers.length&&k!=='putback'&&k!=='ankle'&&k!=='logo'&&r()<(tac==='motion'?0.55:0.3)){const a=PICK(passers,r);return{k:(k==='dunk'||k==='rim')&&r()<0.5?'alley':k==='three'?'three':'assist',a}}
   return{k,a:null}}
 function fill(t,p,a,r){return t.replace('{n}',callN(p,r)).replace('{a}',a?callN(a,r):'')}
-function gameEvents(z,game,boxA,boxB,R,r,inc,bo,tk){inc=inc||[];bo=bo||{};tk=tk||{};
+function gameEvents(z,game,boxA,boxB,R,r,inc,bo,tk,tgm){inc=inc||[];bo=bo||{};tk=tk||{};const TO=s=>z.tac&&z.tac[s]?z.tac[s].o:null,TDf=s=>z.tac&&z.tac[s]?z.tac[s].d:null;
   const [sa,sb,ot]=game,[qa,qb]=game.q,P=qa.length,ev=[];
   const teams={[z.a]:{box:boxA,R:R[z.a]},[z.b]:{box:boxB,R:R[z.b]}},other=s=>s===z.a?z.b:z.a,tn=s=>nm(S,s);
   const ptsOf=(T,x)=>{const b=T.box.find(y=>y.n===x.n);return b?b.pts:2};
@@ -2797,13 +2923,13 @@ function gameEvents(z,game,boxA,boxB,R,r,inc,bo,tk){inc=inc||[];bo=bo||{};tk=tk|
       const side=r()<(qa[q]/(qa[q]+qb[q]||1))?z.a:z.b,T0=teams[side],O0=teams[other(side)],T={...T0,R:avail(T0,q,frac)},O={...O0,R:avail(O0,q,frac)};const x=r();let e;
       if(!toDone&&(q===1||q===2)&&x<0.12){toDone=true;e={kind:'timeout',side:other(side),txt:`${tn(other(side))} 叫暫停，教練氣得跳腳`}}
       else if(!techDone&&x<0.16&&T.R.some(p=>HOT.has(p.id))){techDone=true;const p=PICK(T.R.filter(p=>HOT.has(p.id)),r);e={kind:'tech',side,p:p.n,txt:`${callN(p,r)} 跟裁判理論，吃到技術犯規 😤`}}
-      else if(x<0.27){const c=T.R.filter(y=>styleOf(y).blk),p=c.length&&r()<0.7?PICK(c,r):pickW(T.R,T.R.map(y=>num(y.blk,0.3)+0.1),r),sh=pickW(O.R,O.R.map(y=>ptsOf(O,y)+1),r);
+      else if(x<0.16+0.11*({drop:1.5,zone:1.4}[TDf(side)]||1)){const c=T.R.filter(y=>styleOf(y).blk),p=c.length&&r()<0.7?PICK(c,r):pickW(T.R,T.R.map(y=>num(y.blk,0.3)+0.1),r),sh=pickW(O.R,O.R.map(y=>ptsOf(O,y)+1),r);
         const gs=sigOf(p),useS=gs&&gs.swat&&r()<0.9;e={kind:'block',side,p:p.n,d:sh.n,txt:useS?fill(PICK(gs.swat,r),p,null,r):fill(PICK(KTXT.block,r),p,null,r)};if(useS){e.sig=gs.sl||gs.lab;e.sp=p.n;e.sid=p.id}}
-      else if(x<0.36){const p=pickW(T.R,T.R.map(y=>num(y.stl,0.5)+0.1),r),gs=sigOf(p);const useS=gs&&gs.stl&&r()<0.7;e={kind:'steal',side,p:p.n,txt:useS?fill(PICK(gs.stl,r),p,null,r):fill(PICK(KTXT.steal,r),p,null,r)};if(useS){e.sig=gs.lab;e.sp=p.n;e.sid=p.id}
+      else if(x<0.16+0.11*({drop:1.5,zone:1.4}[TDf(side)]||1)+0.09*(TDf(side)==='blitz'?1.7:TO(side)==='run'?1.3:1)){const p=pickW(T.R,T.R.map(y=>num(y.stl,0.5)+0.1),r),gs=sigOf(p);const useS=gs&&gs.stl&&r()<0.7;e={kind:'steal',side,p:p.n,txt:useS?fill(PICK(gs.stl,r),p,null,r):fill(PICK(KTXT.steal,r),p,null,r)};if(useS){e.sig=gs.lab;e.sp=p.n;e.sid=p.id}
         // chase-down block: a trait player on the beaten team, chance scaled by his block rate
         const ch=O.R.filter(y=>sigOf(y)&&sigOf(y).chase);if(ch.length){const c2=PICK(ch,r),pc=0.35*clamp(num(c2.blkp,1)/2.2,0.3,1);
           if(r()<pc){e.chase=c2.n;e.txt+=`……${callN(c2,r)} 從後面追上來，追魂鍋！🚫`;e.sig='追魂鍋';e.sp=c2.n;e.sid=c2.id}}}
-      else{const p=pickW(T.R,T.R.map(y=>ptsOf(T,y)+1),r),o=offKind(p,T.R,r);
+      else{const hs=TO(side)==='helio'&&z.tac[side].F.star,p=pickW(T.R,T.R.map(y=>(ptsOf(T,y)+1)*(y.n===hs?1.6:1)),r),o=offKind(p,T.R,r,TO(side));
         if(o.k==='three'&&MOVERS.has(p.id)&&r()<0.55){e={kind:'three',side,p:p.n,play:'offball',txt:fill(PICK(OFFBALL_TXT,r),p,null,r)}}
         else if(o.k==='dunk'&&TOMA.has(p.id)&&r()<0.65){e={kind:'dunk',side,p:p.n,txt:fill(PICK(TOMA_TXT,r),p,null,r),sig:'戰斧暴扣',sp:p.n,sid:p.id,ico:'🪓'}}
         else{const st2=sigText(p,o.k,o.a,r);e={kind:o.k,side,p:p.n,a:o.a&&o.a.n,txt:st2.txt};if(st2.sig){e.sig=st2.sig;e.sp=st2.sp;e.sid=st2.sid}}
@@ -2816,6 +2942,9 @@ function gameEvents(z,game,boxA,boxB,R,r,inc,bo,tk){inc=inc||[];bo=bo||{};tk=tk|
     if(i.kind==='foulout')ev.push({q:i.q,t:i.t,clk,side:i.side,kind:'foulout',p:i.n,txt:`${N(i.n)} 六犯畢業，犯滿離場 ❌${sub}`});
     if(i.kind==='eject'){ev.push({q:i.q,t:Math.max(0,i.t-0.08),clk,side:i.side,kind:'tech',p:i.n,txt:`${N(i.n)} 情緒失控，吃到第一次技術犯規 😤`});
       ev.push({q:i.q,t:i.t,clk,side:i.side,kind:'eject',p:i.n,txt:`${N(i.n)} 第二次技術犯規，被驅逐出場 🟥${sub}`})}});
+  if(z.tac){const A=z.tac[z.a],B=z.tac[z.b];ev.push({q:0,t:0.01,clk:'11:59',side:z.a,kind:'tac',txt:`${tn(z.a)} 打${TAC_O[A.o].nm}＋${TAC_D[A.d].nm}，${tn(z.b)} 打${TAC_O[B.o].nm}＋${TAC_D[B.d].nm}`});
+    if(tgm){const xs=[[tgm.ca,z.a,z.b],[tgm.cb,z.b,z.a]].sort((u,v)=>Math.abs(v[0])-Math.abs(u[0]))[0],[c,of,df]=xs;
+      if(Math.abs(c)>=0.5)ev.push({q:Math.min(P-1,2),t:0.4,clk:'7:12',side:c>0?of:df,kind:'tac',txt:c>0?`${tn(of)} 的${TAC_O[z.tac[of].o].nm}打穿 ${tn(df)} 的${TAC_D[z.tac[df].d].nm}`:`${tn(df)} 的${TAC_D[z.tac[df].d].nm}鎖住 ${tn(of)} 的${TAC_O[z.tac[of].o].nm}`})}}
   Object.entries(bo).forEach(([s,n])=>{const b=teams[s]&&teams[s].box.find(x=>x.n===n);if(!b)return;const q=Math.min(P-1,2),t=0.55+0.3*r(),mm=12*(1-t),clk=`${Math.floor(mm)}:${String(Math.floor((mm%1)*60)).padStart(2,'0')}`;
     ev.push({q,t,clk,side:s,kind:'boom',p:n,txt:`${N(n)} 打出生涯之夜，第三節就拿了 ${Math.max(12,Math.round(b.pts*0.7))} 分 🔥`})});
   Object.entries(tk).forEach(([s,n])=>{const b=teams[s]&&teams[s].box.find(x=>x.n===n);if(!b)return;const q=Math.min(P-1,3),t=0.3+0.25*r(),mm=12*(1-t),clk=`${Math.floor(mm)}:${String(Math.floor((mm%1)*60)).padStart(2,'0')}`;
@@ -2841,7 +2970,7 @@ function pbData(){const g=S.game,sim=S.sim;if(pbCache.gid===g.gid+sim.champ)retu
     z.games.forEach((gm,gi)=>{const [sa,sb,ot]=gm,last=gi===z.games.length-1,inc=(z.inc&&z.inc[gi])||[],pa=withMins(pa0,inc),pbb=withMins(pb0,inc);
       const bg=(z.bo&&z.bo[gi])||{},tg=(z.tk&&z.tk[gi])||{},bA=last?z.box[z.a]:boxFor(pa.map(x=>x.p),pa,sa,r,bg[z.a],tg[z.a]),bB=last?z.box[z.b]:boxFor(pbb.map(x=>x.p),pbb,sb,r,bg[z.b],tg[z.b]);
       const game=[sa,sb,ot];game.q=periods(sa,sb,ot,r);
-      const ev=gameEvents(z,game,bA,bB,{[z.a]:pa.map(x=>x.p),[z.b]:pbb.map(x=>x.p)},r,inc,bg,tg);
+      const ev=gameEvents(z,game,bA,bB,{[z.a]:pa.map(x=>x.p),[z.b]:pbb.map(x=>x.p)},r,inc,bg,tg,z.tg&&z.tg[gi]);
       sa>sb?wa++:wb++;
       const all=bA.map(x=>({...x,s:z.a})).concat(bB.map(x=>({...x,s:z.b})));const pog=all.sort((x,y)=>(y.pts+1.2*y.reb+1.5*y.ast+2*y.stl+2*y.blk)-(x.pts+1.2*x.reb+1.5*x.ast+2*x.stl+2*x.blk))[0];
       list.push({si,gi,z,sa,sb,ot,q:game.q,ev,wa,wb,pog,last,bA,bB,inc,bo:bg,tk:tg})})});
@@ -2883,7 +3012,7 @@ setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.
  post entry for bigs), then the shot. Steals turn into fast breaks the other way. Teams switch ends at halftime. */
 const CW=360,CH=200,HX={L:22,R:338},HY=100;
 const SET=[[118,100],[88,30],[88,170],[42,52],[20,140]];
-const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest','boom','takeover']);
+const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest','boom','takeover','tac']);
 function teamCol(s){const v=getComputedStyle(document.documentElement).getPropertyValue({A:'--a',B:'--b',C:'--c3'}[s]||'--a').trim();return v||'#2f7cf6'}
 function court(ctx){ctx.fillStyle='#f3e3c6';ctx.fillRect(0,0,CW,CH);ctx.strokeStyle='rgba(120,80,30,.45)';ctx.lineWidth=1.2;
   ctx.strokeRect(4,4,CW-8,CH-8);ctx.beginPath();ctx.moveTo(CW/2,4);ctx.lineTo(CW/2,CH-4);ctx.stroke();ctx.beginPath();ctx.arc(CW/2,HY,22,0,7);ctx.stroke();
@@ -3043,7 +3172,7 @@ function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getEle
         if(u>0.9||pu){const v=pu||0;ball=[P[off+si][0]+(right?-1:1)*v*60,P[off+si][1]+v*44,8*(1-v)];flash=['🚫 火鍋！',Math.max(seg(u,0.9,1)*0.3,v)]}}
       else{hl=off+si;if(pu){ball=[H[0],HY+pu*4,0];flash=[`${KICO[E.kind]||'🏀'} +${KPTS[E.kind]||2}`,pu]}}
     }}
-  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',boom:'生涯之夜！',takeover:'接管比賽！',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
+  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',boom:'生涯之夜！',takeover:'接管比賽！',tac:'戰術',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
   if(E&&E.kind==='clutch'&&e>E.T)banner=['🏆 致勝球！',cl01((e-E.T)/PB_POST)];
   // camera: zoom in on the action during key moments
   const wa=warpAt(G,e),ww=wa.w;let zf=1,fx=CW/2,fy=HY;
@@ -3140,7 +3269,7 @@ function vResults(){
   const ser=sim.series.map((z,k)=>{const pA=Math.round(z.p*100);return `<div class="series"><div class="grow">${N(z.a)} <span class="mut small">vs</span> ${N(z.b)}
       <div class="gms">${z.games.map(([x,y,ot])=>`<span style="color:${x>y?col(z.a):col(z.b)}">${x}–${y}${ot?' OT':''}</span>`).join('')}</div>
       ${(z.inc||[]).some(x=>x.some(i=>i.kind!=='tech'&&i.kind!=='trouble'))?`<div class="small" style="margin-top:4px;color:#ffb4a8">${z.inc.flatMap((x,gi)=>x.filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>`${i.kind==='eject'?'🟥':'❌'} G${gi+1} ${esc(String(i.n).split(' ').slice(-1)[0])} ${i.kind==='eject'?'被驅逐':'犯滿'}`)).join('・')}</div>`:''}
-      ${boLine(z,k)}<div class="small mut" style="margin-top:2px">單場勝率 ${pA}% : ${100-pA}%・系列賽 ${Math.round(z.pser*100)}% : ${100-Math.round(z.pser*100)}%${z.upset?'・<b style="color:var(--gold)">爆冷</b>':''}</div></div>
+      ${boLine(z,k)}${tacLine(z)}<div class="small mut" style="margin-top:2px">單場勝率 ${pA}% : ${100-pA}%・系列賽 ${Math.round(z.pser*100)}% : ${100-Math.round(z.pser*100)}%${z.upset?'・<b style="color:var(--gold)">爆冷</b>':''}</div></div>
       <div class="sc"><span id="s${k}a-${id}" data-count="${z.wa}" data-delay="${ui.pbFast?0.5:2.0}" style="color:${col(z.a)}">${z.wa}</span>–<span id="s${k}b-${id}" data-count="${z.wb}" data-delay="${ui.pbFast?0.5:2.0}" style="color:${col(z.b)}">${z.wb}</span></div></div>`}).join('');
   const std=two?'':`<table class="std"><tr><th>排名</th><th>系列勝</th><th>場次</th><th>實力</th></tr>${sim.order.map((s,i)=>`<tr><td>${i+1}. ${N(s)}</td><td>${T[s].sw}</td><td>${T[s].gw}–${T[s].gl}</td><td>${T[s].grade}</td></tr>`).join('')}</table>`;
   const board=`<div class="board rs" style="--d:1.8s"><div class="lab">${two?'系列賽':'循環賽'}</div><div style="text-align:left;margin-top:6px">${ser}</div>${std}
@@ -3176,9 +3305,10 @@ function vResults(){
     ${rowT('更衣室不合','有記錄的隊內不合',s=>T[s].base.fdAdj)}
     ${g.size===10?rowT('替補深度','5 位替補比起板凳等級球員',s=>T[s].base.benchAdj||0):''}
     ${rowT('省錢紅利','剩下的錢',s=>T[s].base.savAdj)}
+    ${rowT('戰術契合',`${sides.map(s=>T[s].tac?TAC_O[T[s].tac.o].nm:'').join(' / ')}（克制看各系列賽）`,s=>T[s].tacAdj||0)}
     ${S.game.cards?rowT('🏟️ 主場優勢','能力卡',s=>T[s].base.hcAdj||0):''}
     ${g.misRes?rowT('任務獎勵','完成任務的加成',s=>T[s].base.misAdj||0):''}
-    ${rowT('<b>總評</b>','',s=>T[s].base.net+T[s].posAdj)}</table>
+    ${rowT('<b>總評</b>','',s=>T[s].base.net+T[s].posAdj+(T[s].tacAdj||0))}</table>
     <div class="small mut" style="margin-top:8px">每 1 分總評差距 ≈ 每場多贏 0.8 分（用 1,230 支真實球隊校正）。單場有約 ±13 分的運氣，所以系列賽也可能爆冷。</div></section>`;
   const boxT=(z,s)=>`<table class="box"><tr><th>${esc(nm(S,s))}</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TOV</th></tr>${z.box[s].map(x=>`<tr><td>${esc(isBench(x.slot)?'替':x.slot)} ${esc(x.n)}</td><td>${x.pts}${ar(x,'pts')}</td><td>${x.reb}${ar(x,'reb')}</td><td>${x.ast}${ar(x,'ast')}</td><td>${x.stl}${ar(x,'stl')}</td><td>${x.blk}${ar(x,'blk')}</td><td>${x.tov}${ar(x,'tov',1)}</td></tr>`).join('')}</table>`;
   const owned=new Set(sides.flatMap(s=>g.rosters[s].map(x=>g.items[x.k].n)));const leftover=g.pool.map(p=>p.n).filter(n=>!owned.has(n));
@@ -3283,6 +3413,7 @@ document.addEventListener('click',e=>{
     case 'spass':return dispatch({a:'spass',who:d.who,idx:S.game.idx});
     case 'brole':return dispatch({a:'brole',who:d.who,slot:d.v,role:d.role});
     case 'sfx':{const nx=(SFX.lv+2)%3;sfxSet(nx);toast(['🔇 音效關閉','🔈 音效：小聲','🔊 音效：正常'][nx],1200);if(nx)setTimeout(()=>sfx('bid'),60);return render()}
+    case 'tac':return dispatch({a:'tac',who:d.who,k:d.k,v:d.v});
     case 'lu':{const who=d.who,sl=d.v;if(ui.sel&&ui.sel.who===who){const x=ui.sel.slot;ui.sel=null;if(x===sl)return render();return dispatch({a:'swap',who,x,y:sl})}ui.sel={who,slot:sl};return render()}
     case 'ready':ui.sel=null;return dispatch({a:'ready',who:d.who,v:d.v==='1'});
     case 'quit':if(!ui.quit){ui.quit=true;return render()}ui.quit=false;return dispatch({a:'quit'});
