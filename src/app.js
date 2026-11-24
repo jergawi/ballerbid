@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25c';
+const APPV='2026.11.25d';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -353,11 +353,13 @@ function playerFx(p,q){
     else{m.tov*=1+0.4*pi.x;m.ast*=1-0.1*pi.x;m.stl*=1-0.1*pi.x;m.off-=1.2*pi.x;m.why.push('handle')}}
   if(q){const gap=peOf(q)-peOf(p);if(Math.abs(gap)>=0.75){const ge=Math.min(1.5,Math.abs(gap));
     if(gap>0){m.pts*=1+0.10*ge*crea(p);m.reb*=1-0.06*ge;m.why.push('speed')}else{m.pts*=1+0.08*ge*postS(p);m.reb*=1+0.08*ge*rebS(p);m.why.push('post')}}
-    // stretch big vs traditional big (PF/C only): spacing helps the shooter score but he rebounds less;
-    // the traditional big gets pulled away from the rim (fewer blocks) but wins the glass
+    // stretch big vs traditional big (PF/C only). Spacing helps the shooter score; standing at the arc costs him only
+    // offensive boards (about a quarter of a big's rebounds), so his rebounding stays his own - a Towns who rebounds
+    // like a center keeps doing so. The traditional big guarding him is dragged out to the arc: fewer blocks and a
+    // few fewer defensive boards, because he is no longer under the rim.
     if(POS.indexOf(p.slot)>=3){const ds=spc(p)-spc(q);
-      if(ds>=0.3){m.pts*=1+0.09*ds;m.reb*=1-0.08*ds;m.why.push('stretch')}
-      else if(ds<=-0.3){const a=-ds;m.blk*=1-0.25*a;m.reb*=1+0.06*a;m.why.push('pulled')}}}
+      if(ds>=0.3){m.pts*=1+0.06*ds;m.reb*=1-0.03*ds;m.why.push('stretch')}
+      else if(ds<=-0.3){const a=-ds;m.blk*=1-0.25*a;m.reb*=1-0.03*a;m.why.push('pulled')}}}
   return m;
 }
 function fxPoints(p,m){const b=st(p);
@@ -1370,7 +1372,7 @@ function vResults(){
   const pc=v=>`${v>1?'+':''}${Math.round((v-1)*100)}%`;
   const why=(n,m)=>{const L=[];if(m.why.includes('speed'))L.push(`速度優勢 得分 <b class="up">${pc(m.pts)}</b>`);if(m.why.includes('post'))L.push(`體型優勢 得分 <b class="up">${pc(m.pts)}</b>、籃板 <b class="up">${pc(m.reb)}</b>`);
     if(m.why.includes('speed')&&m.reb<0.99)L.push(`籃板 <b class="dn">${pc(m.reb)}</b>`);if(m.why.includes('size'))L.push(`守禁區吃力、阻攻 <b class="dn">${pc(m.blk)}</b>`);if(m.why.includes('handle'))L.push(`運球推進失誤 <b class="dn">${pc(m.tov)}</b>`);
-    if(m.why.includes('stretch'))L.push(`外線拉開空間 得分 <b class="up">${pc(m.pts)}</b>、離籃框遠籃板 <b class="dn">${pc(m.reb)}</b>`);if(m.why.includes('pulled'))L.push(`被拉出禁區 阻攻 <b class="dn">${pc(m.blk)}</b>、卡位搶籃板 <b class="up">${pc(m.reb)}</b>`);
+    if(m.why.includes('stretch'))L.push(`外線拉開空間 得分 <b class="up">${pc(m.pts)}</b>、少搶進攻籃板 <b class="dn">${pc(m.reb)}</b>`);if(m.why.includes('pulled'))L.push(`被拉出禁區 阻攻 <b class="dn">${pc(m.blk)}</b>、離開籃下籃板 <b class="dn">${pc(m.reb)}</b>`);
     return L.length?`<div class="small">${esc(n)}：${L.join('、')}</div>`:''};
   const muCard=sim.series.some(z=>z.mu.length)?`<section class="card rs" style="--d:${d+0.1}s"><h2>🆚 位置與對位</h2>${sim.series.map(z=>z.mu.length?`<details ${sim.series.length===1?'open':''} style="margin-top:6px"><summary class="small">${esc(nm(S,z.a))} vs ${esc(nm(S,z.b))}</summary>${z.mu.map(m=>{const v=m.fa-m.fb;
       return `<div class="mis"><div><b>${m.slot}</b>｜<span style="color:${col(z.a)}">${esc(m.a)}</span> vs <span style="color:${col(z.b)}">${esc(m.b)}</span> <i class="tag t1">${Math.abs(v)<0.5?'互有勝負':esc(nm(S,v>0?z.a:z.b))+' 佔上風'}</i></div>${why(m.a,m.ma)}${why(m.b,m.mb)}</div>`}).join('')}</details>`:'').join('')}</section>`:'';
