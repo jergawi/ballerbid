@@ -12,103 +12,340 @@
      star gets more chances to take a game over.
    Magnitudes: fit about -1..+1.5 rating points, the star system up to +1.2, a counter up to about +-1.3, against
    typical team ratings of 15-30, so tactics swing close matchups but do not overturn a clear talent gap. */
-const TAC_O={
-  five:{nm:'五外拉開',d:'五個人都站外線，拉開空間找三分和切入（勇士死亡五小、塞爾提克）',need:'射手，尤其是會投三分的 PF、C'},
-  helio:{nm:'持球核心',d:'球交給一位又能得分又能傳的球星，其他四人拉開等球（Harden 的火箭、Luka 的獨行俠）',need:'一位會組織的球星＋四個射手，球權不要太分散'},
-  pnr:{nm:'擋拆雙人組',d:'控衛和長人反覆擋拆，長人順下灌籃或外彈投籃（Stockton-Malone、Nash-Stoudemire）',need:'會傳球的後衛＋會順下或外彈的長人，旁邊要有射手'},
-  post:{nm:'內線強攻',d:'球往禁區送，低位單打、搶進攻籃板（俠客湖人、灰熊雙塔）',need:'低位得分手、籃板好的長人，兩個長人更好'},
-  run:{nm:'跑轟快攻',d:'搶斷、搶到籃板就全速推進（Showtime 湖人、7 秒太陽）',need:'抄截高手、會傳球的後衛、跑得動的鋒線'},
-  motion:{nm:'傳導進攻',d:'不停傳球跑位，人人都可能出手（2014 馬刺、金塊）',need:'三位以上會傳球的人，沒有誰特別霸球'}};
-const TAC_D={
-  switch:{nm:'全員換防',d:'遇到掩護就換人，不讓擋拆成形',need:'能守多個位置的人'},
-  drop:{nm:'護框收縮',d:'長人守在籃下，放對手投中距離',need:'護框長人'},
-  zone:{nm:'區域聯防',d:'各守一區塞住禁區，藏住弱防守者',need:'護框長人＋外圍有人能抄'},
-  blitz:{nm:'包夾壓迫',d:'包夾持球者，逼他把球交出去',need:'抄截高手、防守好的人'}};
-const TO_K=Object.keys(TAC_O),TD_K=Object.keys(TAC_D);
+const TAC_O = {
+  five: {
+    nm: '五外拉開',
+    d: '五個人都站外線，拉開空間找三分和切入（勇士死亡五小、塞爾提克）',
+    need: '射手，尤其是會投三分的 PF、C'
+  },
+  helio: {
+    nm: '持球核心',
+    d: '球交給一位又能得分又能傳的球星，其他四人拉開等球（Harden 的火箭、Luka 的獨行俠）',
+    need: '一位會組織的球星＋四個射手，球權不要太分散'
+  },
+  pnr: {
+    nm: '擋拆雙人組',
+    d: '控衛和長人反覆擋拆，長人順下灌籃或外彈投籃（Stockton-Malone、Nash-Stoudemire）',
+    need: '會傳球的後衛＋會順下或外彈的長人，旁邊要有射手'
+  },
+  post: {
+    nm: '內線強攻',
+    d: '球往禁區送，低位單打、搶進攻籃板（俠客湖人、灰熊雙塔）',
+    need: '低位得分手、籃板好的長人，兩個長人更好'
+  },
+  run: {
+    nm: '跑轟快攻',
+    d: '搶斷、搶到籃板就全速推進（Showtime 湖人、7 秒太陽）',
+    need: '抄截高手、會傳球的後衛、跑得動的鋒線'
+  },
+  motion: {
+    nm: '傳導進攻',
+    d: '不停傳球跑位，人人都可能出手（2014 馬刺、金塊）',
+    need: '三位以上會傳球的人，沒有誰特別霸球'
+  }
+};
+const TAC_D = {
+  switch: { nm: '全員換防', d: '遇到掩護就換人，不讓擋拆成形', need: '能守多個位置的人' },
+  drop: { nm: '護框收縮', d: '長人守在籃下，放對手投中距離', need: '護框長人' },
+  zone: { nm: '區域聯防', d: '各守一區塞住禁區，藏住弱防守者', need: '護框長人＋外圍有人能抄' },
+  blitz: { nm: '包夾壓迫', d: '包夾持球者，逼他把球交出去', need: '抄截高手、防守好的人' }
+};
+const TO_K = Object.keys(TAC_O),
+  TD_K = Object.keys(TAC_D);
 // offense advantage against each defense (+ = the offense tends to do well). Every row sums to zero, so no offense is
 // better in general; only the pairing matters. Sources: switching smothers pick-and-roll and off-ball screens but
 // invites post-ups and isolation hunting; drop coverage protects the rim and gives up pull-ups and pick-and-pop;
 // zones pack the paint and give up threes to good shooting and ball movement; blitzing the ball handler takes the
 // ball out of a star's hands but leaves 4-on-3 behind it.
-const TAC_RAW={five:{switch:-1,drop:0.5,zone:1,blitz:-0.5},helio:{switch:0.5,drop:1,zone:-0.5,blitz:-1},pnr:{switch:-1,drop:0.5,zone:0,blitz:0.5},
-  post:{switch:1,drop:-1,zone:-1,blitz:1},run:{switch:0.5,drop:0.5,zone:0,blitz:-1},motion:{switch:-1,drop:-0.5,zone:0.75,blitz:0.75}};
-const TAC_M=TAC_RAW;
-const TAC_VAR_O={five:0.14,helio:0.06,pnr:0.03,post:0,run:-0.07,motion:-0.04},TAC_VAR_D={switch:0,drop:0,zone:0.06,blitz:0.08};
-const FIT_O=2.4,FIT_D=1.6,HELIO_K=1.2,CNT_K=1.3,TK_HELIO=1.6;
+const TAC_RAW = {
+  five: { switch: -1, drop: 0.5, zone: 1, blitz: -0.5 },
+  helio: { switch: 0.5, drop: 1, zone: -0.5, blitz: -1 },
+  pnr: { switch: -1, drop: 0.5, zone: 0, blitz: 0.5 },
+  post: { switch: 1, drop: -1, zone: -1, blitz: 1 },
+  run: { switch: 0.5, drop: 0.5, zone: 0, blitz: -1 },
+  motion: { switch: -1, drop: -0.5, zone: 0.75, blitz: 0.75 }
+};
+const TAC_M = TAC_RAW;
+const TAC_VAR_O = { five: 0.14, helio: 0.06, pnr: 0.03, post: 0, run: -0.07, motion: -0.04 },
+  TAC_VAR_D = { switch: 0, drop: 0, zone: 0.06, blitz: 0.08 };
+const FIT_O = 2.4,
+  FIT_D = 1.6,
+  HELIO_K = 1.2,
+  CNT_K = 1.3,
+  TK_HELIO = 1.6;
 
 // player traits used by the schemes (0..1)
-const tShoot=p=>{const f=String((bioOf(p)||{}).sk||'');return Math.max(spc(p),f.includes('3')?0.7:0,f.includes('m')?0.35:0)};
-const tRim=p=>clamp((num(p.blkp,1)-1.5)/3.5,0,1),tStl=p=>clamp((num(p.stlp,1.5)-1.3)/1.5,0,1),tPass=p=>clamp((num(p.astp,12)-8)/24,0,1);
-const tDef=p=>clamp((num(p.dbpm,0)+1)/4,0,1),tVers=p=>{const n=canPlay(p).length;return n>=3?1:n===2?0.5:0};
-const tMean=a=>a.length?a.reduce((t,x)=>t+x,0)/a.length:0,tTop=(a,n)=>a.slice().sort((x,y)=>y-x).slice(0,n);
-function helioStar(R){let best=null,bv=-1;R.forEach(p=>{const v=crea(p)*Math.max(0.5,pval(p));if(v>bv){bv=v;best=p}});return best}
-function tacRaw(Rall){const R=starters(Rall),bigs=R.filter(p=>p.slot==='PF'||p.slot==='C');
-  const sh=R.map(tShoot),star=helioStar(R),oth=R.filter(p=>p!==star),us=tTop(oth.map(p=>num(p.usg,18)),1)[0]||18;
-  const O={five:0.6*tMean(sh)+0.4*tMean(bigs.map(tShoot)),
-    helio:star?0.45*crea(star)*clamp(pval(star)/7,0,1)+0.35*tMean(oth.map(tShoot))+0.2*(1-clamp((us-22)/10,0,1)):0,
-    pnr:(()=>{const hv=p=>0.6*crea(p)+0.4*tPass(p),bv=p=>Math.max(0.5*rebS(p)+0.5*clamp(pval(p)/5,0,1),tShoot(p));
-      const h=R.filter(p=>p.slot==='PG'||p.slot==='SG').sort((x,y)=>hv(y)-hv(x))[0],b=bigs.slice().sort((x,y)=>bv(y)-bv(x))[0],rest=R.filter(p=>p!==h&&p!==b);
-      return 0.4*(h?hv(h):0)+0.35*(b?bv(b):0)+0.25*tMean(rest.map(tShoot))})(),
-    post:0.4*Math.max(0,...R.map(postS))+0.3*tMean(bigs.map(rebS))+0.3*Math.min(1,R.filter(p=>peOf(p)>=4).length/2),
-    run:0.35*tMean(tTop(R.map(tStl),3))+0.35*Math.max(0,...R.filter(p=>p.slot==='PG'||p.slot==='SG').map(tPass))+0.3*R.filter(p=>peOf(p)<=3.5).length/5,
-    motion:0.6*Math.min(1,R.filter(p=>tPass(p)>=0.3).length/3)+0.4*(1-clamp((Math.max(...R.map(p=>num(p.usg,18)))-tMean(R.map(p=>num(p.usg,18))))/14,0,1))};
-  const D={switch:tMean(R.map(tVers)),drop:0.7*Math.max(0,...bigs.map(tRim))+0.3*tMean(R.map(tDef)),
-    zone:0.5*Math.max(0,...R.map(tRim))+0.25*tMean(R.map(tStl))+0.25*tMean(R.map(tDef)),blitz:0.6*tMean(tTop(R.map(tStl),3))+0.4*tMean(R.map(tDef))};
-  Object.keys(O).forEach(k=>O[k]=clamp(O[k],0,1));Object.keys(D).forEach(k=>D[k]=clamp(D[k],0,1));
-  return{O,D,star:star&&star.n,starGap:star?pval(star)-tMean(oth.map(pval)):0}}
+const tShoot = p => {
+  const f = String((bioOf(p) || {}).sk || '');
+  return Math.max(spc(p), f.includes('3') ? 0.7 : 0, f.includes('m') ? 0.35 : 0);
+};
+const tRim = p => clamp((num(p.blkp, 1) - 1.5) / 3.5, 0, 1),
+  tStl = p => clamp((num(p.stlp, 1.5) - 1.3) / 1.5, 0, 1),
+  tPass = p => clamp((num(p.astp, 12) - 8) / 24, 0, 1);
+const tDef = p => clamp((num(p.dbpm, 0) + 1) / 4, 0, 1),
+  tVers = p => {
+    const n = canPlay(p).length;
+    return n >= 3 ? 1 : n === 2 ? 0.5 : 0;
+  };
+const tMean = a => (a.length ? a.reduce((t, x) => t + x, 0) / a.length : 0),
+  tTop = (a, n) =>
+    a
+      .slice()
+      .sort((x, y) => y - x)
+      .slice(0, n);
+function helioStar(R) {
+  let best = null,
+    bv = -1;
+  R.forEach(p => {
+    const v = crea(p) * Math.max(0.5, pval(p));
+    if (v > bv) {
+      bv = v;
+      best = p;
+    }
+  });
+  return best;
+}
+function tacRaw(Rall) {
+  const R = starters(Rall),
+    bigs = R.filter(p => p.slot === 'PF' || p.slot === 'C');
+  const sh = R.map(tShoot),
+    star = helioStar(R),
+    oth = R.filter(p => p !== star),
+    us =
+      tTop(
+        oth.map(p => num(p.usg, 18)),
+        1
+      )[0] || 18;
+  const O = {
+    five: 0.6 * tMean(sh) + 0.4 * tMean(bigs.map(tShoot)),
+    helio: star
+      ? 0.45 * crea(star) * clamp(pval(star) / 7, 0, 1) +
+        0.35 * tMean(oth.map(tShoot)) +
+        0.2 * (1 - clamp((us - 22) / 10, 0, 1))
+      : 0,
+    pnr: (() => {
+      const hv = p => 0.6 * crea(p) + 0.4 * tPass(p),
+        bv = p => Math.max(0.5 * rebS(p) + 0.5 * clamp(pval(p) / 5, 0, 1), tShoot(p));
+      const h = R.filter(p => p.slot === 'PG' || p.slot === 'SG').sort((x, y) => hv(y) - hv(x))[0],
+        b = bigs.slice().sort((x, y) => bv(y) - bv(x))[0],
+        rest = R.filter(p => p !== h && p !== b);
+      return 0.4 * (h ? hv(h) : 0) + 0.35 * (b ? bv(b) : 0) + 0.25 * tMean(rest.map(tShoot));
+    })(),
+    post:
+      0.4 * Math.max(0, ...R.map(postS)) +
+      0.3 * tMean(bigs.map(rebS)) +
+      0.3 * Math.min(1, R.filter(p => peOf(p) >= 4).length / 2),
+    run:
+      0.35 * tMean(tTop(R.map(tStl), 3)) +
+      0.35 * Math.max(0, ...R.filter(p => p.slot === 'PG' || p.slot === 'SG').map(tPass)) +
+      (0.3 * R.filter(p => peOf(p) <= 3.5).length) / 5,
+    motion:
+      0.6 * Math.min(1, R.filter(p => tPass(p) >= 0.3).length / 3) +
+      0.4 * (1 - clamp((Math.max(...R.map(p => num(p.usg, 18))) - tMean(R.map(p => num(p.usg, 18)))) / 14, 0, 1))
+  };
+  const D = {
+    switch: tMean(R.map(tVers)),
+    drop: 0.7 * Math.max(0, ...bigs.map(tRim)) + 0.3 * tMean(R.map(tDef)),
+    zone: 0.5 * Math.max(0, ...R.map(tRim)) + 0.25 * tMean(R.map(tStl)) + 0.25 * tMean(R.map(tDef)),
+    blitz: 0.6 * tMean(tTop(R.map(tStl), 3)) + 0.4 * tMean(R.map(tDef))
+  };
+  Object.keys(O).forEach(k => (O[k] = clamp(O[k], 0, 1)));
+  Object.keys(D).forEach(k => (D[k] = clamp(D[k], 0, 1)));
+  return { O, D, star: star && star.n, starGap: star ? pval(star) - tMean(oth.map(pval)) : 0 };
+}
 /* the raw scores above live on different scales (most lineups have two bigs, few have five shooters), so each is
    turned into a percentile against 600 random five-man lineups drawn from the whole card pool: "契合 80" means this
    lineup suits the scheme better than 80% of random lineups. Built once, from a fixed seed, the same on every device. */
-let TAC_CAL=null;
-function tacCal(){if(TAC_CAL)return TAC_CAL;const pool=[];const seen=new Set();THEMES.forEach(t=>t.items.forEach(p=>{if(!p.fa&&!seen.has(p.id+p.y0)){seen.add(p.id+p.y0);pool.push(p)}}));
-  const r=rng(hash('tac-cal-v1')),O={},D={};TO_K.forEach(k=>O[k]=[]);TD_K.forEach(k=>D[k]=[]);
-  for(let i=0;i<600&&pool.length>=5;i++){const pick=[];while(pick.length<5){const p=pool[Math.floor(r()*pool.length)];if(!pick.includes(p))pick.push(p)}
-    const L=pick.slice().sort((a,b)=>peOf(a)-peOf(b)).map((p,j)=>({...p,slot:POS[j]})),f=tacRaw(L);TO_K.forEach(k=>O[k].push(f.O[k]));TD_K.forEach(k=>D[k].push(f.D[k]))}
-  Object.values(O).concat(Object.values(D)).forEach(a=>a.sort((x,y)=>x-y));return TAC_CAL={O,D}}
-const pctIn=(a,v)=>{if(!a.length)return v;let lo=0,hi=a.length;while(lo<hi){const m=(lo+hi)>>1;if(a[m]<v)lo=m+1;else hi=m}let e=lo;while(e<a.length&&a[e]===v)e++;return clamp(((lo+e)/2)/a.length,0,1)};
-function tacFit(R){const f=tacRaw(R),C=tacCal(),O={},D={};TO_K.forEach(k=>O[k]=pctIn(C.O[k],f.O[k]));TD_K.forEach(k=>D[k]=pctIn(C.D[k],f.D[k]));return{...f,O,D}}
-const bestOf=o=>Object.keys(o).reduce((a,b)=>o[b]>o[a]?b:a);
-function tacOf(g,s){const t=g.tac&&g.tac[s],F=tacFit(rosterOf(g,s));return{o:t&&TAC_O[t.o]?t.o:bestOf(F.O),d:t&&TAC_D[t.d]?t.d:bestOf(F.D),F,auto:!t}}
+let TAC_CAL = null;
+function tacCal() {
+  if (TAC_CAL) return TAC_CAL;
+  const pool = [];
+  const seen = new Set();
+  THEMES.forEach(t =>
+    t.items.forEach(p => {
+      if (!p.fa && !seen.has(p.id + p.y0)) {
+        seen.add(p.id + p.y0);
+        pool.push(p);
+      }
+    })
+  );
+  const r = rng(hash('tac-cal-v1')),
+    O = {},
+    D = {};
+  TO_K.forEach(k => (O[k] = []));
+  TD_K.forEach(k => (D[k] = []));
+  for (let i = 0; i < 600 && pool.length >= 5; i++) {
+    const pick = [];
+    while (pick.length < 5) {
+      const p = pool[Math.floor(r() * pool.length)];
+      if (!pick.includes(p)) pick.push(p);
+    }
+    const L = pick
+        .slice()
+        .sort((a, b) => peOf(a) - peOf(b))
+        .map((p, j) => ({ ...p, slot: POS[j] })),
+      f = tacRaw(L);
+    TO_K.forEach(k => O[k].push(f.O[k]));
+    TD_K.forEach(k => D[k].push(f.D[k]));
+  }
+  Object.values(O)
+    .concat(Object.values(D))
+    .forEach(a => a.sort((x, y) => x - y));
+  return (TAC_CAL = { O, D });
+}
+const pctIn = (a, v) => {
+  if (!a.length) return v;
+  let lo = 0,
+    hi = a.length;
+  while (lo < hi) {
+    const m = (lo + hi) >> 1;
+    if (a[m] < v) lo = m + 1;
+    else hi = m;
+  }
+  let e = lo;
+  while (e < a.length && a[e] === v) e++;
+  return clamp((lo + e) / 2 / a.length, 0, 1);
+};
+function tacFit(R) {
+  const f = tacRaw(R),
+    C = tacCal(),
+    O = {},
+    D = {};
+  TO_K.forEach(k => (O[k] = pctIn(C.O[k], f.O[k])));
+  TD_K.forEach(k => (D[k] = pctIn(C.D[k], f.D[k])));
+  return { ...f, O, D };
+}
+const bestOf = o => Object.keys(o).reduce((a, b) => (o[b] > o[a] ? b : a));
+function tacOf(g, s) {
+  const t = g.tac && g.tac[s],
+    F = tacFit(rosterOf(g, s));
+  return { o: t && TAC_O[t.o] ? t.o : bestOf(F.O), d: t && TAC_D[t.d] ? t.d : bestOf(F.D), F, auto: !t };
+}
 /* bots: easy picks among its three best fits at random, normal takes its best fit, hard also looks at what the
    other teams are likely to run (their best fits) and adds the expected counter */
-function botTac(g,s){const lv=(S.bots&&S.bots[s]&&S.bots[s].lv)||S.botLv||'normal',F=tacFit(rosterOf(g,s)),r=rng(hash(g.gid+s+'tac'));
-  const sys=typeof botSys==='function'&&botSys(g,s);if(sys&&F.O[sys]>=0.3)return{o:sys,d:bestOf(F.D)};   // the system coach runs his system
-  if(lv==='easy'){const pk=o=>{const k=Object.keys(o).sort((a,b)=>o[b]-o[a]).slice(0,3);return k[Math.floor(r()*k.length)]};return{o:pk(F.O),d:pk(F.D)}}
-  if(lv!=='hard')return{o:bestOf(F.O),d:bestOf(F.D)};
-  const opp=g.sides.filter(x=>x!==s).map(x=>tacScout(g,x));
-  const so={},sd={};TO_K.forEach(o=>so[o]=FIT_O*F.O[o]+tMean(opp.map(q=>CNT_K*TAC_M[o][q.d]*(0.5+0.5*F.O[o])*(0.5+0.5*q.f.D[q.d]))));
-  TD_K.forEach(d=>sd[d]=FIT_D*F.D[d]-tMean(opp.map(q=>CNT_K*TAC_M[q.o][d]*(0.5+0.5*q.f.O[q.o])*(0.5+0.5*F.D[d]))));return{o:bestOf(so),d:bestOf(sd)}}
+function botTac(g, s) {
+  const lv = (S.bots && S.bots[s] && S.bots[s].lv) || S.botLv || 'normal',
+    F = tacFit(rosterOf(g, s)),
+    r = rng(hash(g.gid + s + 'tac'));
+  const sys = typeof botSys === 'function' && botSys(g, s);
+  if (sys && F.O[sys] >= 0.3) return { o: sys, d: bestOf(F.D) }; // the system coach runs his system
+  if (lv === 'easy') {
+    const pk = o => {
+      const k = Object.keys(o)
+        .sort((a, b) => o[b] - o[a])
+        .slice(0, 3);
+      return k[Math.floor(r() * k.length)];
+    };
+    return { o: pk(F.O), d: pk(F.D) };
+  }
+  if (lv !== 'hard') return { o: bestOf(F.O), d: bestOf(F.D) };
+  const opp = g.sides.filter(x => x !== s).map(x => tacScout(g, x));
+  const so = {},
+    sd = {};
+  TO_K.forEach(
+    o =>
+      (so[o] =
+        FIT_O * F.O[o] + tMean(opp.map(q => CNT_K * TAC_M[o][q.d] * (0.5 + 0.5 * F.O[o]) * (0.5 + 0.5 * q.f.D[q.d]))))
+  );
+  TD_K.forEach(
+    d =>
+      (sd[d] =
+        FIT_D * F.D[d] - tMean(opp.map(q => CNT_K * TAC_M[q.o][d] * (0.5 + 0.5 * q.f.O[q.o]) * (0.5 + 0.5 * F.D[d]))))
+  );
+  return { o: bestOf(so), d: bestOf(sd) };
+}
 /* scouting a rival: lineups stay hidden until tip-off, so this guesses one from public facts only (the five best
    cards on the roster by 攻守貢獻, lined up by size) and rates the schemes for it. The hard bot plans against exactly
    this, and the lineup screen shows the same scouting line to people, so nobody knows more than anyone else. */
-function tacScout(g,x){const R=rosterOf(g,x).filter(p=>!p.fa).sort((a,b)=>pubVal(b)-pubVal(a)).slice(0,5).sort((a,b)=>peOf(a)-peOf(b)).map((p,j)=>({...p,slot:POS[j]}));
-  const f=tacFit(R);return{o:bestOf(f.O),d:bestOf(f.D),f}}
-function scoutLine(g,x){const sc=tacScout(g,x),o2=Object.keys(sc.f.O).sort((a,b)=>sc.f.O[b]-sc.f.O[a]).slice(0,2);
-  return `<div class="small mut" style="margin-top:4px">球探推測：進攻可能打 ${o2.map(k=>TAC_O[k].nm).join(' 或 ')}，防守可能用 ${TAC_D[sc.d].nm}</div>`}
+function tacScout(g, x) {
+  const R = rosterOf(g, x)
+    .filter(p => !p.fa)
+    .sort((a, b) => pubVal(b) - pubVal(a))
+    .slice(0, 5)
+    .sort((a, b) => peOf(a) - peOf(b))
+    .map((p, j) => ({ ...p, slot: POS[j] }));
+  const f = tacFit(R);
+  return { o: bestOf(f.O), d: bestOf(f.D), f };
+}
+function scoutLine(g, x) {
+  const sc = tacScout(g, x),
+    o2 = Object.keys(sc.f.O)
+      .sort((a, b) => sc.f.O[b] - sc.f.O[a])
+      .slice(0, 2);
+  return `<div class="small mut" style="margin-top:4px">球探推測：進攻可能打 ${o2.map(k => TAC_O[k].nm).join(' 或 ')}，防守可能用 ${TAC_D[sc.d].nm}</div>`;
+}
 // the fixed part of a team's tactic edge (fit + star system), and the counter of its offense against a defense
-function tacBase(T){let v=FIT_O*(T.F.O[T.o]-0.45)+FIT_D*(T.F.D[T.d]-0.45),helio=0;
-  if(T.o==='helio')helio=HELIO_K*clamp(T.F.starGap/6,0,1)*T.F.O.helio;return{fit:+(v).toFixed(2),helio:+helio.toFixed(2)}}
-const tacCounter=(A,B)=>CNT_K*TAC_M[A.o][B.d]*(0.5+0.5*A.F.O[A.o])*(0.5+0.5*B.F.D[B.d]);
-function tacResolve(g){g.tacR={};g.sides.forEach(s=>{const t=tacOf(g,s);if(t.auto&&typeof isBot==='function'&&isBot(s)){const b=botTac(g,s);t.o=b.o;t.d=b.d}
-  g.tacR[s]={o:t.o,d:t.d,F:t.F,auto:t.auto,...tacBase(t)}})}
+function tacBase(T) {
+  let v = FIT_O * (T.F.O[T.o] - 0.45) + FIT_D * (T.F.D[T.d] - 0.45),
+    helio = 0;
+  if (T.o === 'helio') helio = HELIO_K * clamp(T.F.starGap / 6, 0, 1) * T.F.O.helio;
+  return { fit: +v.toFixed(2), helio: +helio.toFixed(2) };
+}
+const tacCounter = (A, B) => CNT_K * TAC_M[A.o][B.d] * (0.5 + 0.5 * A.F.O[A.o]) * (0.5 + 0.5 * B.F.D[B.d]);
+function tacResolve(g) {
+  g.tacR = {};
+  g.sides.forEach(s => {
+    const t = tacOf(g, s);
+    if (t.auto && typeof isBot === 'function' && isBot(s)) {
+      const b = botTac(g, s);
+      t.o = b.o;
+      t.d = b.d;
+    }
+    g.tacR[s] = { o: t.o, d: t.d, F: t.F, auto: t.auto, ...tacBase(t) };
+  });
+}
 // short soft hints for the picker: what an offense / a defense usually does well or badly against
-function tacHint(kind,k){if(kind==='o'){const row=TAC_M[k],good=TD_K.filter(d=>row[d]>=0.35).map(d=>TAC_D[d].nm),bad=TD_K.filter(d=>row[d]<=-0.35).map(d=>TAC_D[d].nm);
-    return (good.length?`通常好打：${good.join('、')}`:'')+(good.length&&bad.length?'；':'')+(bad.length?`容易卡住：${bad.join('、')}`:'')}
-  const good=TO_K.filter(o=>TAC_M[o][k]<=-0.35).map(o=>TAC_O[o].nm),bad=TO_K.filter(o=>TAC_M[o][k]>=0.35).map(o=>TAC_O[o].nm);
-  return (good.length?`通常守得住：${good.join('、')}`:'')+(good.length&&bad.length?'；':'')+(bad.length?`比較怕：${bad.join('、')}`:'')}
-function tacPanel(g,s,rd){const t=tacOf(g,s),bo=bestOf(t.F.O),bd=bestOf(t.F.D),pc=x=>Math.round(x*100);
-  const chip=(kind,k,nm,fit,best,on)=>`<button class="tc ${on?'on':''}" data-act="tac" data-who="${s}" data-k="${kind}" data-v="${k}" ${rd?'disabled':''}>${nm}<i>${pc(fit)}</i>${best?'<em>推薦</em>':''}</button>`;
-  const O=TAC_O[t.o],D=TAC_D[t.d],eo=FIT_O*(t.F.O[t.o]-0.45),ed=FIT_D*(t.F.D[t.d]-0.45),eh=t.o==='helio'?HELIO_K*clamp(t.F.starGap/6,0,1)*t.F.O.helio:0,sg=x=>(x>=0?'+':'')+x.toFixed(1);
+function tacHint(kind, k) {
+  if (kind === 'o') {
+    const row = TAC_M[k],
+      good = TD_K.filter(d => row[d] >= 0.35).map(d => TAC_D[d].nm),
+      bad = TD_K.filter(d => row[d] <= -0.35).map(d => TAC_D[d].nm);
+    return (
+      (good.length ? `通常好打：${good.join('、')}` : '') +
+      (good.length && bad.length ? '；' : '') +
+      (bad.length ? `容易卡住：${bad.join('、')}` : '')
+    );
+  }
+  const good = TO_K.filter(o => TAC_M[o][k] <= -0.35).map(o => TAC_O[o].nm),
+    bad = TO_K.filter(o => TAC_M[o][k] >= 0.35).map(o => TAC_O[o].nm);
+  return (
+    (good.length ? `通常守得住：${good.join('、')}` : '') +
+    (good.length && bad.length ? '；' : '') +
+    (bad.length ? `比較怕：${bad.join('、')}` : '')
+  );
+}
+function tacPanel(g, s, rd) {
+  const t = tacOf(g, s),
+    bo = bestOf(t.F.O),
+    bd = bestOf(t.F.D),
+    pc = x => Math.round(x * 100);
+  const chip = (kind, k, nm, fit, best, on) =>
+    `<button class="tc ${on ? 'on' : ''}" data-act="tac" data-who="${s}" data-k="${kind}" data-v="${k}" ${rd ? 'disabled' : ''}>${nm}<i>${pc(fit)}</i>${best ? '<em>推薦</em>' : ''}</button>`;
+  const O = TAC_O[t.o],
+    D = TAC_D[t.d],
+    eo = FIT_O * (t.F.O[t.o] - 0.45),
+    ed = FIT_D * (t.F.D[t.d] - 0.45),
+    eh = t.o === 'helio' ? HELIO_K * clamp(t.F.starGap / 6, 0, 1) * t.F.O.helio : 0,
+    sg = x => (x >= 0 ? '+' : '') + x.toFixed(1);
   return `<div class="tacbox"><div class="blab">戰術 <span class="tacsub">數字＝契合度（比幾 % 的隨機陣容適合），不是強度</span></div>
-    <div class="tacrow"><span class="tl">進攻</span><div class="tcs">${TO_K.map(k=>chip('o',k,TAC_O[k].nm,t.F.O[k],k===bo,k===t.o)).join('')}</div></div>
-    <div class="tacd"><b>${O.nm}</b>：${O.d}。需要${O.need}。<span class="mut">${tacHint('o',t.o)}</span></div>
-    <div class="tacrow"><span class="tl">防守</span><div class="tcs">${TD_K.map(k=>chip('d',k,TAC_D[k].nm,t.F.D[k],k===bd,k===t.d)).join('')}</div></div>
-    <div class="tacd"><b>${D.nm}</b>：${D.d}。需要${D.need}。<span class="mut">${tacHint('d',t.d)}</span></div>
-    ${t.o==='helio'&&t.F.star?`<div class="tacd">核心：<b>${esc(t.F.star)}</b>。他越比隊友強、隊友越會投，這套越好用，他接管比賽的機會也變多。</div>`:''}
-    <div class="tacd">目前加成：進攻 <b>${sg(eo)}</b>、防守 <b>${sg(ed)}</b>${eh?`、核心 <b>${sg(eh)}</b>`:''}（總評每 1 分 ≈ 每場多 0.8 分）</div>
-    <div class="tacd mut">契合 45 左右等於沒加成；100 比 99 只多 0.02。克制只是傾向：每場執行不同，輸球的一方也會調整。對手選什麼開打才知道。</div></div>`}
+    <div class="tacrow"><span class="tl">進攻</span><div class="tcs">${TO_K.map(k => chip('o', k, TAC_O[k].nm, t.F.O[k], k === bo, k === t.o)).join('')}</div></div>
+    <div class="tacd"><b>${O.nm}</b>：${O.d}。需要${O.need}。<span class="mut">${tacHint('o', t.o)}</span></div>
+    <div class="tacrow"><span class="tl">防守</span><div class="tcs">${TD_K.map(k => chip('d', k, TAC_D[k].nm, t.F.D[k], k === bd, k === t.d)).join('')}</div></div>
+    <div class="tacd"><b>${D.nm}</b>：${D.d}。需要${D.need}。<span class="mut">${tacHint('d', t.d)}</span></div>
+    ${t.o === 'helio' && t.F.star ? `<div class="tacd">核心：<b>${esc(t.F.star)}</b>。他越比隊友強、隊友越會投，這套越好用，他接管比賽的機會也變多。</div>` : ''}
+    <div class="tacd">目前加成：進攻 <b>${sg(eo)}</b>、防守 <b>${sg(ed)}</b>${eh ? `、核心 <b>${sg(eh)}</b>` : ''}（總評每 1 分 ≈ 每場多 0.8 分）</div>
+    <div class="tacd mut">契合 45 左右等於沒加成；100 比 99 只多 0.02。克制只是傾向：每場執行不同，輸球的一方也會調整。對手選什麼開打才知道。</div></div>`;
+}
 // one line per series for the results
-function tacLine(z){if(!z.tac)return '';const A=z.tac[z.a],B=z.tac[z.b],nmA=esc(nm(S,z.a)),nmB=esc(nm(S,z.b));
-  const ca=tacCounter(A,B),cb=tacCounter(B,A),edge=x=>x>=0.35?'佔上風':x<=-0.35?'被限制':'互有來回';
+function tacLine(z) {
+  if (!z.tac) return '';
+  const A = z.tac[z.a],
+    B = z.tac[z.b],
+    nmA = esc(nm(S, z.a)),
+    nmB = esc(nm(S, z.b));
+  const ca = tacCounter(A, B),
+    cb = tacCounter(B, A),
+    edge = x => (x >= 0.35 ? '佔上風' : x <= -0.35 ? '被限制' : '互有來回');
   return `<div class="small" style="margin-top:4px;line-height:1.6">戰術：<span style="color:${col(z.a)}">${nmA}</span> ${TAC_O[A.o].nm}／${TAC_D[A.d].nm} vs <span style="color:${col(z.b)}">${nmB}</span> ${TAC_O[B.o].nm}／${TAC_D[B.d].nm}<br>
-    <span class="mut">${nmA}進攻打${nmB}防守：${edge(ca)}；${nmB}進攻打${nmA}防守：${edge(cb)}</span></div>`}
+    <span class="mut">${nmA}進攻打${nmB}防守：${edge(ca)}；${nmB}進攻打${nmA}防守：${edge(cb)}</span></div>`;
+}

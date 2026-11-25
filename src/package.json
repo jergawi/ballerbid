@@ -1,0 +1,17 @@
+{
+  "name": "ballerbid",
+  "private": true,
+  "description": "BALLER BID 球星喊價: source of the single-page build (index.html at the repo root)",
+  "scripts": {
+    "build": "python3 bundle2.py",
+    "check": "sh check.sh",
+    "format": "prettier --config .prettierrc.json --write *.js style4.css"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "globals": "^17",
+    "morphdom": "^2.7.4",
+    "mqtt": "5.16.1",
+    "prettier": "^3"
+  }
+}

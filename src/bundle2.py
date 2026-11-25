@@ -5,10 +5,11 @@ NPM=os.environ.get('BB_NPM',B+'node_modules')+'/'
 # game modules, spliced into app.js just before the matchup model (order matters: later modules use earlier ones)
 MODULES=['mis.js','season.js','views2.js','legend.js','phase.js','bench.js','place.js','formats.js','cards.js','bot.js','sfx.js','views3.js','log.js','tactics.js']
 css=open(B+'style4.css').read()
-app=open(B+'app.js').read()
+# the main program, split by concern; the game modules go between CORE and the rest (they use core, the rest uses them)
+CORE=['core.js']                                    # data loading, positions, chemistry, game state & auction engine
+MAIN=['sim.js','net.js','flow.js','views.js','playback.js','events.js']   # matchup model, online play, dispatch & transitions, screens, playback, input handling
 extra=''.join(open(B+m).read()+'\n' for m in MODULES)
-assert app.count('/* ---------- matchup model')==1
-app=app.replace('/* ---------- matchup model',extra+'/* ---------- matchup model')
+app=''.join(open(B+f).read() for f in CORE)+extra+''.join(open(B+f).read() for f in MAIN)
 md=open(NPM+'morphdom/dist/morphdom-umd.min.js').read()
 mq=open(NPM+'mqtt/dist/mqtt.min.js').read()
 safe=lambda c: re.sub(r'</(script)', r'<\\/\1', c, flags=re.I)
@@ -35,12 +36,15 @@ def csp(html,extra_connect=''):
          "connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884"+extra_connect+"; style-src 'unsafe-inline' https://fonts.googleapis.com; "
          "font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'")
     return html.replace('<!--CSP-->','<meta http-equiv="Content-Security-Policy" content="'+pol+'">')
+# the version, also as a plain marker near the top: copies of the game already open look for APPV='…' to offer an update
+APPV=re.search(r"APPV\s*=\s*'([^']+)'",open(B+'core.js').read()).group(1)
 def page(mqtt_tag):
     return f'''<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <!--CSP-->
+<!-- APPV='{APPV}' -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
