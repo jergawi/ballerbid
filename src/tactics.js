@@ -111,4 +111,4 @@ function tacPanel(g,s,rd){const t=tacOf(g,s),bo=bestOf(t.F.O),bd=bestOf(t.F.D),p
 function tacLine(z){if(!z.tac)return '';const A=z.tac[z.a],B=z.tac[z.b],nmA=esc(nm(S,z.a)),nmB=esc(nm(S,z.b));
   const ca=tacCounter(A,B),cb=tacCounter(B,A),edge=x=>x>=0.35?'佔上風':x<=-0.35?'被限制':'互有來回';
   return `<div class="small" style="margin-top:4px;line-height:1.6">戰術：<span style="color:${col(z.a)}">${nmA}</span> ${TAC_O[A.o].nm}／${TAC_D[A.d].nm} vs <span style="color:${col(z.b)}">${nmB}</span> ${TAC_O[B.o].nm}／${TAC_D[B.d].nm}<br>
-    <span class="mut">${nmA}的進攻${edge(ca)}，${nmB}的進攻${edge(cb)}</span></div>`}
+    <span class="mut">${nmA}進攻打${nmB}防守：${edge(ca)}；${nmB}進攻打${nmA}防守：${edge(cb)}</span></div>`}

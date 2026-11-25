@@ -262,8 +262,6 @@ select:disabled{opacity:.6}
 /* playback v2 */
 .pbh{align-items:center}
 .skipall{font-size:12px;font-weight:700;color:var(--mut);background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 10px}
-.courtw{margin-top:10px;border-radius:16px;overflow:hidden;box-shadow:0 6px 20px -12px rgba(30,40,80,.35);background:#f3e3c6;line-height:0}
-.courtw canvas{width:100%;height:auto;display:block;aspect-ratio:360/200}
 .feed{min-height:0}.ev .ic{margin-right:6px}
 .pbfin{margin-top:10px}
 .pbc{position:sticky;bottom:0;padding:10px 0 calc(8px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:5}

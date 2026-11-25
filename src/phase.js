@@ -38,6 +38,5 @@ const ovrOf=p=>!p||p.fa?45:toOvr(pubVal(p));
 /* how far the card's own season usually lands from the number on the card: one standard deviation, measured over
    every card in the game (about 0.6 rating points for role players, 1.5 for the best stars). Shown as a range so a
    95 that plays like an 89 is a known risk, not a surprise. */
-const ovrRange=p=>{const v=pubVal(p),sd=0.6+0.09*Math.max(0,v);return[toOvr(v-sd),toOvr(v+sd)]};
 const ovrTier=v=>v>=92?'t5':v>=86?'t4':v>=80?'t3':v>=74?'t2':'t1';
 function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p),rg=null;return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>攻守貢獻</i></div>${rg?`<div class="ovrr">這一季多半在 ${rg[0]}–${rg[1]}</div>`:''}`}

@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-EB3sOGqRGGZKYU7F+brAd+PQljc+RBew4A2ht68U7PQ=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-LZGdhs1PmforFd1nN7eQwUdwLM4+QVUYdm1RP3Bbzwo=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -273,8 +273,6 @@ select:disabled{opacity:.6}
 /* playback v2 */
 .pbh{align-items:center}
 .skipall{font-size:12px;font-weight:700;color:var(--mut);background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 10px}
-.courtw{margin-top:10px;border-radius:16px;overflow:hidden;box-shadow:0 6px 20px -12px rgba(30,40,80,.35);background:#f3e3c6;line-height:0}
-.courtw canvas{width:100%;height:auto;display:block;aspect-ratio:360/200}
 .feed{min-height:0}.ev .ic{margin-right:6px}
 .pbfin{margin-top:10px}
 .pbc{position:sticky;bottom:0;padding:10px 0 calc(8px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:5}
@@ -700,7 +698,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.26c';
+const APPV='2026.11.26d';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -1445,7 +1443,6 @@ const ovrOf=p=>!p||p.fa?45:toOvr(pubVal(p));
 /* how far the card's own season usually lands from the number on the card: one standard deviation, measured over
    every card in the game (about 0.6 rating points for role players, 1.5 for the best stars). Shown as a range so a
    95 that plays like an 89 is a known risk, not a surprise. */
-const ovrRange=p=>{const v=pubVal(p),sd=0.6+0.09*Math.max(0,v);return[toOvr(v-sd),toOvr(v+sd)]};
 const ovrTier=v=>v>=92?'t5':v>=86?'t4':v>=80?'t3':v>=74?'t2':'t1';
 function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p),rg=null;return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>攻守貢獻</i></div>${rg?`<div class="ovrr">這一季多半在 ${rg[0]}–${rg[1]}</div>`:''}`}
 
@@ -2086,34 +2083,8 @@ const SND={
   cheer:(c,t)=>crowd(c,t,{dur:2.8,peak:0.17,voices:7,claps:30}),
   applause:(c,t)=>crowd(c,t,{dur:1.9,peak:0.05,voices:0,claps:34}),
   champ:(c,t)=>{[523,659,784,1046].forEach((f,i)=>voice(c,t+i*0.11,{type:'triangle',f,dur:i===3?0.55:0.2,peak:0.13}));voice(c,t+0.33,{f:523,dur:0.6,peak:0.07})},
-  error:(c,t)=>voice(c,t,{type:'triangle',f:jit(300,.02),f2:240,dur:0.12,peak:0.09}),
-  /* ---- game playback ----
-     Built the way procedural-audio work builds impacts: a noise source shaped by filters for air and net, and a few
-     damped sine modes at non-integer ratios for metal (that inharmonic spread is what makes a rim sound like steel). */
-  // a three that touches nothing but net: one crisp, bright "tsh" (about a tenth of a second audible) - the ball through the
-  // cords and the snap of the net - with no falling sweep and no long tail, which is what made the old one sound like surf
-  swish:(c,t)=>{burst(c,t,{f:jit(5600,.05),q:0.7,dur:0.17,peak:0.17});burst(c,t+0.03,{f:jit(8500,.05),q:1.1,dur:0.08,peak:0.1});
-    burst(c,t+0.006,{f:jit(3600,.06),q:1.4,dur:0.035,peak:0.05})},
-  // any other make: a shorter, softer version
-  net:(c,t)=>{burst(c,t,{f:jit(6000,.06),q:0.8,dur:0.1,peak:0.08});burst(c,t+0.022,{f:jit(8800,.05),q:1.2,dur:0.035,peak:0.04})},
-  // dunk: a body thump, the rim ringing (steel modes) and the stanchion rattling for a moment
-  dunk:(c,t)=>{voice(c,t,{f:jit(120,.05),f2:44,dur:0.26,peak:0.32});burst(c,t,{f:jit(380,.06),q:0.8,dur:0.07,peak:0.22});burst(c,t+0.004,{f:jit(2600,.05),q:2,dur:0.03,peak:0.08});
-    const f0=jit(395,.04);[[1,0.055,0.9],[2.32,0.04,0.65],[3.87,0.03,0.45],[5.61,0.02,0.3],[7.42,0.012,0.2]].forEach(([r,p,d])=>voice(c,t+0.003,{f:f0*r,dur:d,peak:p,a:0.002}));
-    for(let i=0;i<7;i++)burst(c,t+0.03+i*0.034,{f:jit(260,.12),q:2.2,dur:0.045,peak:0.09*Math.pow(0.7,i)})},
-  // block: a hand slapping the ball (a dull pop with some slap on top)
-  block:(c,t)=>{voice(c,t,{f:jit(200,.05),f2:85,dur:0.1,peak:0.22});burst(c,t,{f:jit(1300,.08),q:1,dur:0.045,peak:0.15})},
-  // steal: two short sneaker squeaks
-  steal:(c,t)=>{[0,0.07].forEach((d,i)=>{voice(c,t+d,{type:'triangle',f:jit(2000+i*250,.04),f2:2600+i*200,dur:0.055,peak:0.04});burst(c,t+d,{f:2400,q:6,dur:0.04,peak:0.025})})},
-  // referee whistle: a pea whistle, a high tone with the fast flutter of the pea
-  whistle:(c,t)=>{const o=c.createOscillator(),lfo=c.createOscillator(),lg=c.createGain(),g=c.createGain(),am=c.createGain();o.type='sine';o.frequency.value=jit(3050,.02);
-    lfo.frequency.value=34;lg.gain.value=0.45;am.gain.value=0.55;lfo.connect(lg);lg.connect(am.gain);
-    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.05,t+0.02);g.gain.setValueAtTime(0.05,t+0.28);g.gain.exponentialRampToValueAtTime(0.0001,t+0.36);
-    o.connect(am);am.connect(g);g.connect(SFX.out);o.start(t);lfo.start(t);o.stop(t+0.4);lfo.stop(t+0.4);o.onended=()=>{o.disconnect();lfo.disconnect();lg.disconnect();am.disconnect();g.disconnect()}},
-  // a crowd swell for big moments inside a game (a run, a takeover, a career night)
-  // (voices and claps only: the noise bed of the full crowd is what read as waves in the middle of a game)
-  ooh:(c,t)=>crowd(c,t,{dur:1.4,peak:0.07,voices:5,claps:10,bed:false}),
-  clutch:(c,t)=>{SND.swish(c,t);crowd(c,t+0.12,{dur:1.8,peak:0.1,voices:6,claps:22,bed:false})}};
-const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90,swish:140,net:140,dunk:350,block:300,steal:250,whistle:400,ooh:1500,clutch:1500};
+  error:(c,t)=>voice(c,t,{type:'triangle',f:jit(300,.02),f2:240,dur:0.12,peak:0.09})};
+const SFX_GAP={tap:35,tick2:35,press:35,back:35,tick:250,raise:90,bid:90};
 // gesture: called inside a tap, so a context that is still resuming may queue the sound (it plays as soon as it resumes)
 function sfx(name,delay,gesture,arg){if(!SFX.lv||!SND[name])return;sfxInit();const c=SFX.ctx;if(!c)return;if(c.state!=='running'){c.resume().catch(()=>{});if(!gesture)return}
   const n=performance.now();if(n-(SFX.last[name]||0)<(SFX_GAP[name]||120))return;SFX.last[name]=n;try{SND[name](c,c.currentTime+0.01+(delay||0),arg)}catch(e){}}
@@ -2372,7 +2343,7 @@ function tacPanel(g,s,rd){const t=tacOf(g,s),bo=bestOf(t.F.O),bd=bestOf(t.F.D),p
 function tacLine(z){if(!z.tac)return '';const A=z.tac[z.a],B=z.tac[z.b],nmA=esc(nm(S,z.a)),nmB=esc(nm(S,z.b));
   const ca=tacCounter(A,B),cb=tacCounter(B,A),edge=x=>x>=0.35?'佔上風':x<=-0.35?'被限制':'互有來回';
   return `<div class="small" style="margin-top:4px;line-height:1.6">戰術：<span style="color:${col(z.a)}">${nmA}</span> ${TAC_O[A.o].nm}／${TAC_D[A.d].nm} vs <span style="color:${col(z.b)}">${nmB}</span> ${TAC_O[B.o].nm}／${TAC_D[B.d].nm}<br>
-    <span class="mut">${nmA}的進攻${edge(ca)}，${nmB}的進攻${edge(cb)}</span></div>`}
+    <span class="mut">${nmA}進攻打${nmB}防守：${edge(ca)}；${nmB}進攻打${nmA}防守：${edge(cb)}</span></div>`}
 
 /* ---------- matchup model ----------
  Base: OBPM+DBPM (Box Plus/Minus, Basketball-Reference), shrunk toward replacement level for small samples.
@@ -2617,6 +2588,7 @@ async function joinRoom(code,bi){
   if(!HAS_MQTT()){NET.err='連線元件載入失敗，請確認網路後重新整理';return render()}
   NET.err='';NET.busy=true;render();
   try{await deriveRoom(code);
+    if(bi!=null&&!(bi>=0&&bi<BROKERS.length))bi=null;   // invite links carry a broker index; ignore one that is out of range
     const order=bi!=null?[bi,...BROKERS.map((_,i)=>i).filter(i=>i!==bi)]:BROKERS.map((_,i)=>i);let found=false;
     for(const b of order){let c;try{c=await mqttConnect(b)}catch(e){continue}
       const st0=await new Promise(res=>{const to=setTimeout(()=>res(null),4500);c.subscribe(topic('s'),{qos:1});
@@ -3049,9 +3021,8 @@ const SIG={
 const TOMA=new Set(['jamesle01','cartevi01','wilkido01','ervinju01','kempsh01','drexlcl01','thompda01','mcgratr01','griffbl01','moranja01','westbru01','edwaran01','willizi01','lavinza01','richaja01','smithjo03']);
 const TOMA_TXT=['{n} 高高舉起單手，戰斧暴扣！','{n} 空中把球拉到腦後，戰斧式重扣，籃框還在晃 🪓','{n} 衝進禁區起飛，頂著防守者戰斧暴扣！','{n} 快攻一路殺到底，戰斧劈扣，全場起立 🪓'];
 const sigOf=p=>p&&own(SIG,p.id)?SIG[p.id]:null;
-// movement shooters: they run off screens for their threes; athletic freaks can still recover onto a step-back/fadeaway
+// movement shooters: they run off screens for their threes
 const MOVERS=new Set(['curryst01','thompkl01','allenra02','millere01','redicjj01','korveky01','hamilri01','robindu01']);
-const ATHL=new Set(['jamesle01','westbru01','antetgi01','davisan02','leonaka01','pippesc01','wembavi01','wadedw01','jordami01','garneke01','olajuha01','robinda01','moranja01','edwaran01']);
 const OFFBALL_TXT=['{n} 無球跑動，繞過兩道掩護，接球三分刷！','{n} 從底線一路跑到側翼，接球就投，進！','{n} 繞掩護甩開防守，空檔三分！'];
 function sigText(p,kind,a,r){const g=sigOf(p);if(g&&g.k&&g.k[kind]&&r()<0.85)return{txt:fill(PICK(g.k[kind],r),p,a,r),sig:(g.kl&&g.kl[kind])||g.lab,sp:p.n,sid:p.id};
   const ga=sigOf(a);if(a&&ga&&ga.pass&&(kind==='assist'||kind==='alley')&&r()<0.8)return{txt:fill(PICK(ga.pass,r),p,a,r),sig:ga.pl||ga.lab,sp:a.n,sid:a.id};
@@ -3060,8 +3031,6 @@ const SIGICO={jamesle01:'👑',wadedw01:'⚡',pippesc01:'🦇',wembavi01:'👽',
  olajuha01:'🌀',abdulka01:'🪝',nowitdi01:'🦩',jordami01:'🐐',bryanko01:'🐍',lillada01:'⌚',curryst01:'😴',iversal01:'😵',hardeja01:'🧔',ginobma01:'🔀',
  duncati01:'🪨',jokicni01:'🃏',johnsma02:'🪄',nashst01:'🧵',stockjo01:'🤝',paulch01:'🧠',malonka01:'📮',onealsh01:'🦈',cartevi01:'🚀',antetgi01:'🦌',
  leonaka01:'🤖',allenra02:'🍬',millere01:'🔪',horryro01:'🎯',irvinky01:'🪄',duranke01:'💀',westbru01:'🏎️',thompkl01:'🔥',butleji01:'😤',rodmade01:'🪱'};
-const SIGMOVE={olajuha01:'spin',abdulka01:'hook',johnsma02:'hook',nowitdi01:'fade',jordami01:'fade',bryanko01:'fade',jokicni01:'fade',hardeja01:'step',
- iversal01:'cross',irvinky01:'cross',ginobma01:'euro',antetgi01:'euro',duncati01:'bank',mutomdi01:'wag',lillada01:'deep',curryst01:'deep'};
 function offKind(p,mates,r,tac){const st=styleOf(p),c=[],w=[];const add=(k,x)=>{const i=c.indexOf(k);if(i>=0)w[i]+=x;else{c.push(k);w.push(x)}};
   add(st.big?'post':'rim',2);if(st.three)add('three',st.big?2:4);if(st.mid)add('mid',3);add('mid',1);
   if(st.rim)add('and1',1.2);if(st.big||st.rim)add('dunk',st.big?2:1.2);if(st.big)add('putback',1);if(st.guard)add('ankle',0.35);
@@ -3170,216 +3139,9 @@ function champSound(d){const ch=S.sim&&S.sim.champ,me=myRole(),won=me==='all'||m
 function pbNext(){const L=pbData();if(ui.pb.k+1>=L.length){ui.pbDone.add(S.game.gid);champSound();ui.pbFast=true;ui.pb=null}else{ui.pb.k++;ui.pb.vt=0;ui.pb.last=Date.now()}render();scrollTo(0,0)}
 setInterval(()=>{if(!S)return;withView(()=>{if(S.phase!=='results'||!S.sim||!ui.pb||ui.pbDone.has(S.game.gid))return;pbAdvance();const st=pbState();if(st&&st.next&&ui.pb.auto!==false)return pbNext();render()})},150);
 
-/* ---------- mini court (top-down, canvas) ----------
- Each highlight is played as a full possession: the ball is brought up the floor from where the last play ended,
- the offense runs a set that fits the shooter (isolation for stars, pick-and-roll, ball swing for shooters,
- post entry for bigs), then the shot. Steals turn into fast breaks the other way. Teams switch ends at halftime. */
-const CW=360,CH=200,HX={L:22,R:338},HY=100;
-const SET=[[118,100],[88,30],[88,170],[42,52],[20,140]];
+/* ---------- play-by-play ----------
+ Dead-ball lines (timeouts, runs, fouls, tactic notes …): shown in the feed, never scoring plays. */
 const DEAD=new Set(['timeout','run','hot','tech','foul','foulout','eject','ot','rest','boom','takeover','tac']);
-function teamCol(s){const v=getComputedStyle(document.documentElement).getPropertyValue({A:'--a',B:'--b',C:'--c3'}[s]||'--a').trim();return v||'#2f7cf6'}
-function court(ctx){ctx.fillStyle='#f3e3c6';ctx.fillRect(0,0,CW,CH);ctx.strokeStyle='rgba(120,80,30,.45)';ctx.lineWidth=1.2;
-  ctx.strokeRect(4,4,CW-8,CH-8);ctx.beginPath();ctx.moveTo(CW/2,4);ctx.lineTo(CW/2,CH-4);ctx.stroke();ctx.beginPath();ctx.arc(CW/2,HY,22,0,7);ctx.stroke();
-  for(const [hx,d] of [[HX.L,1],[HX.R,-1]]){ctx.fillStyle='rgba(239,120,40,.12)';ctx.fillRect(d>0?4:CW-4-62,HY-24,62,48);ctx.strokeRect(d>0?4:CW-4-62,HY-24,62,48);
-    ctx.beginPath();ctx.moveTo(d>0?4:CW-4,HY-86);ctx.lineTo(hx+d*14,HY-86);ctx.arc(hx,HY,87,d>0?-1.4:Math.PI+1.4,d>0?1.4:Math.PI-1.4,d<0);ctx.lineTo(d>0?4:CW-4,HY+86);ctx.stroke();
-    ctx.strokeStyle='#e8772e';ctx.lineWidth=2;ctx.beginPath();ctx.arc(hx,HY,5,0,7);ctx.stroke();ctx.strokeStyle='rgba(120,80,30,.45)';ctx.lineWidth=1.2;
-    ctx.beginPath();ctx.moveTo(hx-d*6,HY-9);ctx.lineTo(hx-d*6,HY+9);ctx.stroke()}}
-/* who is on the floor: starters, plus anyone the play-by-play needs (a bench scorer checks in for the closest
-   position), minus players who fouled out / were ejected / sit with foul trouble. So the dots always match the text. */
-function lineupAt(G,z,full,ev,upto,e){const ro={[z.a]:starters(full[z.a]).slice(),[z.b]:starters(full[z.b]).slice()},out=new Set();
-  const by=(s,n)=>full[s].find(p=>p.n===n);
-  const put=(s,n,keep)=>{if(!n||out.has(n)||ro[s].some(p=>p.n===n))return;const p=by(s,n);if(!p)return;let bi=-1,bd=1e9;
-    const grp=p.role&&BROLE[p.role]?BROLE[p.role].pos:null;ro[s].forEach((q,i)=>{if(keep.includes(q.n))return;const d=Math.abs(peOf(q)-peOf(p))-(isBench(q.slot)?0.01:0)+(grp&&!grp.includes(q.slot)?5:0);if(d<bd){bd=d;bi=i}});if(bi>=0)ro[s][bi]={...p,slot:ro[s][bi].slot}};
-  const items=ev.slice(0,upto+1).map(x=>({x,T:x.T})).concat((G.inc||[]).filter(i=>i.kind!=='tech'&&(i.q+i.t)*PB_Q<=e).map(i=>({i,T:(i.q+i.t)*PB_Q}))).sort((a,b)=>a.T-b.T);
-  for(const it of items){if(it.i){const i=it.i;if(i.kind!=='trouble')out.add(i.n);const k=ro[i.side].findIndex(p=>p.n===i.n);
-      if(k>=0){const sb=(i.sub&&by(i.side,i.sub))||full[i.side].find(p=>!ro[i.side].some(q=>q.n===p.n)&&!out.has(p.n));if(sb)ro[i.side][k]={...sb,slot:ro[i.side][k].slot}}continue}
-    const x=it.x;if(DEAD.has(x.kind)&&!x.p)continue;const o=x.side===z.a?z.b:z.a;if(!x.side)continue;
-    if(x.kind==='block'){put(x.side,x.p,[x.p]);put(o,x.d,[x.d])}else if(x.kind==='steal'){put(x.side,x.p,[x.p]);put(o,x.chase,[x.chase])}
-    else if(!DEAD.has(x.kind)){put(x.side,x.p,[x.p,x.a]);put(x.side,x.a,[x.p,x.a])}}
-  return ro}
-const lerp=(a,b,u)=>a+(b-a)*u,ease=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2,cl01=u=>Math.max(0,Math.min(1,u)),seg=(u,a,b)=>cl01((u-a)/(b-a));
-const L2=(p,q,u)=>[lerp(p[0],q[0],u),lerp(p[1],q[1],u)];
-const at=(right,dx,y)=>[right?HX.R-dx:HX.L+dx,y],hoop=right=>[right?HX.R:HX.L,HY];
-const attacksRight=(z,side,q)=>(side===z.a)!==(q>=2);
-const SUFX=new Set(['Jr.','Sr.','II','III','IV']);
-function shortName(p){const nk=nickOf(p),k=nk?nk.split('・')[0]:'';const parts=String(p.n||'').split(' ').filter(Boolean);let last=parts[parts.length-1]||'';
-  if(SUFX.has(last)&&parts.length>2)last=parts[parts.length-2];if(last.length>9&&k)return k;
-  const s=(parts.length>1?parts[0][0]+'.':'')+last;return s.length>11?(k||last.slice(0,10)):s}
-function pathAt(pts,v){const seg2=[];let tot=0;for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);seg2.push(d);tot+=d}
-  let t=v*tot;for(let i=0;i<seg2.length;i++){if(t<=seg2[i]||i===seg2.length-1){const f=seg2[i]?Math.min(1,t/seg2[i]):1;return L2(pts[i],pts[i+1],f)}t-=seg2[i]}return pts[pts.length-1]}
-function guardAt(o,right,dist){const h=hoop(right),dx=h[0]-o[0],dy=h[1]-o[1],d=Math.hypot(dx,dy)||1,g=Math.min(dist,d*0.6);return[o[0]+dx/d*g,o[1]+dy/d*g-3]}
-function guard(o,right){const h=hoop(right),dx=h[0]-o[0],dy=h[1]-o[1],d=Math.hypot(dx,dy)||1,g=Math.min(16,d*0.35);return[o[0]+dx/d*g,o[1]+dy/d*g-5]}
-function setLayout(off,def,right,ro,jit){const P={};ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx+Math.sin(jit+i)*3,y+Math.cos(jit*1.2+i)*3)});
-  ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
-function tipoff(z,ro){const P={};[z.a,z.b].forEach((s,k)=>ro[s].forEach((p,i)=>{const ang=(i/5)*Math.PI*2+(k?0.6:0),r=i===4?8:34;P[s+i]=[CW/2+(k?6:-6)+Math.cos(ang)*r*(i===4?1:1),HY+Math.sin(ang)*r*0.8]}));return P}
-function playType(E,p){if(E.kind==='three'||E.kind==='logo')return'swing';if(E.kind==='post'||E.kind==='putback')return'post';if(E.kind==='assist'||E.kind==='alley')return'pnr';
-  return styleOf(p).star||E.kind==='clutch'?'iso':'drive'}
-function shotDx(kind,seed){return kind==='logo'?150:kind==='three'?92:kind==='mid'?52:kind==='post'?24:12}
-// where everyone stands when a play ends (start point of the next possession)
-function endLayout(E,z,ro,prevL){if(!E||DEAD.has(E.kind))return prevL;
-  const off=E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side,def=off===z.a?z.b:z.a,right=attacksRight(z,off,E.q),P={};
-  if(E.kind==='steal'){const run=!right;ro[E.side].forEach((p,i)=>{P[E.side+i]=at(run,i===0?14:40+i*12,HY+(i-2)*24)});ro[off].forEach((p,i)=>{P[off+i]=at(run,60+i*14,HY+(i-2)*30)});return P}
-  ro[off].forEach((p,i)=>{const [dx,y]=SET[i];P[off+i]=at(right,dx*0.6,lerp(HY,y,0.7))});ro[def].forEach((p,i)=>{P[def+i]=guard(P[off+i],right)});return P}
-/* playback sound: each highlight makes its sound at the moment it lands on court (the ball through the net, the hand on
-   the ball), not when its line appears in the feed. Jumps in the clock (seeking, a new game) make no sound, and at high
-   speed the per-sound minimum gaps in sfx() keep it from turning into noise. */
-const PB_SND={three:'swish',logo:'swish',dunk:'dunk',alley:'dunk',rim:'net',mid:'net',post:'net',putback:'net',and1:'net',ankle:'net',assist:'net',
-  block:'block',steal:'steal',clutch:'clutch',takeover:'ooh',boom:'ooh',foul:'whistle',tech:'whistle',eject:'whistle',foulout:'whistle',timeout:'whistle',ot:'horn'};
-let pbSnd={k:null,e:0};
-function pbSound(G,ev,e,done){const k=G.si+'-'+G.gi;if(pbSnd.k!==k||e<pbSnd.e||e-pbSnd.e>1200||done){pbSnd={k,e};return}const e0=pbSnd.e;pbSnd.e=e;
-  ev.forEach((x,i)=>{const nm=PB_SND[x.kind];if(!nm)return;let T=x.T;const s0=i>0?ev[i-1].T+PB_POST:0;
-    if(x.kind==='steal')T=s0+0.5*(x.T-s0);else if(x.kind==='block')T=s0+0.9*(x.T-s0);else if(DEAD.has(x.kind))T=x.T-400;
-    if(T>e0&&T<=e)sfx(nm)})}
-function courtFrame(){requestAnimationFrame(courtFrame);const cv=document.getElementById('court');if(!cv||!S||document.hidden)return;
-  withView(()=>{if(S.phase!=='results'||!ui.pb)return;const st=pbState();if(!st)return;const {G,e,done}=st,z=G.z;
-  let ctx=null;try{ctx=cv.getContext('2d')}catch(_){}if(!ctx)return;const k=cv.width/CW;pbAdvance();
-  const full={[z.a]:rosterOf(S.game,z.a),[z.b]:rosterOf(S.game,z.b)};
-  const C={[z.a]:teamCol(z.a),[z.b]:teamCol(z.b)},jit=e/380;
-  const ev=G.ev.map(x=>({...x,T:(x.q+x.t)*PB_Q}));
-  let ci=ev.findIndex(x=>x.T+PB_POST>e);if(ci<0)ci=ev.length;
-  const ro=lineupAt(G,z,full,ev,Math.min(ci,ev.length-1),e);
-  let L=tipoff(z,ro);for(let i=0;i<ci;i++)L=endLayout(ev[i],z,ro,L);
-  const E=done?null:ev[ci],s0=ci>0?ev[ci-1].T+PB_POST:0;pbSound(G,ev,e,done);
-  let P={...L},ball=null,flash=null,hl=null,banner=null,fallen=null;
-  const idx=(s,n)=>{const i=ro[s].findIndex(p=>p.n===n);return i>=0?i:(hash(String(n))%5)};
-  if(E&&!DEAD.has(E.kind)){
-    const off=E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side,def=off===z.a?z.b:z.a,right=attacksRight(z,off,E.q),H=hoop(right);
-    let u=cl01((e-s0)/Math.max(1,E.T-s0));const pu=e>E.T?cl01((e-E.T)/PB_POST):0,seed=hash(E.txt+E.clk);
-    // possessions alternate: if the last play should have handed the ball to the other team, show their empty trip first
-    let nat=null;for(let i=ci-1;i>=0;i--){const x=ev[i];if(DEAD.has(x.kind))continue;nat=x.kind==='block'?x.side:(x.side===z.a?z.b:z.a);break}
-    let inTrip=false;if(nat&&nat!==off){const rD=attacksRight(z,def,E.q),SE=setLayout(def,off,rD,ro,jit),uE=seg(u,0,0.42),mv=ease(seg(uE,0,0.6));
-      if(uE<1){inTrip=true;Object.keys(SE).forEach(kk=>{P[kk]=L2(L[kk]||SE[kk],SE[kk],mv)});const sh=P[def+1],H2=hoop(rD);
-        if(uE<0.62){const q=P[def+0];ball=[q[0]+(rD?3:-3),q[1]+2,Math.abs(Math.sin(e/85))*3]}
-        else if(uE<0.9){const v=seg(uE,0.62,0.9);ball=[lerp(sh[0],H2[0],v),lerp(sh[1],HY,v),Math.sin(Math.PI*v)*18]}
-        else{const v=seg(uE,0.9,1),rb=P[off+4];ball=[lerp(H2[0],rb[0],v),lerp(HY,rb[1],v),8*Math.sin(Math.PI*v)];flash=['🧱 沒進！籃板',v]}}
-      L=SE;u=seg(u,0.42,1)}
-    const si=E.kind==='steal'?1+(seed%4):E.kind==='block'?idx(off,E.d):idx(off,E.p),sp=ro[off][si]||ro[off][0];
-    const type=E.kind==='block'||E.kind==='steal'?'drive':E.play||playType(E,sp);
-    play:{if(inTrip)break play;
-    const S0=setLayout(off,def,right,ro,jit),uA=ease(seg(u,0,0.3));
-    Object.keys(S0).forEach(kk=>{P[kk]=L2(L[kk]||S0[kk],S0[kk],uA)});
-    let holder=0;const pass=[];// [time, toIndex]
-    const big=ro[off][4]?4:3,ang=((seed%100)/100*2.2-1.1);
-    const mv=E.sig&&E.sid&&E.sp===(ro[off][si]||{}).n?SIGMOVE[E.sid]:null,sdx=shotDx(E.kind)*(mv==='deep'&&E.kind==='three'?1.3:1);
-    const spot=[right?H[0]-Math.cos(ang)*sdx:H[0]+Math.cos(ang)*sdx,HY+Math.sin(ang)*sdx*0.9];
-    const uB=seg(u,0.3,0.72),uC=seg(u,0.72,1);
-    let trail=null;
-    if(type==='offball'){const y0=P[off+si][1]>HY?1:-1,route=[P[off+si],at(right,34,HY+y0*46),at(right,10,HY+y0*8),at(right,12,HY-y0*40),at(right,40,HY-y0*78),spot];
-      const scr1=si===4?3:4,scr2=si===3?2:3;const v=ease(seg(u,0.3,0.66));P[off+si]=pathAt(route,v);trail=pathAt(route,Math.max(0,v-0.16));
-      P[off+scr1]=L2(P[off+scr1],at(right,14,HY+y0*6),ease(seg(u,0.3,0.45)));P[off+scr2]=L2(P[off+scr2],at(right,22,HY-y0*48),ease(seg(u,0.42,0.56)));
-      pass.push([0.66,si])}
-    else if(type==='swing'){const mid=si===1?2:1;pass.push([0.42,mid],[0.6,si]);P[off+si]=L2(P[off+si],spot,ease(seg(u,0.45,0.62)))}
-    else if(type==='post'){P[off+si]=L2(P[off+si],at(right,24,HY+18),ease(seg(u,0.3,0.5)));pass.push([0.52,si])}
-    else if(type==='pnr'){const scr=si===big?3:big,pg=0;const scrPos=[P[off+pg][0]+(right?14:-14),P[off+pg][1]+10];
-      P[off+scr]=L2(P[off+scr],scrPos,ease(seg(u,0.3,0.45)));P[off+pg]=L2(P[off+pg],at(right,48,HY-10),ease(seg(u,0.48,0.64)));
-      if(si!==pg){P[off+si]=L2(P[off+si],at(right,14,HY+12),ease(seg(u,0.5,0.66)));pass.push([0.66,si])}}
-    else if(type==='iso'){[0,1,2,3,4].forEach(i=>{if(i===si)return;const cor=[[8,18],[8,182],[110,30],[110,170],[60,190]][i];P[off+i]=L2(P[off+i],at(right,cor[0],cor[1]),ease(uB))});
-      if(si!==0)pass.push([0.38,si]);P[off+si]=L2(P[off+si],at(right,70,HY+(seed%2?-14:14)),ease(seg(u,0.35,0.5)));P[off+si][0]+=Math.sin(e/70)*2*(uB>0&&uB<1)}
-    else{if(si!==0)pass.push([0.45,si])}
-    const rimShot=['dunk','alley','rim','and1','ankle','putback','clutch'].includes(E.kind)&&!(E.kind==='clutch'&&styleOf(sp).three);
-    const spd=p=>{const st=styleOf(p);return st.guard?1:st.big?0.78:0.9};
-    if(E.kind==='steal'){
-      // a pass gets picked off; the thief leads the break, the passer chases, the thief's wings fill the lanes
-      const th=idx(E.side,E.p),run=!right,lead=[hoop(run)[0]+(run?-10:10),HY],passFrom=P[off+0],passTo=P[off+si],iu=0.55,pick=L2(passFrom,passTo,0.55);
-      ro[def].forEach((p,i)=>{P[def+i]=L2(P[def+i],guardAt(P[off+i],right,12),uA)});
-      if(u<iu){ball=u>0.42?[...L2(passFrom,passTo,seg(u,0.42,iu)*0.55),5]:[passFrom[0]+(right?3:-3),passFrom[1]+2,Math.abs(Math.sin(e/85))*3];
-        P[def+th]=L2(P[def+th],pick,ease(seg(u,0.38,iu)))}
-      else{const ru=seg(u,iu,1)+(pu*0.3),dir=run?1:-1;
-        P[E.side+th]=L2(pick,lead,ease(cl01(ru)));const lp=P[E.side+th];
-        P[off+0]=L2(passFrom,[lp[0]-dir*16,lp[1]+7],ease(cl01(ru*0.93)));
-        const mates=ro[E.side].map((p,i)=>i).filter(i=>i!==th).sort((x,y)=>spd(ro[E.side][y])-spd(ro[E.side][x]));
-        const lanes=[[at(run,34,38),1],[at(run,34,162),1],[at(run,95,HY+8),0.85],[at(run,150,HY-20),0.7]];
-        mates.forEach((i,k)=>{const [tg,w]=lanes[k];P[E.side+i]=L2(P[E.side+i],tg,ease(cl01(ru*spd(ro[E.side][i])*1.05*w)))});
-        ro[off].forEach((p,i)=>{if(i===0)return;P[off+i]=L2(P[off+i],at(run,60+i*16,HY+(i-2)*28),ease(cl01(ru*spd(p)*0.85)))});
-        ball=[lp[0]+dir*3,lp[1]+2,Math.abs(Math.sin(e/75))*3];hl=E.side+th;
-        if(E.chase){const ch=idx(off,E.chase),cs=P[off+ch],cu=cl01(ru*1.2);P[off+ch]=L2(cs,[lp[0]-dir*7,lp[1]-5],ease(cu));
-          if(ru>0.85){const v=cl01((ru-0.85)/0.15+pu);ball=[lp[0]-dir*v*40,lp[1]+v*36,10*(1-v)];hl=off+ch;flash=['🚫 追魂鍋！',Math.min(1,v)]}
-          else if(ru<0.35)flash=['🧤 抄截！',ru/0.35]}
-        else if(ru<0.35)flash=['🧤 抄截！',ru/0.35];else if(pu)flash=['⚡ 快攻得手！',pu]}
-    }else{
-      // ---- offense: passes, the shot, bigs crash the glass ----
-      let h=0,t0=-1;for(const [t,to] of pass){if(u>=t){h=to;t0=t}}
-      const pi=pass.findIndex(x=>x[0]===t0),fromI=pi>0?pass[pi-1][1]:0;
-      if(rimShot)P[off+si]=L2(P[off+si],[H[0]+(right?-9:9),HY+3],ease(uC));else P[off+si]=L2(P[off+si],spot,ease(seg(u,0.6,0.75)));
-      // signature footwork
-      const away=right?-1:1,base=[P[off+si][0],P[off+si][1]],me=P[off+si]=[P[off+si][0],P[off+si][1]];
-      if(mv==='fade'&&u>0.7)me[0]+=away*11*ease(seg(u,0.72,0.86));
-      if(mv==='step'&&u>0.6)me[0]+=away*15*ease(seg(u,0.6,0.7));
-      if(mv==='spin'&&u>0.5&&u<0.82){const a2=seg(u,0.5,0.8)*Math.PI*2;me[0]+=(Math.cos(a2)-1)*9*away;me[1]+=Math.sin(a2)*9}
-      if(mv==='euro'&&u>0.6&&u<0.95)me[1]+=Math.sin(seg(u,0.6,0.95)*Math.PI*2)*11;
-      const shotU=rimShot?0.95:0.82;
-      ro[off].forEach((p,i)=>{if(i!==si&&peOf(p)>=4&&u>shotU-0.08)P[off+i]=L2(P[off+i],at(right,20,HY+(i===4?16:-16)),ease(seg(u,shotU-0.08,1)))});
-      const flying=t0>=0&&u-t0<0.06;
-      if(flying){const a2=P[off+fromI],b2=P[off+h],v=(u-t0)/0.06;ball=[lerp(a2[0],b2[0],v),lerp(a2[1],b2[1],v),6*Math.sin(Math.PI*v)]}
-      else if(u<shotU){const q=P[off+h];ball=[q[0]+(right?3:-3),q[1]+2,Math.abs(Math.sin(e/85))*3]}
-      else{const v=seg(u,shotU,1),q=P[off+si];ball=[lerp(q[0],H[0],v),lerp(q[1],HY,v),Math.sin(Math.PI*v)*(E.kind==='three'||E.kind==='logo'?26:rimShot?4:16)*(mv==='hook'?2:1)]}
-      const bp=flying?P[off+h]:(ball?[ball[0],ball[1]]:P[off+h]);
-      // ---- defense: man-to-man that sags off non-shooters, helps from the weak side, rotates, switches and closes out ----
-      const D={};ro[def].forEach((p,i)=>{const man=P[off+i],mp=ro[off][i],thr=styleOf(mp).three,onBall=i===h,near=Math.abs(man[1]-bp[1])<55;
-        let g=guardAt(man,right,onBall?6:thr?9:near?14:24);
-        if(!onBall&&!near)g=L2(g,[lerp(bp[0],H[0],0.55),lerp(bp[1],HY,0.6)],0.38);D[i]=g});
-      if(type==='pnr'){const scr=si===big?3:big,a0=ro[def][0],aS=ro[def][scr],sw=canPlay(a0).length>=3&&canPlay(aS).length>=3;
-        if(sw&&u>0.5){const t=ease(seg(u,0.5,0.6));D[0]=L2(D[0],guardAt(P[off+scr],right,8),t);D[scr]=L2(D[scr],guardAt(P[off+0],right,6),t)}
-        else if(u>0.42&&u<0.72){D[scr]=L2(D[scr],P[off+0],0.55*Math.sin(Math.PI*seg(u,0.42,0.72)))}}
-      if(type==='swing'&&t0>=0&&pi===pass.length-1){const cu=seg(u,t0,t0+0.16);D[si]=L2([lerp(bp[0],H[0],0.5),lerp(bp[1],HY,0.5)],guardAt(P[off+si],right,5),ease(cu))}
-      if(rimShot&&u>0.55){let best=-1,bv=-1;ro[def].forEach((p,i)=>{if(i===si)return;const v=num(p.blkp,1)+peOf(p);if(v>bv){bv=v;best=i}});
-        if(best>=0)D[best]=L2(D[best],[lerp(P[off+si][0],H[0],0.45),lerp(P[off+si][1],HY,0.45)],ease(seg(u,0.55,0.85)))}
-      // contest: normally a step off the shooter; fadeaways / step-backs create space unless the defender is an athletic freak
-      if(type==='offball'&&trail&&u<0.7)D[si]=[trail[0]+(right?6:-6),trail[1]+4];
-      const cst=mv==='step'?0.6:0.7;if(!rimShot&&u>cst){const freak=ATHL.has((ro[def][si]||{}).id),sep=(mv==='fade'||mv==='step')?(freak?9:20):type==='offball'?(freak?10:18):9;
-        const from=(mv==='fade'||mv==='step')?base:P[off+si],dx=H[0]-from[0],dy=HY-from[1],dd=Math.hypot(dx,dy)||1;
-        D[si]=L2(D[si],[from[0]+dx/dd*sep,from[1]+dy/dd*sep-2],ease(seg(u,cst,cst+0.1)))}
-      if(u>shotU)ro[def].forEach((p,i)=>{if(peOf(p)>=4&&i!==si)D[i]=L2(D[i],at(right,13,HY+(i%2?11:-11)),ease(seg(u,shotU,1)))});
-      if(mv==='cross'&&u>0.55){D[si]=[D[si][0]-away*4,D[si][1]+16*ease(seg(u,0.55,0.66))];fallen=def+si}
-      ro[def].forEach((p,i)=>{P[def+i]=L2(P[def+i],D[i],uA<1?uA*0.92:1)});
-      if(E.kind==='block'&&u>0.8){const bl=idx(E.side,E.p);P[E.side+bl]=L2(P[E.side+bl],P[off+si],0.85);hl=E.side+bl;
-        if(u>0.9||pu){const v=pu||0;ball=[P[off+si][0]+(right?-1:1)*v*60,P[off+si][1]+v*44,8*(1-v)];flash=['🚫 火鍋！',Math.max(seg(u,0.9,1)*0.3,v)]}}
-      else{hl=off+si;if(pu){ball=[H[0],HY+pu*4,0];flash=[`${KICO[E.kind]||'🏀'} +${KPTS[E.kind]||2}`,pu]}}
-    }}
-  }else if(E&&DEAD.has(E.kind)&&e>E.T-400){banner=[`${KICO[E.kind]||''} ${{ot:'延長賽！',timeout:'暫停',run:'攻勢！',hot:'手感發燙',boom:'生涯之夜！',takeover:'接管比賽！',tac:'戰術',tech:'技術犯規',foul:'犯規麻煩',foulout:'犯滿離場',eject:'驅逐出場！',rest:'提前收工'}[E.kind]||''}`,cl01((e-E.T+400)/(PB_POST+400))]}
-  if(E&&E.kind==='clutch'&&e>E.T)banner=['🏆 致勝球！',cl01((e-E.T)/PB_POST)];
-  // camera: zoom in on the action during key moments
-  const wa=warpAt(G,e),ww=wa.w;let zf=1,fx=CW/2,fy=HY;
-  if(ww&&ww.zoom&&!done){const r=Math.min(cl01((e-ww.a)/450),cl01((ww.b-e)/450));zf=1+0.5*ease(r);const f=ball||[CW/2,HY];fx=f[0];fy=f[1]}
-  const vw=CW/zf,vh=CH/zf;fx=Math.max(vw/2,Math.min(CW-vw/2,fx));fy=Math.max(vh/2,Math.min(CH-vh/2,fy));
-  ctx.setTransform(k*zf,0,0,k*zf,k*(CW/2-fx*zf),k*(CH/2-fy*zf));court(ctx);
-  const curOff=E&&!DEAD.has(E.kind)?(E.kind==='block'||E.kind==='steal'?(E.side===z.a?z.b:z.a):E.side):null;
-  // draw players; offense names under the dots, defense names above (smaller)
-  const lab=p=>shortName(p);
-  [z.a,z.b].forEach(s=>ro[s].forEach((p,i)=>{const q=P[s+i];if(!q)return;const star=styleOf(p).star;if(fallen===s+i){ctx.save();ctx.globalAlpha=0.55}
-    ctx.beginPath();ctx.arc(q[0],q[1]+1.6,7.5,0,7);ctx.fillStyle='rgba(0,0,0,.16)';ctx.fill();
-    ctx.beginPath();ctx.arc(q[0],q[1],7,0,7);ctx.fillStyle=C[s];ctx.fill();ctx.lineWidth=hl===s+i?2.6:1.6;ctx.strokeStyle=hl===s+i?'#ffcf33':star?'#ffe9a8':'#fff';ctx.stroke();
-    ctx.font='800 8.5px "Barlow Condensed","Noto Sans TC",system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.lineJoin='round';
-    const t=lab(p),offNow=curOff?s===curOff:true,ty=offNow?q[1]+8.5:q[1]-17;ctx.globalAlpha=offNow||hl===s+i?1:0.7;if(!offNow)ctx.font='700 7.5px "Barlow Condensed","Noto Sans TC",system-ui,sans-serif';
-    ctx.lineWidth=3;ctx.strokeStyle='rgba(20,26,46,.88)';ctx.strokeText(t,q[0],ty);ctx.fillStyle='#fff';ctx.fillText(t,q[0],ty);ctx.globalAlpha=1;if(fallen===s+i){ctx.restore();ctx.font='14px system-ui';ctx.textAlign='center';ctx.fillText('😵',q[0]+10,q[1]-10)}}));
-  if(!ball&&!done){const E2=E||{},off=E2.side||z.a,q=P[off+0]||P[z.a+0];if(q)ball=[q[0]+4,q[1]+2,Math.abs(Math.sin(e/90))*3]}
-  if(ball)drawBall(ctx,ball[0],ball[1],ball[2]);
-  // signature moment: big sticker over the player who owns it
-  if(E&&E.sig&&!done&&e>E.T-700&&e<E.T+PB_POST+500){let q=null;[z.a,z.b].forEach(s=>ro[s].forEach((p,i)=>{if(p.n===E.sp)q=P[s+i]}));
-    if(q){const v=cl01((e-E.T+700)/(PB_POST+1200)),bob=Math.sin(e/120)*2,ico=E.ico||SIGICO[E.sid]||'⭐';ctx.save();ctx.translate(q[0],q[1]-24+bob);
-      if(SIGMOVE[E.sid]==='wag')ctx.rotate(Math.sin(e/90)*0.6);const sc=v<0.15?v/0.15*1.4:1.4-(v-0.15)*0.3;ctx.scale(sc,sc);ctx.globalAlpha=v>0.85?(1-v)/0.15:1;
-      ctx.font='18px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ico,0,0);ctx.restore()}}
-  ctx.setTransform(k,0,0,k,0,0);
-  if(E&&E.sig&&!done&&e>E.T-700&&e<E.T+PB_POST+500){const lab=`⭐ 招牌：${E.sig}`;ctx.save();ctx.font='900 12px system-ui,sans-serif';const tw=ctx.measureText(lab).width+18;
-    ctx.fillStyle='rgba(255,207,51,.95)';ctx.beginPath();ctx.roundRect?ctx.roundRect(CW/2-tw/2,8,tw,20,10):ctx.rect(CW/2-tw/2,8,tw,20);ctx.fill();
-    ctx.fillStyle='#4a3200';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lab,CW/2,18.5);ctx.restore()}
-  if(flash)pop(ctx,CW/2,44,flash[0],flash[1],18);if(banner)pop(ctx,CW/2,HY,banner[0],banner[1],18);
-  if(ww&&ww.lab&&!done){ctx.save();ctx.globalAlpha=0.6+0.4*Math.abs(Math.sin(Date.now()/300));ctx.font='900 11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.lineWidth=3;ctx.strokeStyle='rgba(20,26,46,.85)';ctx.strokeText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.fillStyle='#ffcf33';ctx.fillText(ww.lab+(ww.rate<1?'・慢動作':''),10,CH-12);ctx.restore()}
-  })}
-/* the ball: orange leather with a light spot, and the black seams of a basketball (one straight seam each way and
-   two curved ones), turning as it travels so a dribble or a pass reads as a spinning ball */
-function drawBall(ctx,x,y,h){const R=4.8+h*0.09,cy=y-h;ctx.beginPath();ctx.ellipse(x,y+h*0.25+2,Math.max(2.2,4-h*0.05),Math.max(1.2,2-h*0.03),0,0,7);ctx.fillStyle=`rgba(0,0,0,${Math.max(.08,.2-h*.004)})`;ctx.fill();
-  ctx.save();ctx.translate(x,cy);ctx.rotate((x*0.11+y*0.07+h*0.2)%(Math.PI*2));
-  const gr=ctx.createRadialGradient(-R*0.35,-R*0.4,R*0.15,0,0,R);gr.addColorStop(0,'#ffb067');gr.addColorStop(0.55,'#ef7a22');gr.addColorStop(1,'#c4561a');
-  ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fillStyle=gr;ctx.fill();ctx.save();ctx.clip();
-  ctx.strokeStyle='#3a1a08';ctx.lineWidth=Math.max(.55,R*0.12);ctx.lineCap='round';ctx.beginPath();
-  ctx.moveTo(-R,0);ctx.lineTo(R,0);ctx.moveTo(0,-R);ctx.lineTo(0,R);
-  ctx.moveTo(-R*0.62,-R*0.82);ctx.quadraticCurveTo(-R*0.12,0,-R*0.62,R*0.82);ctx.moveTo(R*0.62,-R*0.82);ctx.quadraticCurveTo(R*0.12,0,R*0.62,R*0.82);ctx.stroke();ctx.restore();
-  ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.strokeStyle='#6a2e08';ctx.lineWidth=.8;ctx.stroke();ctx.restore()}
-function pop(ctx,x,y,txt,u,size){const sc=u<.25?u/.25*1.2:1.2-(u-.25)*.27;ctx.save();ctx.globalAlpha=u>.8?(1-u)/.2:1;ctx.translate(x,y-u*8);ctx.scale(sc,sc);
-  ctx.font=`900 ${size||16}px system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.strokeText(txt,0,0);ctx.fillStyle='#1c2333';ctx.fillText(txt,0,0);ctx.restore()}
-requestAnimationFrame(courtFrame);
 function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayback()}
   const {L,G,e,P,pe,done}=st,z=G.z,two=g.sides.length===2,ns=S.sim.series.length;
   const qa=G.q[0],qb=G.q[1],shown=()=>{const full=Math.floor(pe);let a=0,b=0;for(let i=0;i<P;i++){if(i<full){a+=qa[i];b+=qb[i]}else if(i===full){const f=pe-full;a+=Math.floor(qa[i]*f);b+=Math.floor(qb[i]*f)}}return[a,b]};
@@ -3402,7 +3164,6 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
     <div class="sb2"><div class="tm"><div class="tn" style="color:${col(z.a)}">${esc(nm(S,z.a))}</div><div class="dots">${dots(z.a)}</div></div>
       <div class="mid"><div class="scr"><span style="color:${col(z.a)}">${ca}</span><i>:</i><span style="color:${col(z.b)}">${cb}</span></div><div class="clk ${done?'end':''}">${clk}</div></div>
       <div class="tm"><div class="tn" style="color:${col(z.b)}">${esc(nm(S,z.b))}</div><div class="dots">${dots(z.b)}</div></div></div>
-    <div class="courtw"><canvas id="court" width="${CW*2}" height="${CH*2}" aria-label="比賽動畫"></canvas></div>
     ${done?final:`<div class="feed">${evs.map(x=>`<div class="ev ${x.sig?'sigev':''}" id="ev-${g.gid}-${G.si}-${G.gi}-${G.ev.indexOf(x)}" style="${x.side?`border-left-color:${col(x.side)}`:''}"><span class="t">${x.q<4?'Q'+(x.q+1):'OT'} ${x.clk}</span><span class="ic">${x.sig?(x.ico||SIGICO[x.sid]||'⭐'):(KICO[x.kind]||'🏀')}</span>${x.sig?`<b class="sgl">⭐ ${esc(x.sig)}</b>`:''}${esc(x.txt)}</div>`).join('')||'<div class="small mut" style="text-align:center;padding:12px">跳球，比賽開始！</div>'}</div>`}
     ${qt}
     <div class="pbc"><button class="ghost" data-act="pbsp">⏩ ${ui.pb.sp}x</button>
