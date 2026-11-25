@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-Csg/W0XHXYQWPpjnSubwhgbVYUNdv1F6M965C70HgCI=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G+oeNzOGD3XoUb9T4s2Xr4vSTYjnDxXMZD9Kc3zS/io=' 'sha256-EB3sOGqRGGZKYU7F+brAd+PQljc+RBew4A2ht68U7PQ=' https://cdn.jsdelivr.net/npm/mqtt@5.16.1/dist/mqtt.min.js; worker-src blob:; connect-src 'self' wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e4e9f3">
 <title>BALLER BID 球星喊價</title>
@@ -700,7 +700,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.26b';
+const APPV='2026.11.26c';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -1438,8 +1438,8 @@ function phaseGap(k){if(!PH_D){const acc={};THEMES.forEach(t=>t.items.forEach(p=
   PH_D={};Object.keys(PHASE).forEach(x=>{const L=(acc[x]||[]).sort((a,b)=>a-b);PH_D[x]=L.length?L[L.length>>1]:0})}
   return k?PH_D[k]||0:0}
 
-/* 攻守貢獻 (shown on the card): the same public number the bots price cards with (career BPM-based value + the phase adjustment, see
-   pubVal in bot.js), put on a 2K-style 45-99 scale (72 + 2.65 per rating point): role players in the 60s-70s, All-Stars mid-80s, the very top 95+.
+/* 攻守貢獻 (shown on the card): the card's own season (its BPM, through the same small-sample shrink the match sim
+   uses), the same public number the bots price cards with (pubVal in bot.js), put on a 2K-style 45-99 scale (72 + 2.65 per rating point): role players in the 60s-70s, All-Stars mid-80s, the very top 95+.
    It exists so a person does not have to work out from points per game what the computer already knows. */
 const ovrOf=p=>!p||p.fa?45:toOvr(pubVal(p));
 /* how far the card's own season usually lands from the number on the card: one standard deviation, measured over
@@ -1447,7 +1447,7 @@ const ovrOf=p=>!p||p.fa?45:toOvr(pubVal(p));
    95 that plays like an 89 is a known risk, not a surprise. */
 const ovrRange=p=>{const v=pubVal(p),sd=0.6+0.09*Math.max(0,v);return[toOvr(v-sd),toOvr(v+sd)]};
 const ovrTier=v=>v>=92?'t5':v>=86?'t4':v>=80?'t3':v>=74?'t2':'t1';
-function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p),rg=!small&&!(g&&g.showStats)?ovrRange(p):null;return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>攻守貢獻</i></div>${rg?`<div class="ovrr">這一季多半在 ${rg[0]}–${rg[1]}</div>`:''}`}
+function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p),rg=null;return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>攻守貢獻</i></div>${rg?`<div class="ovrr">這一季多半在 ${rg[0]}–${rg[1]}</div>`:''}`}
 
 /* ---------- bench roles (10-man mode) ----------
  Five bench spots, each holding one of three roles: 替補後衛 (covers PG/SG), 替補鋒線 (covers SF/PF/C) and one 第六人
@@ -1552,7 +1552,7 @@ function fmtFor(S){const c=S.cfg;if(c.fmt==='rotate'&&S.season)return FMT_ROT[((
 const bidders=g=>g.sides.filter(s=>openN(g,s)>0&&maxBid(g,s)>=1);
 /* a card's standing among every card in the game, from what the card face shows. Measured against all cards rather
    than this deck, so a price never hints at what is still face down. */
-let ALLSTAR=null;function starPct(p){if(!ALLSTAR){const seen=new Set();ALLSTAR=[];THEMES.forEach(t=>t.items.forEach(q=>{const k=q.id+':'+q.y0;if(!q.fa&&!seen.has(k)){seen.add(k);ALLSTAR.push(pubStar(q))}}));ALLSTAR.sort((a,b)=>a-b)}
+let ALLSTARS={};function starPct(p){const md=pubMode();let ALLSTAR=ALLSTARS[md];if(!ALLSTAR){const seen=new Set();ALLSTAR=ALLSTARS[md]=[];THEMES.forEach(t=>t.items.forEach(q=>{const k=q.id+':'+q.y0;if(!q.fa&&!seen.has(k)){seen.add(k);ALLSTAR.push(pubStar(q))}}));ALLSTAR.sort((a,b)=>a-b)}
   const v=pubStar(p);let lo=0,hi=ALLSTAR.length;while(lo<hi){const m=(lo+hi)>>1;if(ALLSTAR[m]<v)lo=m+1;else hi=m}return ALLSTAR.length?lo/ALLSTAR.length:0.5}
 // Dutch clock start price: average price per spot, ~0.35x to ~2x
 function snatchPrice(g,p){const pct=starPct(p),avg=(g.budget||10)/(g.size||5);
@@ -1832,7 +1832,11 @@ let FAV=null;const FA_V=()=>FAV!=null?FAV:(FAV=+pval(FA).toFixed(2));
    through the same small-sample shrink as the season a card actually plays. Reading it over the whole career (1,000+
    games, almost no shrink) made every star's card look 2-3 points better than any of his seasons could play. */
 const careerAsSeason=(p,c)=>({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:Math.min(num(c.g,72),72)});
-function pubVal(p){if(!p||p.fa)return FA_V();if(S&&S.game&&S.game.showStats)return pval(p);if(PUBV.has(p))return PUBV.get(p);
+/* the number a player at the table can see for a card. The card shows its own season's 攻守貢獻, so that is the
+   public value, for bots and people alike. Only if a host turns the number off (lobby: 卡片顯示攻守貢獻) and season
+   stats are hidden too does it fall back to the career line, which is all the card face then shows. */
+const pubMode=()=>S&&S.game&&S.game.ovr===false&&!S.game.showStats?'career':'season';
+function pubVal(p){if(!p||p.fa)return FA_V();if(pubMode()==='season')return pval(p);if(PUBV.has(p))return PUBV.get(p);
   const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval(careerAsSeason(p,c))+phaseGap(phaseOf(p)):pval(p);PUBV.set(p,v);return v}
 const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
@@ -1844,7 +1848,7 @@ function botCache(g){const k=g.gid+':'+g.idx+':'+g.log.length+':'+(g.stage||'')+
    table), the cards already shown, and how many are still to come. The unseen cards are estimated from what has been
    shown so far, blended with the spread of every card in the game (worth five cards of evidence), so early on the
    guess is generic and it sharpens as the deck shows its hand. */
-let ALLV=null;const allVals=()=>{if(ALLV)return ALLV;const seen=new Set(),v=[];THEMES.forEach(t=>t.items.forEach(p=>{const k=p.id+':'+p.y0;if(!p.fa&&!seen.has(k)){seen.add(k);v.push(pubVal(p))}}));return ALLV=v.sort((a,b)=>b-a)};
+let ALLV={};const allVals=()=>{const md=pubMode();if(ALLV[md])return ALLV[md];const seen=new Set(),v=[];THEMES.forEach(t=>t.items.forEach(p=>{const k=p.id+':'+p.y0;if(!p.fa&&!seen.has(k)){seen.add(k);v.push(pubVal(p))}}));return ALLV[md]=v.sort((a,b)=>b-a)};
 function deckEst(g){const vis=(g.stage==='left'?leftovers(g).map(x=>x.p):g.stage==='nom'?market(g).map(x=>x.p):[cur(g)]).filter(p=>p&&!p.fa);
   const n=Math.max(0,realLeft(g)-vis.length),shownV=g.items.slice(0,g.idx).filter(p=>!p.fa).map(pubVal).concat(vis.map(pubVal));
   const est=[];if(n>0){const A=allVals(),PRIOR=5,wS=1,wA=PRIOR/Math.max(1,A.length);
@@ -2729,8 +2733,8 @@ function vHome(){
    the other tabs are short key-and-one-line entries so a rule can be found at a glance. */
 const RULE_TABS=[['quick','入門'],['card','卡片'],['auction','拍賣'],['tac','戰術'],['score','勝負'],['more','更多']];
 function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</span></div>`;
-  if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這位球員對贏球的貢獻，看的是攻守效率（BPM），不是得分。刷分但不防守的球員會偏低。電腦估價也用這個數字。')
-    +R('生涯 vs 本季','卡面的貢獻是生涯水準；比賽用的是卡片那一季，會上下浮動。數字下面寫的「這一季多半在 84–94」就是浮動範圍（大約七成的卡落在裡面），越強的球星浮動越大。結果頁會揭曉實際數字。想要完全沒有落差，可開進階設定的「顯示本季數據」。')
+  if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這張卡<b>那一季</b>對贏球的貢獻，看的是攻守效率（BPM），不是得分。比賽用的就是這個數字，電腦估價也用它。同一位球星不同年份的卡，數字會不一樣。')
+    +R('生涯資料','榮譽、場均得分籃板助攻、生涯階段標籤是整個生涯的，幫你判斷名氣和球風；強不強看攻守貢獻。')
     +R('生涯階段','新秀年、生涯早期、巔峰期（最強五季）、生涯晚期。巔峰期通常比生涯平均更強。')
     +R('爆發型','MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星。每場約 5–7% 機會接管比賽，一隊每場最多 25%。')
     +R('年份、估','\'92 是卡片球季（進階設定可關）。標「估」的是 1974 年前推估的數據。');
@@ -2864,7 +2868,7 @@ function vLobby(){
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
       <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
       <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button>
-      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示攻守貢獻</button></div>
+      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示攻守貢獻（關掉就只看生涯資料猜）</button></div>
       <div class="small mut" style="margin-top:6px">前兩個會透露主題的球隊和年代，預設關閉。年份只透露年代，預設開啟；想更神秘可以關掉。每張卡都會標巔峰期／生涯早期／生涯晚期。</div></section>
     ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
     ${isP?(waitingFor().length?`<button class="big" disabled>等 ${esc(waitingFor().join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">${c.season?`開始季賽（${c.season} 局）→`:'開始競標 →'}</button>`):`<div class="note">觀眾無法變更設定。</div>`}`;
@@ -3408,8 +3412,8 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
    happened, so a run with no takeovers reads as the dice it is rather than as something rigged */
 /* after the games: the card's 攻守貢獻 next to what that season actually played like, so a surprise (Wade's injured
    2007-08 shows 88 on the card and plays like a 75) is visible instead of feeling rigged */
-function ovrShift(p,g){if(!p||p.fa||g.ovr===false)return '';const a=ovrOf(p),b=seasonOvr(p),d=b-a;
-  return `<i class="tag ovs ${d<=-4?'dn':d>=3?'up':''}">貢獻 ${a} → 本季 ${b}</i>`}
+// the card already showed its season's 攻守貢獻; only when the number was hidden is it revealed after the games
+function ovrShift(p,g){if(!p||p.fa||g.ovr!==false)return '';return `<i class="tag ovs">本季貢獻 ${seasonOvr(p)}</i>`}
 function tkSummary(g,sim){const rows=g.sides.map(s=>{const R=rosterOf(g,s).filter(p=>tkRate(p)>0),ch=1-R.reduce((t,p)=>t*(1-tkRate(p)),1);
     let n=0,gp=0;sim.series.forEach(z=>{if(z.a!==s&&z.b!==s)return;gp+=z.games.length;(z.tk||[]).forEach(t=>{if(t[s])n++})});
     return `<span style="color:${col(s)}">${esc(nm(S,s))}</span> ${R.length?`${R.length} 人・每場約 ${Math.round(ch*100)}%・實際 ${n}/${gp} 場`:'沒有爆發型球員'}`});

@@ -24,7 +24,7 @@ function fmtFor(S){const c=S.cfg;if(c.fmt==='rotate'&&S.season)return FMT_ROT[((
 const bidders=g=>g.sides.filter(s=>openN(g,s)>0&&maxBid(g,s)>=1);
 /* a card's standing among every card in the game, from what the card face shows. Measured against all cards rather
    than this deck, so a price never hints at what is still face down. */
-let ALLSTAR=null;function starPct(p){if(!ALLSTAR){const seen=new Set();ALLSTAR=[];THEMES.forEach(t=>t.items.forEach(q=>{const k=q.id+':'+q.y0;if(!q.fa&&!seen.has(k)){seen.add(k);ALLSTAR.push(pubStar(q))}}));ALLSTAR.sort((a,b)=>a-b)}
+let ALLSTARS={};function starPct(p){const md=pubMode();let ALLSTAR=ALLSTARS[md];if(!ALLSTAR){const seen=new Set();ALLSTAR=ALLSTARS[md]=[];THEMES.forEach(t=>t.items.forEach(q=>{const k=q.id+':'+q.y0;if(!q.fa&&!seen.has(k)){seen.add(k);ALLSTAR.push(pubStar(q))}}));ALLSTAR.sort((a,b)=>a-b)}
   const v=pubStar(p);let lo=0,hi=ALLSTAR.length;while(lo<hi){const m=(lo+hi)>>1;if(ALLSTAR[m]<v)lo=m+1;else hi=m}return ALLSTAR.length?lo/ALLSTAR.length:0.5}
 // Dutch clock start price: average price per spot, ~0.35x to ~2x
 function snatchPrice(g,p){const pct=starPct(p),avg=(g.budget||10)/(g.size||5);

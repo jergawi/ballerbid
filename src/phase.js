@@ -31,8 +31,8 @@ function phaseGap(k){if(!PH_D){const acc={};THEMES.forEach(t=>t.items.forEach(p=
   PH_D={};Object.keys(PHASE).forEach(x=>{const L=(acc[x]||[]).sort((a,b)=>a-b);PH_D[x]=L.length?L[L.length>>1]:0})}
   return k?PH_D[k]||0:0}
 
-/* 攻守貢獻 (shown on the card): the same public number the bots price cards with (career BPM-based value + the phase adjustment, see
-   pubVal in bot.js), put on a 2K-style 45-99 scale (72 + 2.65 per rating point): role players in the 60s-70s, All-Stars mid-80s, the very top 95+.
+/* 攻守貢獻 (shown on the card): the card's own season (its BPM, through the same small-sample shrink the match sim
+   uses), the same public number the bots price cards with (pubVal in bot.js), put on a 2K-style 45-99 scale (72 + 2.65 per rating point): role players in the 60s-70s, All-Stars mid-80s, the very top 95+.
    It exists so a person does not have to work out from points per game what the computer already knows. */
 const ovrOf=p=>!p||p.fa?45:toOvr(pubVal(p));
 /* how far the card's own season usually lands from the number on the card: one standard deviation, measured over
@@ -40,4 +40,4 @@ const ovrOf=p=>!p||p.fa?45:toOvr(pubVal(p));
    95 that plays like an 89 is a known risk, not a surprise. */
 const ovrRange=p=>{const v=pubVal(p),sd=0.6+0.09*Math.max(0,v);return[toOvr(v-sd),toOvr(v+sd)]};
 const ovrTier=v=>v>=92?'t5':v>=86?'t4':v>=80?'t3':v>=74?'t2':'t1';
-function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p),rg=!small&&!(g&&g.showStats)?ovrRange(p):null;return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>攻守貢獻</i></div>${rg?`<div class="ovrr">這一季多半在 ${rg[0]}–${rg[1]}</div>`:''}`}
+function ovrBadge(p,g,small){if(!p||(g&&g.ovr===false))return '';const v=ovrOf(p),rg=null;return `<div class="ovrb ${ovrTier(v)} ${small?'sm':''}"><b>${v}</b><i>攻守貢獻</i></div>${rg?`<div class="ovrr">這一季多半在 ${rg[0]}–${rg[1]}</div>`:''}`}

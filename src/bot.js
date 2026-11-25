@@ -101,7 +101,11 @@ let FAV=null;const FA_V=()=>FAV!=null?FAV:(FAV=+pval(FA).toFixed(2));
    through the same small-sample shrink as the season a card actually plays. Reading it over the whole career (1,000+
    games, almost no shrink) made every star's card look 2-3 points better than any of his seasons could play. */
 const careerAsSeason=(p,c)=>({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:Math.min(num(c.g,72),72)});
-function pubVal(p){if(!p||p.fa)return FA_V();if(S&&S.game&&S.game.showStats)return pval(p);if(PUBV.has(p))return PUBV.get(p);
+/* the number a player at the table can see for a card. The card shows its own season's 攻守貢獻, so that is the
+   public value, for bots and people alike. Only if a host turns the number off (lobby: 卡片顯示攻守貢獻) and season
+   stats are hidden too does it fall back to the career line, which is all the card face then shows. */
+const pubMode=()=>S&&S.game&&S.game.ovr===false&&!S.game.showStats?'career':'season';
+function pubVal(p){if(!p||p.fa)return FA_V();if(pubMode()==='season')return pval(p);if(PUBV.has(p))return PUBV.get(p);
   const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval(careerAsSeason(p,c))+phaseGap(phaseOf(p)):pval(p);PUBV.set(p,v);return v}
 const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
@@ -113,7 +117,7 @@ function botCache(g){const k=g.gid+':'+g.idx+':'+g.log.length+':'+(g.stage||'')+
    table), the cards already shown, and how many are still to come. The unseen cards are estimated from what has been
    shown so far, blended with the spread of every card in the game (worth five cards of evidence), so early on the
    guess is generic and it sharpens as the deck shows its hand. */
-let ALLV=null;const allVals=()=>{if(ALLV)return ALLV;const seen=new Set(),v=[];THEMES.forEach(t=>t.items.forEach(p=>{const k=p.id+':'+p.y0;if(!p.fa&&!seen.has(k)){seen.add(k);v.push(pubVal(p))}}));return ALLV=v.sort((a,b)=>b-a)};
+let ALLV={};const allVals=()=>{const md=pubMode();if(ALLV[md])return ALLV[md];const seen=new Set(),v=[];THEMES.forEach(t=>t.items.forEach(p=>{const k=p.id+':'+p.y0;if(!p.fa&&!seen.has(k)){seen.add(k);v.push(pubVal(p))}}));return ALLV[md]=v.sort((a,b)=>b-a)};
 function deckEst(g){const vis=(g.stage==='left'?leftovers(g).map(x=>x.p):g.stage==='nom'?market(g).map(x=>x.p):[cur(g)]).filter(p=>p&&!p.fa);
   const n=Math.max(0,realLeft(g)-vis.length),shownV=g.items.slice(0,g.idx).filter(p=>!p.fa).map(pubVal).concat(vis.map(pubVal));
   const est=[];if(n>0){const A=allVals(),PRIOR=5,wS=1,wA=PRIOR/Math.max(1,A.length);

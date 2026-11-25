@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.26b';
+const APPV='2026.11.26c';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -704,8 +704,8 @@ function vHome(){
    the other tabs are short key-and-one-line entries so a rule can be found at a glance. */
 const RULE_TABS=[['quick','入門'],['card','卡片'],['auction','拍賣'],['tac','戰術'],['score','勝負'],['more','更多']];
 function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</span></div>`;
-  if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這位球員對贏球的貢獻，看的是攻守效率（BPM），不是得分。刷分但不防守的球員會偏低。電腦估價也用這個數字。')
-    +R('生涯 vs 本季','卡面的貢獻是生涯水準；比賽用的是卡片那一季，會上下浮動。數字下面寫的「這一季多半在 84–94」就是浮動範圍（大約七成的卡落在裡面），越強的球星浮動越大。結果頁會揭曉實際數字。想要完全沒有落差，可開進階設定的「顯示本季數據」。')
+  if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這張卡<b>那一季</b>對贏球的貢獻，看的是攻守效率（BPM），不是得分。比賽用的就是這個數字，電腦估價也用它。同一位球星不同年份的卡，數字會不一樣。')
+    +R('生涯資料','榮譽、場均得分籃板助攻、生涯階段標籤是整個生涯的，幫你判斷名氣和球風；強不強看攻守貢獻。')
     +R('生涯階段','新秀年、生涯早期、巔峰期（最強五季）、生涯晚期。巔峰期通常比生涯平均更強。')
     +R('爆發型','MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星。每場約 5–7% 機會接管比賽，一隊每場最多 25%。')
     +R('年份、估','\'92 是卡片球季（進階設定可關）。標「估」的是 1974 年前推估的數據。');
@@ -839,7 +839,7 @@ function vLobby(){
       <button class="chip ${c.showStats?'on':''}" data-act="cfg" data-k="showStats" data-v="${c.showStats?0:1}" ${dis}>${c.showStats?'✓ ':''}競標時顯示數據</button>
       <button class="chip ${c.hints?'on':''}" data-act="cfg" data-k="hints" data-v="${c.hints?0:1}" ${dis}>${c.hints?'✓ ':''}競標時提示隊友／不合</button>
       <button class="chip ${c.showYr!==false?'on':''}" data-act="cfg" data-k="showYr" data-v="${c.showYr!==false?0:1}" ${dis}>${c.showYr!==false?'✓ ':''}卡片顯示球季年份</button>
-      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示攻守貢獻</button></div>
+      <button class="chip ${c.ovr!==false?'on':''}" data-act="cfg" data-k="ovr" data-v="${c.ovr!==false?0:1}" ${dis}>${c.ovr!==false?'✓ ':''}卡片顯示攻守貢獻（關掉就只看生涯資料猜）</button></div>
       <div class="small mut" style="margin-top:6px">前兩個會透露主題的球隊和年代，預設關閉。年份只透露年代，預設開啟；想更神秘可以關掉。每張卡都會標巔峰期／生涯早期／生涯晚期。</div></section>
     ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
     ${isP?(waitingFor().length?`<button class="big" disabled>等 ${esc(waitingFor().join('、'))} 看完結算…</button>`:`<button class="big" data-act="start">${c.season?`開始季賽（${c.season} 局）→`:'開始競標 →'}</button>`):`<div class="note">觀眾無法變更設定。</div>`}`;
@@ -1383,8 +1383,8 @@ function vPlayback(){const g=S.game,st=pbState();if(!st){pbStart();return vPlayb
    happened, so a run with no takeovers reads as the dice it is rather than as something rigged */
 /* after the games: the card's 攻守貢獻 next to what that season actually played like, so a surprise (Wade's injured
    2007-08 shows 88 on the card and plays like a 75) is visible instead of feeling rigged */
-function ovrShift(p,g){if(!p||p.fa||g.ovr===false)return '';const a=ovrOf(p),b=seasonOvr(p),d=b-a;
-  return `<i class="tag ovs ${d<=-4?'dn':d>=3?'up':''}">貢獻 ${a} → 本季 ${b}</i>`}
+// the card already showed its season's 攻守貢獻; only when the number was hidden is it revealed after the games
+function ovrShift(p,g){if(!p||p.fa||g.ovr!==false)return '';return `<i class="tag ovs">本季貢獻 ${seasonOvr(p)}</i>`}
 function tkSummary(g,sim){const rows=g.sides.map(s=>{const R=rosterOf(g,s).filter(p=>tkRate(p)>0),ch=1-R.reduce((t,p)=>t*(1-tkRate(p)),1);
     let n=0,gp=0;sim.series.forEach(z=>{if(z.a!==s&&z.b!==s)return;gp+=z.games.length;(z.tk||[]).forEach(t=>{if(t[s])n++})});
     return `<span style="color:${col(s)}">${esc(nm(S,s))}</span> ${R.length?`${R.length} 人・每場約 ${Math.round(ch*100)}%・實際 ${n}/${gp} 場`:'沒有爆發型球員'}`});
