@@ -119,7 +119,7 @@ function deckEst(g){const vis=(g.stage==='left'?leftovers(g).map(x=>x.p):g.stage
 function botMarket(g){const C=botCache(g);if(C.m)return C.m;
   const vals=deckEst(g);
   let os=0,ob=0;g.sides.forEach(t=>openSlots(g,t).forEach(x=>isBench(x)?ob++:os++));
-  const tight=realLeft(g)+Math.max(0,EXTRA_MAX-(g.extra||0))<=os+ob+2;   // public counts: few cards to spare, a pass may end in a free agent
+  const tight=realLeft(g)+Math.max(0,EXTRA_MAX-(g.extra||0))<=os+ob+2+Math.ceil((os+ob)*0.1);   // public counts: few cards to spare, a pass may end in a free agent
   const N=os+ob,vN=tight?FA_V():N>0&&vals.length>=N?vals[N-1]:FA_V();
   const money=g.sides.reduce((a,t)=>a+Math.max(0,left(g,t)-openN(g,t)),0);
   return C.m={vals,os,ob,N,vN,money}}

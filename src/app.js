@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.25j';
+const APPV='2026.11.26a';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -1572,6 +1572,7 @@ document.addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.i
   if(k==='era0'||k==='era1'){const o=c.era?[...c.era]:[null,null];o[k==='era0'?0:1]=v?+v:null;let era=null;
     if(o[0]!=null||o[1]!=null){const a=o[0]!=null?o[0]:o[1],b=o[1]!=null?o[1]:o[0];era=[a,b]}return dispatch({a:'cfg',cfg:{era}})}
   if(k==='team'){if(!v)return;t.value='';return dispatch({a:'cfg',cfg:{teams:[...(c.teams||[]),v]}})}
+  if(k==='aist')return dispatch({a:'aist',s:t.dataset.i,v});
   if(k==='pcat')return dispatch({a:'cfg',cfg:{pcat:v}});
   if(k==='ptheme'){if(!v)return;t.value='';return dispatch({a:'cfg',cfg:{picks:[...(c.picks||[]),v]}})}
 });

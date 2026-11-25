@@ -75,11 +75,14 @@ function sfxBtn(){const ic=['🔇','🔈','🔊'][SFX.lv];return `<button class=
 function aiLobby(sides,dis){const bots=sides.filter(isBot),lv=S.botLv||'normal';
   return `<section class="card"><h2>挑戰電腦</h2>
     <div class="row" style="margin-bottom:8px"><span class="dot" style="background:${col('A')}"></span><input data-in="name" data-i="A" maxlength="12" value="${esc(S.names.A)}" ${dis} aria-label="你的名字"></div>
-    ${bots.map(s=>{const st=S.bots[s].st;return `<div class="botrow"><span class="dot" style="background:${col(s)}"></span><b>${st==='rand'?'🤖 電腦 '+s:esc(nm(S,s))}</b><small>${st==='rand'?'每局隨機換風格（有時是兩種混搭）':BOT_DESC[st]}</small></div>
-      <div class="seg bstyle">${STYLE_K.concat(['mix','rand']).map(k=>`<button class="chip ${st===k?'on':''}" data-act="aist" data-who="${s}" data-v="${k}" ${dis}>${k==='rand'?'🎲 隨機':k==='mix'?'🔀 混搭':BOT_STYLE[k].nm.replace('🤖 ','')}</button>`).join('')}</div>`}).join('')}
+    ${bots.map(s=>{const st=S.bots[s].st,opt=(k,l)=>`<option value="${k}" ${st===k?'selected':''}>${l}</option>`;
+      return `<div class="botrow2"><span class="dot" style="background:${col(s)}"></span><b>🤖 電腦 ${s}</b>
+        <select class="bsel" data-in="aist" data-i="${s}" ${dis} aria-label="電腦 ${s} 的風格">${opt('rand','🎲 隨機')}${opt('mix','🔀 混搭')}<optgroup label="固定風格">${STYLE_K.map(k=>opt(k,BOT_STYLE[k].nm.replace('🤖 ',''))).join('')}</optgroup></select></div>
+        <div class="bdesc">${st==='rand'?'每局隨機換風格，有時是兩種混搭':st==='mix'?'每局隨機混合兩種風格':BOT_DESC[st]}</div>`}).join('')}
+    <div class="small mut" style="margin:2px 0 4px">各風格怎麼出價，看「玩法說明 → 更多」。</div>
     <div class="fl" style="margin-top:12px">電腦強度</div>
     <div class="fgrid lv">${Object.entries(BOT_LV).map(([k,L])=>`<button class="fopt ${lv===k?'on':''}" data-act="ailv" data-v="${k}" ${dis}><b>${L.nm}</b><small>${L.d}</small></button>`).join('')}</div>
-    <div class="small mut" style="margin-top:8px">電腦只能用跟你一樣的按鈕出價，看不到你的任務卡和暗標金額。</div></section>`}
+    <div class="small mut" style="margin-top:8px">電腦只能用跟你一樣的按鈕出價，看不到還沒翻的牌、你的任務、暗標和戰術。</div></section>`}
 // last team with open spots: every card left is face up, sign the ones you want for $1
 function leftPanel(g,r){const who=g.solo.who,mine=r==='all'||r===who,L=leftovers(g),need=openN(g,who),sel=ui.leftSel&&ui.leftSel.gid===g.gid&&ui.leftSel.idx===g.idx?ui.leftSel.j:null;
   return `<div class="nomhd"><div class="nt">只剩 <b style="color:${col(who)}">${esc(nm(S,who))}</b> 有空位</div>

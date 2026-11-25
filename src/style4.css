@@ -652,3 +652,10 @@ button.mcard:not(:disabled):active{transform:scale(.98)}
 .mcard2 .mpr{position:absolute;right:12px;top:10px;font-weight:900;font-size:16px;color:#e8711b}
 .mcard2.dim{opacity:.45}
 .mcard2.xtra .mpr{right:46px}
+
+/* compact bot style picker */
+.botrow2{display:flex;align-items:center;gap:8px;padding:10px 2px 2px;border-top:1px solid var(--line)}
+.botrow2 b{font-size:15px;white-space:nowrap}
+.botrow2 .bsel{margin-left:auto;max-width:56%;font:inherit;font-size:14px;font-weight:700;padding:7px 30px 7px 12px;border-radius:10px;border:1px solid var(--line);background:#f6f8fc;color:var(--ink,#1b2233);
+  appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,#6b7590 50%),linear-gradient(135deg,#6b7590 50%,transparent 50%);background-position:calc(100% - 16px) 52%,calc(100% - 11px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.bdesc{font-size:12.5px;color:var(--mut);margin:2px 0 8px 18px}
