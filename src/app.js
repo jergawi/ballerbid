@@ -14,7 +14,7 @@ const LS='ballerbid_local_v1',LS_AI='ballerbid_ai_v1';
 let CID=lsGet('bb_cid');if(!CID){CID=Math.random().toString(36).slice(2,10);lsSet('bb_cid',CID)}
 let MYNAME=lsGet('bb_name')||'';
 const clean=(s,n=14)=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,n);
-const APPV='2026.11.26a';
+const APPV='2026.11.26b';
 const own=(o,k)=>!!o&&typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
@@ -440,7 +440,7 @@ function tkRate(p){if(!p||p.fa)return 0;const b=bioOf(p)||{};let v=b.mvp>0?0.065
   if(!v)return 0;const ph=typeof phaseOf==='function'?phaseOf(p):null;return v*({prime:1.15,early:0.85,late:0.7,rook:0.6}[ph]||1)}
 /* a team's chance of a takeover in one game is capped at TK_TEAM: a roster of five MVPs (a Dream Team deck) should not
    turn the special night into a weekly event; the rates are scaled down together so who takes over stays fair */
-const TK_TEAM=0.16;
+const TK_TEAM=0.25;
 function tkPick(R,gi,r,mul){const out=new Set((gi||[]).filter(i=>i.kind==='eject'||i.kind==='foulout').map(i=>i.n)),rt0=p=>tkRate(p)*((mul&&mul[p.n])||1);
   const c=R.filter(p=>!out.has(p.n)&&tkRate(p)>0),all=1-c.reduce((t,p)=>t*(1-rt0(p)),1),sc=all>TK_TEAM?Math.log(1-TK_TEAM)/Math.log(1-all):1,rt=p=>1-Math.pow(1-rt0(p),sc);for(let i=c.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
   for(const p of c)if(r()<rt(p))return p.n;return null}
@@ -704,10 +704,10 @@ function vHome(){
    the other tabs are short key-and-one-line entries so a rule can be found at a glance. */
 const RULE_TABS=[['quick','入門'],['card','卡片'],['auction','拍賣'],['tac','戰術'],['score','勝負'],['more','更多']];
 function rulesBody(t){const R=(k,v)=>`<div class="rk"><b>${k}</b><span>${v}</span></div>`;
-  if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這位球員對贏球的貢獻，看的是攻守效率（BPM），不是得分。刷分但不防守的球員會偏低，例如 Melo 78。電腦估價也用這個數字。')
-    +R('生涯 vs 本季','卡面的貢獻、數據和榮譽是整個生涯；比賽用的是卡片那一季。大多只差幾分，結果頁會揭曉「貢獻 88 → 本季 75」。')
+  if(t==='card')return R('攻守貢獻','卡片上方的數字（45–99）：這位球員對贏球的貢獻，看的是攻守效率（BPM），不是得分。刷分但不防守的球員會偏低。電腦估價也用這個數字。')
+    +R('生涯 vs 本季','卡面的貢獻是生涯水準；比賽用的是卡片那一季，會上下浮動。數字下面寫的「這一季多半在 84–94」就是浮動範圍（大約七成的卡落在裡面），越強的球星浮動越大。結果頁會揭曉實際數字。想要完全沒有落差，可開進階設定的「顯示本季數據」。')
     +R('生涯階段','新秀年、生涯早期、巔峰期（最強五季）、生涯晚期。巔峰期通常比生涯平均更強。')
-    +R('爆發型','MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星。每場約 5–7% 機會接管比賽。')
+    +R('爆發型','MVP、FMVP、兩屆以上年度一隊或 8 次以上全明星。每場約 5–7% 機會接管比賽，一隊每場最多 25%。')
     +R('年份、估','\'92 是卡片球季（進階設定可關）。標「估」的是 1974 年前推估的數據。');
   if(t==='auction')return R('一般喊價','輪流出價（三人蛇形），輪到你就喊或按「不要」。沒人出價 20 秒、有人出價後 15 秒沒動作，就算不要。')
     +R('暗標','大家同時偷偷出價，最高價得標。平手加賽一次，再平手由空位多的一方得標。')

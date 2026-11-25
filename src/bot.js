@@ -97,8 +97,12 @@ const PUBV=new WeakMap();
 /* a free agent is worth what the match sim gives it (about -2.3), not more: bots used to rate it -1 and took free
    agents over real players too often */
 let FAV=null;const FA_V=()=>FAV!=null?FAV:(FAV=+pval(FA).toFixed(2));
+/* the career line read as one season: career BPM rates at career minutes over one season's games (72), so it goes
+   through the same small-sample shrink as the season a card actually plays. Reading it over the whole career (1,000+
+   games, almost no shrink) made every star's card look 2-3 points better than any of his seasons could play. */
+const careerAsSeason=(p,c)=>({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:Math.min(num(c.g,72),72)});
 function pubVal(p){if(!p||p.fa)return FA_V();if(S&&S.game&&S.game.showStats)return pval(p);if(PUBV.has(p))return PUBV.get(p);
-  const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval({...p,obpm:c.obpm,dbpm:c.dbpm,mp:c.mp,g:c.g})+phaseGap(phaseOf(p)):pval(p);PUBV.set(p,v);return v}
+  const c=CAREER&&CAREER.get(normName(p.n)),v=c&&typeof c.obpm==='number'?pval(careerAsSeason(p,c))+phaseGap(phaseOf(p)):pval(p);PUBV.set(p,v);return v}
 const pubStar=p=>starScore(p)-pval(p)+pubVal(p);
 // per-card cache: the market and each bot's numbers stay fixed while a card is up
 const BC={k:''};
